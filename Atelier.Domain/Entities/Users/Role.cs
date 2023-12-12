@@ -12,9 +12,12 @@ namespace Atelier.Domain.Entities.Users
         public string? Description { get; set; }
         public string? PersianTitle { get; set; }
         //Base Entity
-        public DateTime? InsertTime { get; set; }
+        public DateTime? InsertTime { get; set; } = DateTime.Now;
+        public string? InsertByUserId { get; set; }
         public DateTime? UpdateTime { get; set; }
-        public bool IsRemoved { get; set; }=false;
+        public string? UpdateByUserId { get; set; }
+        public bool IsRemoved { get; set; } = false;
         public DateTime? RemoveTime { get; set; }
+        public string? RemoveByUserId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Atelier.Domain.Entities.Users;
+﻿using Atelier.Domain.Entities.AtelierApp;
+using Atelier.Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace Atelier.Application.Interfaces.Contexts
     {
         DbSet<User> Users { get; set; }
         DbSet<Role> Roles { get; set; }
+        DbSet<AtelierBase> AtelierBases { get; set; }
+        DbSet<Branch> Branches { get; set; }
 
 
         int SaveChanges(bool acceptAllChangesOnSuccess);

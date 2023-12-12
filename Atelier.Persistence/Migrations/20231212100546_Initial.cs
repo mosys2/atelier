@@ -8,11 +8,34 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Atelier.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AtelierBases",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    StatusMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InsertByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsRemoved = table.Column<bool>(type: "bit", nullable: false),
+                    RemoveTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RemoveByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AtelierBases", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -25,9 +48,12 @@ namespace Atelier.Persistence.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PersianTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InsertTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InsertByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsRemoved = table.Column<bool>(type: "bit", nullable: true),
-                    RemoveTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    RemoveTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RemoveByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -35,40 +61,35 @@ namespace Atelier.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "Branches",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gender = table.Column<int>(type: "int", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AtelierBaseId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    StatusDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     InsertTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InsertByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsRemoved = table.Column<bool>(type: "bit", nullable: false),
                     RemoveTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    RemoveByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Branches", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Branches_AtelierBases_AtelierBaseId",
+                        column: x => x.AtelierBaseId,
+                        principalTable: "AtelierBases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,6 +109,54 @@ namespace Atelier.Persistence.Migrations
                         name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BranchId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HomeNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InsertByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsRemoved = table.Column<bool>(type: "bit", nullable: false),
+                    RemoveTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RemoveByUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -179,14 +248,20 @@ namespace Atelier.Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Roles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Discriminator", "InsertTime", "IsRemoved", "Name", "NormalizedName", "PersianTitle", "RemoveTime", "UpdateTime" },
+                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Discriminator", "InsertByUserId", "InsertTime", "IsRemoved", "Name", "NormalizedName", "PersianTitle", "RemoveByUserId", "RemoveTime", "UpdateByUserId", "UpdateTime" },
                 values: new object[,]
                 {
-                    { "1d6f1ad7-56f2-4512-b81c-9a77e2b55ee1", null, null, "Role", null, false, "Secretary", "Secretary", "منشی", null, null },
-                    { "80c468c9-d7ef-465b-88e7-85202f51b217", null, null, "Role", null, false, "Admin", "ADMIN", "مدیر", null, null },
-                    { "a4e5d7ba-a1c7-49a1-86c0-4576e098a65b", null, null, "Role", null, false, "Customer", "Customer", "منشی", null, null },
-                    { "a7d3e1cb-da31-4bad-ae91-98d381a65b3b", null, null, "Role", null, false, "Employee", "Employee", "منشی", null, null }
+                    { "0af81db3-fc9c-4e56-8396-87a1782c7764", null, null, "Role", null, new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9594), false, "Employee", "Employee", "منشی", null, null, null, null },
+                    { "9d1fb279-7746-4fd1-bfc0-b4a3f48d2d9d", null, null, "Role", null, new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9623), false, "Customer", "Customer", "منشی", null, null, null, null },
+                    { "a96afce5-c2f1-43a6-8465-7077d1cad478", null, null, "Role", null, new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9578), false, "Secretary", "Secretary", "منشی", null, null, null, null },
+                    { "cf8d8b8f-10c1-4a89-b781-522198fe6f38", null, null, "Role", null, new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9501), false, "BigAdmin", "BigAdmin", "مدیر اپلیکیشن", null, null, null, null },
+                    { "d964e41c-3654-4744-b13b-af2c144daaea", null, null, "Role", null, new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9570), false, "Admin", "Admin", "مدیر", null, null, null, null }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branches_AtelierBaseId",
+                table: "Branches",
+                column: "AtelierBaseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -216,16 +291,9 @@ namespace Atelier.Persistence.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "EmailIndex",
+                name: "IX_Users_BranchId",
                 table: "Users",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "Users",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                column: "BranchId");
         }
 
         /// <inheritdoc />
@@ -251,6 +319,12 @@ namespace Atelier.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Branches");
+
+            migrationBuilder.DropTable(
+                name: "AtelierBases");
         }
     }
 }

@@ -22,6 +22,118 @@ namespace Atelier.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Atelier.Domain.Entities.AtelierApp.AtelierBase", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InsertByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemoved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RemoveByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemoveTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StatusMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdateByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AtelierBases");
+                });
+
+            modelBuilder.Entity("Atelier.Domain.Entities.AtelierApp.Branch", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AtelierBaseId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InsertByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemoved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RemoveByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemoveTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StatusDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdateByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AtelierBaseId");
+
+                    b.ToTable("Branches");
+                });
+
             modelBuilder.Entity("Atelier.Domain.Entities.Users.User", b =>
                 {
                     b.Property<string>("Id")
@@ -35,6 +147,10 @@ namespace Atelier.Persistence.Migrations
 
                     b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("BranchId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -55,6 +171,12 @@ namespace Atelier.Persistence.Migrations
 
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
+
+                    b.Property<string>("HomeNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InsertByUserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("InsertTime")
                         .HasColumnType("datetime2");
@@ -94,6 +216,9 @@ namespace Atelier.Persistence.Migrations
                     b.Property<string>("ProfileImage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RemoveByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("RemoveTime")
                         .HasColumnType("datetime2");
 
@@ -102,6 +227,9 @@ namespace Atelier.Persistence.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<string>("UpdateByUserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -112,13 +240,7 @@ namespace Atelier.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.HasIndex("BranchId");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -273,6 +395,9 @@ namespace Atelier.Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("InsertByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("InsertTime")
                         .HasColumnType("datetime2");
 
@@ -282,8 +407,14 @@ namespace Atelier.Persistence.Migrations
                     b.Property<string>("PersianTitle")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RemoveByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("RemoveTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdateByUserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -293,36 +424,71 @@ namespace Atelier.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "80c468c9-d7ef-465b-88e7-85202f51b217",
+                            Id = "cf8d8b8f-10c1-4a89-b781-522198fe6f38",
+                            Name = "BigAdmin",
+                            NormalizedName = "BigAdmin",
+                            InsertTime = new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9501),
+                            IsRemoved = false,
+                            PersianTitle = "مدیر اپلیکیشن"
+                        },
+                        new
+                        {
+                            Id = "d964e41c-3654-4744-b13b-af2c144daaea",
                             Name = "Admin",
-                            NormalizedName = "ADMIN",
+                            NormalizedName = "Admin",
+                            InsertTime = new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9570),
                             IsRemoved = false,
                             PersianTitle = "مدیر"
                         },
                         new
                         {
-                            Id = "1d6f1ad7-56f2-4512-b81c-9a77e2b55ee1",
+                            Id = "a96afce5-c2f1-43a6-8465-7077d1cad478",
                             Name = "Secretary",
                             NormalizedName = "Secretary",
+                            InsertTime = new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9578),
                             IsRemoved = false,
                             PersianTitle = "منشی"
                         },
                         new
                         {
-                            Id = "a7d3e1cb-da31-4bad-ae91-98d381a65b3b",
+                            Id = "0af81db3-fc9c-4e56-8396-87a1782c7764",
                             Name = "Employee",
                             NormalizedName = "Employee",
+                            InsertTime = new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9594),
                             IsRemoved = false,
                             PersianTitle = "منشی"
                         },
                         new
                         {
-                            Id = "a4e5d7ba-a1c7-49a1-86c0-4576e098a65b",
+                            Id = "9d1fb279-7746-4fd1-bfc0-b4a3f48d2d9d",
                             Name = "Customer",
                             NormalizedName = "Customer",
+                            InsertTime = new DateTime(2023, 12, 12, 13, 35, 46, 314, DateTimeKind.Local).AddTicks(9623),
                             IsRemoved = false,
                             PersianTitle = "منشی"
                         });
+                });
+
+            modelBuilder.Entity("Atelier.Domain.Entities.AtelierApp.Branch", b =>
+                {
+                    b.HasOne("Atelier.Domain.Entities.AtelierApp.AtelierBase", "AtelierBase")
+                        .WithMany("Branches")
+                        .HasForeignKey("AtelierBaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AtelierBase");
+                });
+
+            modelBuilder.Entity("Atelier.Domain.Entities.Users.User", b =>
+                {
+                    b.HasOne("Atelier.Domain.Entities.AtelierApp.Branch", "Branch")
+                        .WithMany("Users")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -374,6 +540,16 @@ namespace Atelier.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Atelier.Domain.Entities.AtelierApp.AtelierBase", b =>
+                {
+                    b.Navigation("Branches");
+                });
+
+            modelBuilder.Entity("Atelier.Domain.Entities.AtelierApp.Branch", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

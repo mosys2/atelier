@@ -1,5 +1,6 @@
 ﻿using Atelier.Application.Interfaces.Contexts;
 using Atelier.Common.Constants;
+using Atelier.Domain.Entities.AtelierApp;
 using Atelier.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,8 @@ namespace Atelier.Persistence.Contexts
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<AtelierBase> AtelierBases { get; set; }
+        public DbSet<Branch> Branches { get; set; }
 
 
 
@@ -30,8 +33,10 @@ namespace Atelier.Persistence.Contexts
                 b.HasKey(u => u.Id);
 
                 // Indexes for "normalized" username and email, to allow efficient lookups
-                b.HasIndex(u => u.NormalizedUserName).HasName("UserNameIndex").IsUnique();
-                b.HasIndex(u => u.NormalizedEmail).HasName("EmailIndex");
+
+                //b.HasIndex(u => u.NormalizedUserName).HasName("UserNameIndex").IsUnique();
+                //b.HasIndex(u => u.NormalizedEmail).HasName("EmailIndex");
+
                 b.HasQueryFilter(p => !p.IsRemoved);
                 // Maps to the AspNetUsers table
                 b.ToTable("Users");
@@ -135,9 +140,10 @@ namespace Atelier.Persistence.Contexts
 
             builder.Entity<IdentityUserRole<string>>(b =>
             {
+                //b.ToTable("AtelierId");
+                
                 // Primary key
                 b.HasKey(r => new { r.UserId, r.RoleId });
-
                 // Maps to the AspNetUserRoles table
                 b.ToTable("UserRoles");
             });
@@ -156,10 +162,11 @@ namespace Atelier.Persistence.Contexts
 
         private void SeedData(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Admin, PersianTitle = RoleesTitle.Admin, NormalizedName = "ADMIN" });
-            modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Secretary, PersianTitle = RoleesTitle.Secretary, NormalizedName = "Secretary" });
-            modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Employee, PersianTitle = RoleesTitle.Secretary, NormalizedName = "Employee" });
-            modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Customer, PersianTitle = RoleesTitle.Secretary, NormalizedName = "Customer" });
+            //modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.BigAdmin, PersianTitle = RoleesTitle.BigAdmin, NormalizedName = "BigAdmin" });
+            //modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Admin, PersianTitle = RoleesTitle.Admin, NormalizedName = "Admin" });
+            //modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Secretary, PersianTitle = RoleesTitle.Secretary, NormalizedName = "Secretary" });
+            //modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Employee, PersianTitle = RoleesTitle.Employee, NormalizedName = "Employee" });
+            //modelBuilder.Entity<Role>().HasData(new Role { Name = RoleesName.Customer, PersianTitle = RoleesTitle.Customer, NormalizedName = "Customer" });
         }
     }
 }

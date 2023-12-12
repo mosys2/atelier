@@ -8,6 +8,7 @@ namespace Atelier.Common.Constants
 {
     public class RoleesName
     {
+        public const string BigAdmin = "BigAdmin";
         public const string Admin = "Admin";
         public const string Secretary = "Secretary";
         public const string Employee = "Employee";
@@ -18,6 +19,7 @@ namespace Atelier.Common.Constants
 
     public class RoleesTitle
     {
+        public const string BigAdmin = "مدیر اپلیکیشن";
         public const string Admin = "مدیر";
         public const string Secretary = "منشی";
         public const string Employee = "کارمند";
