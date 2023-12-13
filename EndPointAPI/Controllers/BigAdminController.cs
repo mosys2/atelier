@@ -23,13 +23,12 @@ namespace EndPointAPI.Controllers
           var result=await  _addBigAdmin.Execute();
           return Ok(result);
         }
-
         // PUT api/<BigAdminController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
-        }
 
+        }
         // DELETE api/<BigAdminController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
