@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="Services\AtelierBase\Commands\" />
+    <Folder Include="Services\Branches\Commands\" />
     <Folder Include="Services\Customers\Queries\" />
     <Folder Include="Services\Users\Queries\GetAllUser\" />
   </ItemGroup>
