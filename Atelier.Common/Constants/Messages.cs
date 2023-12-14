@@ -75,6 +75,7 @@ namespace Atelier.Common.Constants
         public const string MessageExistsCategoryFeature = "این ترکیب از مشخصه‌ها برای دسته‌بندی مورد نظر قبلاً وارد شده است!";
         public const string InvalidEmail = "ممکن است ایمیل وارد شده معتبر نباشد! و یا اینکه ایمیل خود را تایید نکرده باشید!";
         public const string MessageExistNewsletter = "ایمیل شما قبلا ثبت شده است!";
-
+        public const string NoExistBranchForUser = "شعبه ایی برای این کاربر ثبت نشده است!";
+        public const string LoginSucceed = "ورود به آتلیه با موفقیت انجام شد!";
     }
 }

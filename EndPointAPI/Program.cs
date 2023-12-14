@@ -6,8 +6,11 @@ using Atelier.Common.Constants;
 using Atelier.Common.Helpers;
 using Atelier.Domain.Entities.Users;
 using Atelier.Persistence.Contexts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +29,6 @@ builder.Services.AddAuthorization(option =>
     option.AddPolicy(RoleesName.Employee, policy => policy.RequireRole(RoleesName.Employee));
     option.AddPolicy(RoleesName.Customer, policy => policy.RequireRole(RoleesName.Customer));
 });
-
 builder.Services.Configure<IdentityOptions>(option =>
 {
     //UserSetting
@@ -48,13 +50,60 @@ builder.Services.Configure<IdentityOptions>(option =>
     //option.SignIn.RequireConfirmedAccount = false;
     //option.SignIn.RequireConfirmedEmail = false;
     //option.SignIn.RequireConfirmedPhoneNumber = false;
-
 });
+builder.Services.AddAuthentication(Options =>
+{
+    Options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    Options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    Options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+           .AddJwtBearer(configureOptions =>
+           {
+               configureOptions.TokenValidationParameters = new TokenValidationParameters()
+               {
+                   ValidIssuer = builder.Configuration["JWtConfig:issuer"],
+                   ValidAudience = builder.Configuration["JWtConfig:audience"],
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWtConfig:Key"])),
+                   ValidateIssuerSigningKey = true,
+                   ValidateLifetime = true,
+               };
+               configureOptions.SaveToken = true; // HttpContext.GetTokenAsunc();
+               configureOptions.Events = new JwtBearerEvents
+               {
+                   OnAuthenticationFailed = context =>
+                   {
+                       //log 
+                       //........
+                       return Task.CompletedTask;
+                   },
+                   OnTokenValidated = context =>
+                   {
+                       //log
+                       return Task.CompletedTask;
+                   },
+                   OnChallenge = context =>
+                   {
+                       return Task.CompletedTask;
 
+                   },
+                   OnMessageReceived = context =>
+                   {
+                       return Task.CompletedTask;
+
+                   },
+                   OnForbidden = context =>
+                   {
+                       return Task.CompletedTask;
+
+                   }
+               };
+
+           });
 builder.Services.AddScoped<IDatabaseContext, DatabaseContext>();
 builder.Services.AddScoped<IAddBigAdminService, AddBigAdminService>();
 builder.Services.AddScoped<IGetAllAtelierBase, GetAllAtelierBase>();
 builder.Services.AddScoped<IGetAllBranches, GetAllBranches>();
+
 
 
 builder.Services.AddControllers();
