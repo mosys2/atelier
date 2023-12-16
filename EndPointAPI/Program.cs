@@ -1,5 +1,6 @@
 using Atelier.Application.Interfaces.Contexts;
 using Atelier.Application.Services.AtelierBase.Queries;
+using Atelier.Application.Services.Auth;
 using Atelier.Application.Services.Branches.Queries;
 using Atelier.Application.Services.Users.Commands.AddUser;
 using Atelier.Common.Constants;
@@ -103,7 +104,7 @@ builder.Services.AddScoped<IDatabaseContext, DatabaseContext>();
 builder.Services.AddScoped<IAddBigAdminService, AddBigAdminService>();
 builder.Services.AddScoped<IGetAllAtelierBase, GetAllAtelierBase>();
 builder.Services.AddScoped<IGetAllBranches, GetAllBranches>();
-
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 
 builder.Services.AddControllers();

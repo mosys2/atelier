@@ -1,6 +1,7 @@
 ﻿using Atelier.Application.Services.Branches.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Atelier.Common.Dto;
+using Atelier.Common.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,9 +19,13 @@ namespace EndPointAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string Id)
         {
-            if (Id == null)
+            if (string.IsNullOrEmpty(Id))
             {
-                return BadRequest();
+                return NotFound(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message=Messages.NotFind
+                });
             }
             var result = await _getAllBranches.Excute(new RequestBranchDto { AtelierBaseId=Id});
             return Ok(result);
