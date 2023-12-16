@@ -1,4 +1,5 @@
 ﻿using Atelier.Domain.Entities.AtelierApp;
+using Atelier.Domain.Entities.Commons;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -30,8 +31,17 @@ namespace Atelier.Domain.Entities.Users
         public bool IsRemoved { get; set; } = false;
         public DateTime? RemoveTime { get; set; }
         public string? RemoveByUserId { get; set; }
+        public ICollection<JwtUserToken> JwtUserTokens { get; set; }
 
-
-
+    }
+    public class JwtUserToken:BaseEntity
+    {
+        public string TokenHash { get; set; }
+        public DateTime TokenExp { get; set; }
+        //public string MobileModel { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExp { get; set; }
+        public User User { get; set; }
+        public string UserId { get; set; }
     }
 }

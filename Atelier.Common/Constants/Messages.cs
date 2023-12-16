@@ -77,5 +77,11 @@ namespace Atelier.Common.Constants
         public const string MessageExistNewsletter = "ایمیل شما قبلا ثبت شده است!";
         public const string NoExistBranchForUser = "شعبه ایی برای این کاربر ثبت نشده است!";
         public const string LoginSucceed = "ورود به آتلیه با موفقیت انجام شد!";
+        public const string InsertAtelier = "ثبت آتلیه با موفقیت انجام شد!";
+        public const string ValidRefreshToken = "رفرش توکن مورد نظر با موفقیت برگشت داده شد!";
+        public const string NotFoundRefreshToken = "رفرش توکن مورد نظر وجود ندارد!";
+        public const string ExpireRefreshToken = "رفرش توکن منقضی شده است!";
+
+
     }
 }

@@ -1,8 +1,13 @@
 using Atelier.Application.Interfaces.Contexts;
-using Atelier.Application.Services.AtelierBase.Queries;
+using Atelier.Application.Services.Ateliers.Commands;
+using Atelier.Application.Services.Ateliers.Queries;
 using Atelier.Application.Services.Auth;
 using Atelier.Application.Services.Branches.Queries;
 using Atelier.Application.Services.Users.Commands.AddUser;
+using Atelier.Application.Services.Users.Commands.DeleteToken;
+using Atelier.Application.Services.Users.Commands.SaveToken;
+using Atelier.Application.Services.Users.Queries.FindRefreshToken;
+using Atelier.Application.Services.Users.Queries.ValidatorUsers;
 using Atelier.Common.Constants;
 using Atelier.Common.Helpers;
 using Atelier.Domain.Entities.Users;
@@ -10,6 +15,7 @@ using Atelier.Persistence.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -52,6 +58,22 @@ builder.Services.Configure<IdentityOptions>(option =>
     //option.SignIn.RequireConfirmedEmail = false;
     //option.SignIn.RequireConfirmedPhoneNumber = false;
 });
+
+builder.Services.AddScoped<IDatabaseContext, DatabaseContext>();
+builder.Services.AddScoped<IAddBigAdminService, AddBigAdminService>();
+builder.Services.AddScoped<IGetAllAtelierBase, GetAllAtelierBase>();
+builder.Services.AddScoped<IGetAllBranches, GetAllBranches>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IAddAtelierService,AddAtelierService>();
+builder.Services.AddScoped<ISaveUserTokenService, SaveUserTokenService>();
+builder.Services.AddScoped<ITokenValidatorUserService, TokenValidatorUserService>();
+builder.Services.AddScoped<IDeleteTokenUserService, DeleteTokenUserService>();
+builder.Services.AddScoped<IFindRefreshTokenService, FindRefreshTokenService>();
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(Options =>
 {
     Options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,8 +101,8 @@ builder.Services.AddAuthentication(Options =>
                    },
                    OnTokenValidated = context =>
                    {
-                       //log
-                       return Task.CompletedTask;
+                       var tokenValidatorService = context.HttpContext.RequestServices.GetRequiredService<ITokenValidatorUserService>();
+                       return tokenValidatorService.Execute(context);
                    },
                    OnChallenge = context =>
                    {
@@ -100,18 +122,6 @@ builder.Services.AddAuthentication(Options =>
                };
 
            });
-builder.Services.AddScoped<IDatabaseContext, DatabaseContext>();
-builder.Services.AddScoped<IAddBigAdminService, AddBigAdminService>();
-builder.Services.AddScoped<IGetAllAtelierBase, GetAllAtelierBase>();
-builder.Services.AddScoped<IGetAllBranches, GetAllBranches>();
-builder.Services.AddScoped<ILoginService, LoginService>();
-
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

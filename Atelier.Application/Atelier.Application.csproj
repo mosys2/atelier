@@ -9,13 +9,13 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
-    <Folder Include="Services\AtelierBase\Commands\" />
     <Folder Include="Services\Branches\Commands\" />
     <Folder Include="Services\Customers\Queries\" />
     <Folder Include="Services\Users\Queries\GetAllUser\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">

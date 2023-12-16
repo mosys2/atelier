@@ -16,5 +16,7 @@ namespace Atelier.Common.Dto
     public class ResultLoginDto
     {
         public string JwtToken { get; set; }
+        public string RefreshJwtToken { get; set; }
+
     }
 }

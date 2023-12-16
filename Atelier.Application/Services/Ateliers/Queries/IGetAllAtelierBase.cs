@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Atelier.Application.Services.AtelierBase.Queries
+namespace Atelier.Application.Services.Ateliers.Queries
 {
     public interface IGetAllAtelierBase
     {
