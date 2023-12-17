@@ -10,35 +10,35 @@ namespace EndPointAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
-        private readonly IAddCustomerService _addcustomerService;
-        private readonly IRemoveCustomerService _removecustomerService;
-        public CustomerController(IAddCustomerService addCustomerService,IRemoveCustomerService removeCustomerService)
+        private readonly IAddEmployeeService _employeeService;
+        private readonly IRemoveEmployeeService _removeEmployeeService;
+        public EmployeeController(IAddEmployeeService addEmployeeService,IRemoveEmployeeService removeEmployeeService)
         {
-            _addcustomerService = addCustomerService;
-            _removecustomerService = removeCustomerService;
+            _employeeService = addEmployeeService;
+            _removeEmployeeService = removeEmployeeService;
         }
-        // POST api/<CustomerController>
+        // POST api/<EmployeeController>
         [HttpPost]
         [Authorize(Policy = "BigAdminOrAdminOrSecretary")]
-        public async Task<IActionResult> Post(AddCustomerDto customer)
+        public async Task<IActionResult> Post(AddEmployeeDto employee)
         {
             if(!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+            return BadRequest(ModelState);
             }
-            var result =await _addcustomerService.Execute(customer);
+            var result = await _employeeService.Execute(employee);
             return Ok(result);
         }
 
-        // PUT api/<CustomerController>/5
+        // PUT api/<EmployeeController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<CustomerController>/5
+        // DELETE api/<EmployeeController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdminOrAdminOrSecretary")]
         public async Task<IActionResult> Delete(string id)
@@ -47,7 +47,7 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result=await _removecustomerService.Execute(id);
+            var result=await _removeEmployeeService.Execute(id);
             return Ok(result);
         }
     }

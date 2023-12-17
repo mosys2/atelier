@@ -20,7 +20,7 @@ namespace Atelier.Common.Constants
         public const string MessageInvalidPass = "نام کاربری یا رمز عبور اشتباه!";
         public const string MessageInvalidPassword = " رمز عبور شما اشتباه است!";
         public const string MessageInvalidOldPassword = " رمز عبور قبلی شما اشتباه است!";
-        public const string MessageNotfindUser = "کاربری با این مشخصات در سایت ثبت نام نکرده است!";
+        public const string MessageNotfindUser = "کاربری با این مشخصات وجودندارد!";
         public const string MessageNotFind = "کاربر یافت نشد!";
         public const string MessageInvalidOperation = "مشکلی در ثبت اطلاعات وجود دارد!";
         public const string MessageInsert = "ثبت  با موفقیت انجام شد!";
@@ -81,7 +81,15 @@ namespace Atelier.Common.Constants
         public const string ValidRefreshToken = "رفرش توکن مورد نظر با موفقیت برگشت داده شد!";
         public const string NotFoundRefreshToken = "رفرش توکن مورد نظر وجود ندارد!";
         public const string ExpireRefreshToken = "رفرش توکن منقضی شده است!";
-
+        public const string NotfindAtelierbase = "آتلیه ایی با این مشخصات وجود ندارد!";
+        public const string ExistBranchCode = "کد شعبه تکراری است!";
+        public const string InsertBranch = "شعبه با موفقیت ثبت شد!";
+        public const string NoExistBranch = "شعبه ایی  ثبت نشده است!";
+        public const string NoExistRoleBigAdminInUser = "کاربری با سطح دسترسی مدیر سایت یافت نشد!";
+        public const string NoExistRoleAdminInUser = "کاربری با سطح دسترسی ادمین  یافت نشد!";
+        public const string NoExistRoleCustomerInUser = "کاربری با سطح دسترسی مشتری  یافت نشد!";
+        public const string NoExistRoleEmployeeInUser = "کاربری با سطح دسترسی کارمند  یافت نشد!";
+        public const string NoExistRoleSecretaryInUser = "کاربری با سطح دسترسی منشی  یافت نشد!";
 
     }
 }

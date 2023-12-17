@@ -1,9 +1,7 @@
 ﻿using Atelier.Application.Interfaces.Contexts;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
-using Atelier.Domain.Entities.AtelierApp;
 using Atelier.Domain.Entities.Users;
-using Azure.Core;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -13,41 +11,42 @@ using System.Threading.Tasks;
 
 namespace Atelier.Application.Services.Users.Commands.AddUser
 {
-    public interface IAddBigAdminService
+    public interface IAddCustomerService
     {
-        Task<ResultDto> Execute(AddBigAdminDto bigAdmin);
+        Task<ResultDto> Execute(AddCustomerDto customer);
     }
-    public class AddBigAdminService : IAddBigAdminService
+    public class AddCustomerService : IAddCustomerService
     {
         private readonly UserManager<User> _userManager;
         private readonly IDatabaseContext _context;
-        public AddBigAdminService(UserManager<User> userManager, IDatabaseContext context)
+
+        public AddCustomerService(UserManager<User> userManager, IDatabaseContext context)
         {
-            _userManager=userManager;
-            _context=context;
+            _userManager = userManager;
+            _context = context;
         }
 
-        public async Task<ResultDto> Execute(AddBigAdminDto bigAdmin)
+        public async Task<ResultDto> Execute(AddCustomerDto customer)
         {
             string[] roles = { RoleesName.Customer };
-            var branch = await _context.Branches.FindAsync(bigAdmin.BranchId);
+            var branch = await _context.Branches.FindAsync(customer.BranchId);
             if (branch == null) { return new ResultDto { IsSuccess = false, Message = Messages.NoExistBranch }; }
             User user = new User()
             {
                 Id = Guid.NewGuid().ToString(),
-                FirstName = bigAdmin.FirstName,
-                LastName = bigAdmin.LastName,
-                FullName = bigAdmin.FirstName + " " + bigAdmin.LastName,
-                Email = bigAdmin.Email,
-                Gender = bigAdmin.Gender,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                FullName = customer.FirstName + " " + customer.LastName,
+                Email = customer.Email,
+                Gender = customer.Gender,
                 BranchId = branch.Id,
-                HomeNumber = bigAdmin.HomeNumber,
+                HomeNumber = customer.HomeNumber,
                 InsertTime = DateTime.Now,
-                IsActive = bigAdmin.IsActive,
-                PhoneNumber = bigAdmin.PhoneNumber,
-                UserName = bigAdmin.UserName,
+                IsActive = customer.IsActive,
+                PhoneNumber = customer.PhoneNumber,
+                UserName = customer.UserName,
             };
-            var result = await _userManager.CreateAsync(user, bigAdmin.Password);
+            var result = await _userManager.CreateAsync(user, customer.Password);
             var UserInRole = _userManager.AddToRolesAsync(user, roles).Result;
             if (result.Succeeded && UserInRole.Succeeded)
             {

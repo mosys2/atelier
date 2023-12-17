@@ -11,7 +11,6 @@ namespace EndPointAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class AtelierBaseController : ControllerBase
     {
         private readonly IGetAllAtelierBase _getAllAtelierBase;
@@ -27,15 +26,21 @@ namespace EndPointAPI.Controllers
        
         // GET: api/<AtelierBaseController>
         [HttpGet]
+        [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Get()
         {
             var result = await _getAllAtelierBase.Excute();
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Post(AddAtelierDto atelier)
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Post(RequestAddAtelierDto atelier)
         {
-            var userId = ClaimUtility.GetUserId(User);
+            if (!ModelState.IsValid)
+            {
+            return BadRequest(ModelState);
+            }
+            var userId = User.Claims.First(u => u.Type == "UserId").Value;
             var result = await _addAtelierService.Execute
                 (
                 new AddAtelierDto

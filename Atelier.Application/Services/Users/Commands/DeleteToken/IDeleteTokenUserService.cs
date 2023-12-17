@@ -26,7 +26,7 @@ namespace Atelier.Application.Services.Users.Commands.DeleteToken
             var token =_context.JwtUserTokens.Where(r=>r.RefreshToken== RefreshTokenHash).FirstOrDefault();
             if (token != null)
             {
-                _context.JwtUserTokens.Remove(token);
+                 token.IsRemoved= true;
                 await _context.SaveChangesAsync();
             }
         }

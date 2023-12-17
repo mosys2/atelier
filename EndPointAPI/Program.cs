@@ -19,6 +19,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Atelier.Application.Services.Users.Queries.GetRolesUser;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using Atelier.Application.Services.Branches.Commands.AddBranch;
+using Atelier.Application.Services.Users.Commands.DeleteUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,11 +36,17 @@ builder.Services.AddIdentity<User, Role>(
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddAuthorization(option =>
 {
-    option.AddPolicy(RoleesName.BigAdmin, policy => policy.RequireRole(RoleesName.BigAdmin));
-    option.AddPolicy(RoleesName.Admin, policy => policy.RequireRole(RoleesName.Admin));
-    option.AddPolicy(RoleesName.Secretary, policy => policy.RequireRole(RoleesName.Secretary));
-    option.AddPolicy(RoleesName.Employee, policy => policy.RequireRole(RoleesName.Employee));
-    option.AddPolicy(RoleesName.Customer, policy => policy.RequireRole(RoleesName.Customer));
+   
+   option.AddPolicy("BigAdminOrAdminOrSecretary", policy =>
+   {
+    policy.RequireRole(RoleesName.BigAdmin, RoleesName.Admin,RoleesName.Secretary);
+    });
+    option.AddPolicy(RoleesName.BigAdmin, policy =>{policy.RequireClaim(ClaimTypes.Role, RoleesName.BigAdmin);});
+    option.AddPolicy(RoleesName.Admin, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Admin); });
+    option.AddPolicy(RoleesName.Secretary, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Secretary); });
+    option.AddPolicy(RoleesName.Employee, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Employee); });
+    option.AddPolicy(RoleesName.Customer, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Customer); });
+
 });
 builder.Services.Configure<IdentityOptions>(option =>
 {
@@ -70,6 +81,19 @@ builder.Services.AddScoped<ISaveUserTokenService, SaveUserTokenService>();
 builder.Services.AddScoped<ITokenValidatorUserService, TokenValidatorUserService>();
 builder.Services.AddScoped<IDeleteTokenUserService, DeleteTokenUserService>();
 builder.Services.AddScoped<IFindRefreshTokenService, FindRefreshTokenService>();
+builder.Services.AddScoped<IGetRolesUserService, GetRolesUserService>();
+builder.Services.AddScoped<IAddBranchService, AddBranchService>();
+builder.Services.AddScoped<IAddAdminService, AddAdminService>();
+builder.Services.AddScoped<IAddSecretaryService, AddSecretaryService>();
+builder.Services.AddScoped<IAddEmployeeService, AddEmployeeService>();
+builder.Services.AddScoped<IAddCustomerService, AddCustomerService>();
+builder.Services.AddScoped<IRemoveBigAdminService, RemoveBigAdminService>();
+builder.Services.AddScoped<IRemoveAdminService, RemoveAdminService>();
+builder.Services.AddScoped<IRemoveCustomerService, RemoveCustomerService>();
+builder.Services.AddScoped<IRemoveEmployeeService, RemoveEmployeeService>();
+builder.Services.AddScoped<IRemoveSecretaryService, RemoveSecretaryService>();
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
