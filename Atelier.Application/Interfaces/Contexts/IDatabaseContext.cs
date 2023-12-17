@@ -15,7 +15,7 @@ namespace Atelier.Application.Interfaces.Contexts
         DbSet<Role> Roles { get; set; }
         DbSet<AtelierBase> AtelierBases { get; set; }
         DbSet<Branch> Branches { get; set; }
-
+        DbSet<JwtUserToken> JwtUserTokens { get; set; }
 
         int SaveChanges(bool acceptAllChangesOnSuccess);
         int SaveChanges();

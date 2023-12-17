@@ -22,7 +22,7 @@ namespace Atelier.Persistence.Contexts
         public DbSet<Role> Roles { get; set; }
         public DbSet<AtelierBase> AtelierBases { get; set; }
         public DbSet<Branch> Branches { get; set; }
-
+        public DbSet<JwtUserToken> JwtUserTokens { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

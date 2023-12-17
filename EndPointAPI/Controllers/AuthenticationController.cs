@@ -1,4 +1,5 @@
 ﻿using Atelier.Application.Services.Auth;
+using Atelier.Application.Services.Users.Queries.FindRefreshToken;
 using Atelier.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,41 +12,25 @@ namespace EndPointAPI.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly ILoginService _loginService;
-        public AuthenticationController(ILoginService loginService)
+        private readonly IFindRefreshTokenService _findRefreshTokenService;
+        public AuthenticationController(ILoginService loginService,IFindRefreshTokenService findRefreshTokenService)
         {
             _loginService = loginService;
+            _findRefreshTokenService = findRefreshTokenService;
         }
-        // GET: api/<AuthenticationController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<AuthenticationController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<AuthenticationController>
+       // POST api/<AuthenticationController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RequestLoginDto request)
         {
             var result =await _loginService.Execute(request);
                 return Ok(result);
         }
-        // PUT api/<AuthenticationController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost]
+        [Route("RefreshToken")]
+        public async Task<IActionResult> RefreshToken(string Refreshtoken)
         {
-        }
-
-        // DELETE api/<AuthenticationController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var result = await _findRefreshTokenService.Execute(Refreshtoken);
+            return Ok(result);
         }
     }
 }
