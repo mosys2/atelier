@@ -16,10 +16,10 @@ namespace EndPointAPI.Controllers
             _getAllBranches = getAllBranches;
         }
         // GET: api/<BranchController>
-        [HttpGet]
-        public async Task<IActionResult> Get(string Id)
+        [HttpGet("{atelierBaseId}")]
+        public async Task<IActionResult> Get(string atelierBaseId)
         {
-            if (string.IsNullOrEmpty(Id))
+            if (string.IsNullOrEmpty(atelierBaseId))
             {
                 return NotFound(new ResultDto
                 {
@@ -27,33 +27,10 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFind
                 });
             }
-            var result = await _getAllBranches.Excute(new RequestBranchDto { AtelierBaseId=Id});
+            var result = await _getAllBranches.Excute(new RequestBranchDto { AtelierBaseId=atelierBaseId });
             return Ok(result);
         }
 
-        // GET api/<BranchController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<BranchController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<BranchController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<BranchController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+       
     }
 }

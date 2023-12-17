@@ -1,5 +1,5 @@
 using Atelier.Application.Interfaces.Contexts;
-using Atelier.Application.Services.AtelierBase.Queries;
+using Atelier.Application.Services.Ateliers.Queries;
 using Atelier.Application.Services.Auth;
 using Atelier.Application.Services.Branches.Queries;
 using Atelier.Application.Services.Users.Commands.AddUser;

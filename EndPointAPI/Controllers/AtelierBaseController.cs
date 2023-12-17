@@ -1,4 +1,4 @@
-﻿using Atelier.Application.Services.AtelierBase.Queries;
+﻿using Atelier.Application.Services.Ateliers.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
