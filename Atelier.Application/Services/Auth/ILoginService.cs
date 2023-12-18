@@ -1,5 +1,6 @@
 ﻿using Atelier.Application.Interfaces.Contexts;
 using Atelier.Application.Services.Users.Commands.SaveToken;
+using Atelier.Application.Services.Users.Queries.GetRolesUser;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Atelier.Common.Helpers;
@@ -28,12 +29,15 @@ namespace Atelier.Application.Services.Auth
         private readonly IDatabaseContext _context;
         private readonly IConfiguration configuration;
         private readonly ISaveUserTokenService _saveUserTokenService;
+        private readonly IGetRolesUserService _getRolesUserService;
         public LoginService(UserManager<User> userManager,
             ISaveUserTokenService saveUserTokenService,
+            IGetRolesUserService getRolesUserService,
             IDatabaseContext context, IConfiguration configuration)
         {
             _userManager = userManager;
             _saveUserTokenService = saveUserTokenService;
+            _getRolesUserService= getRolesUserService;
             _context = context;
            this.configuration = configuration;
         }
@@ -78,6 +82,12 @@ namespace Atelier.Application.Services.Auth
                     new Claim ("UserId", findUser.Id.ToString()),
                 };
             claims.Add(claimUser.First());
+            //Add Role To Claim
+            var roles = await _getRolesUserService.Execute(findUser);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
             string key = configuration["JWtConfig:Key"];
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

@@ -10,29 +10,34 @@ namespace EndPointAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BigAdminController : ControllerBase
+    public class AdminController : ControllerBase
     {
-        private readonly IAddBigAdminService _addBigAdmin;
-        private readonly IRemoveBigAdminService _removeBigAdmin;
-        public BigAdminController(IAddBigAdminService addBigAdmin,IRemoveBigAdminService removeBigAdminService)
+        private readonly IAddAdminService _adminService;
+        private readonly IRemoveAdminService _removeAdminService;
+        public AdminController(IAddAdminService adminService,IRemoveAdminService removeAdminService)
         {
-            _addBigAdmin=addBigAdmin;
-            _removeBigAdmin=removeBigAdminService;
+            _adminService = adminService;
+            _removeAdminService = removeAdminService;
         }
-
-
+      
         // POST api/<BigAdminController>
         [HttpPost]
-        [Authorize(Policy ="BigAdmin")]
-        public async Task<IActionResult> Post(AddBigAdminDto bigAdmin)
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Post(AddAdminDto addAdmin)
         {
             if(!ModelState.IsValid)
             {
-            return BadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-          var result=await  _addBigAdmin.Execute(bigAdmin);
-          return Ok(result);
+            var result = await _adminService.Execute(addAdmin);
+            return Ok(result);
         }
+        // PUT api/<AdminController>/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
+        {
+        }
+
         // DELETE api/<AdminController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdmin")]
@@ -42,7 +47,7 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result=await _removeBigAdmin.Execute(id);
+            var result=await _removeAdminService.Execute(id);
             return Ok(result);
         }
     }
