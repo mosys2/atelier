@@ -13,7 +13,7 @@ namespace Atelier.Application.Services.Users.Commands.DeleteUser
 {
     public interface IRemoveSecretaryService
     {
-        Task<ResultDto> Execute(string UserId);
+        Task<ResultDto> Execute(string UserId, string RemoveByUserId);
     }
     public class RemoveSecretaryService : IRemoveSecretaryService
     {
@@ -24,7 +24,7 @@ namespace Atelier.Application.Services.Users.Commands.DeleteUser
             _context = context;
             _userManager = userManager;
         }
-        public async Task<ResultDto> Execute(string UserId)
+        public async Task<ResultDto> Execute(string UserId, string RemoveByUserId)
         {
             var checkUserId = await _context.Users.FindAsync(UserId);
             if (checkUserId == null)
@@ -52,6 +52,7 @@ namespace Atelier.Application.Services.Users.Commands.DeleteUser
                     Message = Messages.NoExistRoleSecretaryInUser
                 };
             }
+            checkUserId.RemoveByUserId = RemoveByUserId;
             checkUserId.IsRemoved = true;
             checkUserId.RemoveTime = DateTime.Now;
             await _context.SaveChangesAsync();

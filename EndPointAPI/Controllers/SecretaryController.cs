@@ -1,5 +1,6 @@
 ﻿using Atelier.Application.Services.Users.Commands.AddUser;
 using Atelier.Application.Services.Users.Commands.DeleteUser;
+using Atelier.Application.Services.Users.Commands.EditUser;
 using Atelier.Common.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace EndPointAPI.Controllers
     public class SecretaryController : ControllerBase
     {
         private readonly IAddSecretaryService _addSecretaryService;
+        private readonly IEditSecretaryService _editSecretaryService;
         private readonly IRemoveSecretaryService _removeSecretaryService;
-        public SecretaryController(IAddSecretaryService addSecretaryService,IRemoveSecretaryService removeSecretaryService)
+        public SecretaryController(IAddSecretaryService addSecretaryService,IEditSecretaryService editSecretaryService,IRemoveSecretaryService removeSecretaryService)
         {
             _addSecretaryService=addSecretaryService;
+            _editSecretaryService=editSecretaryService;
             _removeSecretaryService=removeSecretaryService;
         }
         // POST api/<SecretaryController>
@@ -34,9 +37,16 @@ namespace EndPointAPI.Controllers
 
         // PUT api/<SecretaryController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> Put(string id, [FromBody] EditSecretaryDto editSecretary)
         {
-
+            if (ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _editSecretaryService.Execute(id, editByUserId, editSecretary);
+            return Ok(result);
         }
 
         // DELETE api/<SecretaryController>/5
@@ -48,7 +58,8 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result=await _removeSecretaryService.Execute(id);
+            var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result =await _removeSecretaryService.Execute(id, remByUserId);
             return Ok(result);
         }
     }
