@@ -28,7 +28,7 @@ namespace Atelier.Application.Services.Ateliers.Queries
                 InsertTime=p.InsertTime,
                 Status=p.Status,
                 branchCount=p.Branches.Count()
-            }).ToListAsync();
+            }).OrderByDescending(d=>d.InsertTime).ToListAsync();
 
             return new ResultDto<List<ResultListAtelierBaseDto>> {
                 Data=result,

@@ -155,7 +155,7 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("https://localhost:44356",
-                                              "http://www.google.com");
+                                              "http://www.google.com").AllowAnyMethod();
                       });
 });
 var app = builder.Build();
