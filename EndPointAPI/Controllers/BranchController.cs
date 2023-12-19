@@ -4,6 +4,7 @@ using Atelier.Common.Dto;
 using Atelier.Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Atelier.Application.Services.Branches.Commands.AddBranch;
+using Atelier.Common.Helpers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +37,7 @@ namespace EndPointAPI.Controllers
                     Address = branch.Address,
                     Code = branch.Code,
                     Description = branch.Description,
-                    ExpireDate = branch.ExpireDate,
+                    ExpireDate =branch.ExpireDate,
                     InsertByUserId=userId,
                     PhoneNumber = branch.PhoneNumber,
                     Status = branch.Status,

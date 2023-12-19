@@ -19,6 +19,7 @@ namespace Atelier.Common.Dto
         public bool Status { get; set; } = true;
         public string? StatusDescription { get; set; }
         public DateTime ExpireDate { get; set; }
+        public bool isExpier { get; set; }
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
         public string AtelierBaseId { get; set; }

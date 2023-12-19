@@ -33,6 +33,7 @@ namespace Atelier.Application.Services.Branches.Queries
                     Message="آتلیه مورد نظر یافت نشد!"
                 };
             }
+            DateTime dateNow = DateTime.Now;
             var result=await _context.Branches.Select(p=>new ResultBranchDto
             {
                 Id = p.Id,
@@ -41,6 +42,7 @@ namespace Atelier.Application.Services.Branches.Queries
                 Address=p.Address,
                 Code=p.Code,
                 Description=p.Description,
+                isExpier=p.ExpireDate <dateNow,
                 ExpireDate=p.ExpireDate,
                 PhoneNumber=p.PhoneNumber,
                 StatusDescription = p.StatusDescription,

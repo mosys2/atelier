@@ -10,13 +10,13 @@ namespace Atelier.Common.Dto
 {
     public class RequestAddBranchDto
     {
-
+        [Required]
         public string AtelierBaseId { get; set; }
         [Required]
         public string Title { get; set; }
         public string? Description { get; set; }
         public int Code { get; set; }
-        public bool Status { get; set; } = true;
+        public bool Status { get; set; }
         public string? StatusDescription { get; set; }
         public DateTime ExpireDate { get; set; }
         public string? Address { get; set; }
