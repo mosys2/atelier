@@ -24,6 +24,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Atelier.Application.Services.Branches.Commands.AddBranch;
 using Atelier.Application.Services.Users.Commands.DeleteUser;
+using Atelier.Application.Services.Users.Commands.EditUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,9 +93,11 @@ builder.Services.AddScoped<IRemoveAdminService, RemoveAdminService>();
 builder.Services.AddScoped<IRemoveCustomerService, RemoveCustomerService>();
 builder.Services.AddScoped<IRemoveEmployeeService, RemoveEmployeeService>();
 builder.Services.AddScoped<IRemoveSecretaryService, RemoveSecretaryService>();
-
-
-
+builder.Services.AddScoped<IEditAdminService, EditAdminService>();
+builder.Services.AddScoped<IEditBigAdminService, EditBigAdminService>();
+builder.Services.AddScoped<IEditCustomerService, EditCustomerService>();
+builder.Services.AddScoped<IEditEmployeeService, EditEmployeeService>();
+builder.Services.AddScoped<IEditSecretaryService, EditSecretaryService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -1,5 +1,6 @@
 ﻿using Atelier.Application.Services.Users.Commands.AddUser;
 using Atelier.Application.Services.Users.Commands.DeleteUser;
+using Atelier.Application.Services.Users.Commands.EditUser;
 using Atelier.Common.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,16 @@ namespace EndPointAPI.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IAddAdminService _adminService;
+        private readonly IEditAdminService _editAdminService;
         private readonly IRemoveAdminService _removeAdminService;
-        public AdminController(IAddAdminService adminService,IRemoveAdminService removeAdminService)
+        public AdminController
+        (IAddAdminService adminService,
+        IEditAdminService editAdminService,
+        IRemoveAdminService removeAdminService
+         )
         {
             _adminService = adminService;
+            _editAdminService = editAdminService;
             _removeAdminService = removeAdminService;
         }
       
@@ -34,8 +41,16 @@ namespace EndPointAPI.Controllers
         }
         // PUT api/<AdminController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Put(string id, [FromBody] EditAdminDto editAdmin)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _editAdminService.Execute(id, editByUserId,editAdmin);
+            return Ok(result);
         }
 
         // DELETE api/<AdminController>/5
@@ -47,7 +62,8 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result=await _removeAdminService.Execute(id);
+            var remByUserId= User.Claims.First(u => u.Type == "UserId").Value;
+            var result=await _removeAdminService.Execute(id, remByUserId);
             return Ok(result);
         }
     }

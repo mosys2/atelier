@@ -1,5 +1,6 @@
 ﻿using Atelier.Application.Services.Users.Commands.AddUser;
 using Atelier.Application.Services.Users.Commands.DeleteUser;
+using Atelier.Application.Services.Users.Commands.EditUser;
 using Atelier.Common.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace EndPointAPI.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IAddEmployeeService _employeeService;
+        private readonly IEditEmployeeService _editEmployeeService;
         private readonly IRemoveEmployeeService _removeEmployeeService;
-        public EmployeeController(IAddEmployeeService addEmployeeService,IRemoveEmployeeService removeEmployeeService)
+        public EmployeeController(IAddEmployeeService addEmployeeService,IEditEmployeeService editEmployeeService,IRemoveEmployeeService removeEmployeeService)
         {
             _employeeService = addEmployeeService;
+            _editEmployeeService = editEmployeeService;
             _removeEmployeeService = removeEmployeeService;
         }
         // POST api/<EmployeeController>
@@ -32,10 +35,18 @@ namespace EndPointAPI.Controllers
             return Ok(result);
         }
 
-        // PUT api/<EmployeeController>/5
+        // PUT api/<SecretaryController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize(Policy = "BigAdminOrAdminOrSecretary")]
+        public async Task<IActionResult> Put(string id, [FromBody] EditEmployeeDto editEmployee)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _editEmployeeService.Execute(id, editByUserId, editEmployee);
+            return Ok(result);
         }
 
         // DELETE api/<EmployeeController>/5
@@ -47,7 +58,8 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result=await _removeEmployeeService.Execute(id);
+            var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result =await _removeEmployeeService.Execute(id, remByUserId);
             return Ok(result);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Atelier.Application.Services.Users.Commands.AddUser;
 using Atelier.Application.Services.Users.Commands.DeleteUser;
+using Atelier.Application.Services.Users.Commands.EditUser;
 using Atelier.Common.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace EndPointAPI.Controllers
     public class BigAdminController : ControllerBase
     {
         private readonly IAddBigAdminService _addBigAdmin;
+        private readonly IEditBigAdminService _editBigAdmin;
         private readonly IRemoveBigAdminService _removeBigAdmin;
-        public BigAdminController(IAddBigAdminService addBigAdmin,IRemoveBigAdminService removeBigAdminService)
+        public BigAdminController(IAddBigAdminService addBigAdmin,IEditBigAdminService editBigAdminService,IRemoveBigAdminService removeBigAdminService)
         {
             _addBigAdmin=addBigAdmin;
+            _editBigAdmin=editBigAdminService;
             _removeBigAdmin=removeBigAdminService;
         }
 
@@ -33,6 +36,19 @@ namespace EndPointAPI.Controllers
           var result=await  _addBigAdmin.Execute(bigAdmin);
           return Ok(result);
         }
+        // PUT api/<SecretaryController>/5
+        [HttpPut("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Put(string id, [FromBody] EditBigAdminDto bigAdmin)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result=await _editBigAdmin.Execute(id,editByUserId,bigAdmin);
+            return Ok(result);
+        }
         // DELETE api/<AdminController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdmin")]
@@ -42,7 +58,8 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result=await _removeBigAdmin.Execute(id);
+            var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result =await _removeBigAdmin.Execute(id, remByUserId);
             return Ok(result);
         }
     }
