@@ -1,6 +1,6 @@
 ﻿using Atelier.Application.Interfaces.Contexts;
+using Atelier.Application.Services.Roles.Queries.GetRolesUser;
 using Atelier.Application.Services.Users.Commands.SaveToken;
-using Atelier.Application.Services.Users.Queries.GetRolesUser;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Atelier.Common.Helpers;

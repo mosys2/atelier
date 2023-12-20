@@ -45,7 +45,7 @@ namespace Atelier.Application.Services.Users.Commands.AddUser
                 InsertTime = DateTime.Now,
                 IsActive = employee.IsActive,
                 PhoneNumber = employee.PhoneNumber,
-                UserName = employee.UserName,
+                UserName = employee.PhoneNumber + "_" + branch.Code,
             };
             var result = await _userManager.CreateAsync(user, employee.Password);
             var UserInRole = _userManager.AddToRolesAsync(user, roles).Result;

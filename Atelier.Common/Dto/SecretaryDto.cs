@@ -7,28 +7,7 @@ using System.Threading.Tasks;
 
 namespace Atelier.Common.Dto
 {
-    public class AddBigAdminDto
-    {
-        [Required]
-        public string FirstName { get; set; }
-        [Required]
-        public string LastName { get; set; }
-        public string? Email { get; set; }
-        public string? PhoneNumber { get; set; }
-       
-        [Required]
-        public string Password { get; set; }
-        public string BranchId { get; set; }
-        [Required]
-        public int Gender { get; set; }
-        [Required]
-        public bool IsActive { get; set; }
-        public string? Address { get; set; }
-        public DateTime? BirthDay { get; set; }
-        public string? ProfileImage { get; set; }
-        public string? HomeNumber { get; set; }
-    }
-    public class EditBigAdminDto
+    public class AddSecretaryDto
     {
         [Required]
         public string FirstName { get; set; }
@@ -48,4 +27,27 @@ namespace Atelier.Common.Dto
         public string? ProfileImage { get; set; }
         public string? HomeNumber { get; set; }
     }
+    public class EditSecretaryDto
+    {
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        [Required]
+        public string? UserName { get; set; }
+        [Required]
+        public string Password { get; set; }
+        public string BranchId { get; set; }
+        [Required]
+        public int Gender { get; set; }
+        [Required]
+        public bool IsActive { get; set; }
+        public string? Address { get; set; }
+        public DateTime? BirthDay { get; set; }
+        public string? ProfileImage { get; set; }
+        public string? HomeNumber { get; set; }
+    }
+
 }

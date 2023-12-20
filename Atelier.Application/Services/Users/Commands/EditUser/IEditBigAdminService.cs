@@ -1,6 +1,7 @@
 ﻿using Atelier.Application.Interfaces.Contexts;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Atelier.Application.Services.Users.Commands.EditUser
         }
         public async Task<ResultDto> Execute(string id, string editByUserId, EditBigAdminDto editBigAdmin)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Include(b => b.Branch).Where(i => i.Id == id).FirstOrDefaultAsync();
             if (user == null)
             {
                 return new ResultDto
@@ -31,7 +32,7 @@ namespace Atelier.Application.Services.Users.Commands.EditUser
                     Message = Messages.MessageNotfindUser
                 };
             }
-            user.UserName = editBigAdmin.UserName;
+            user.UserName = editBigAdmin.PhoneNumber + "_" + user.Branch.Code;
             user.Address = editBigAdmin.Address;
             user.PhoneNumber = editBigAdmin.PhoneNumber;
             user.Email = editBigAdmin.Email;

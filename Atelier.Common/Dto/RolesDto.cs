@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Atelier.Common.Dto
 {
-    public class AddAtelierDto
+    public class GetAllRoleDto
     {
-        public string? CurrentUserId { get; set; }
+        public string? Id { get; set; }
         public string Name { get; set; }
+        public string? PersianTitle { get; set; }
         public string? Description { get; set; }
-        public bool Status { get; set; }
-        public string? StatusMessage { get; set; }
     }
+
 }

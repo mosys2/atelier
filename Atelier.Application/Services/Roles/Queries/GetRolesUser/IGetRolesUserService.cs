@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Atelier.Application.Services.Users.Queries.GetRolesUser
+namespace Atelier.Application.Services.Roles.Queries.GetRolesUser
 {
     public interface IGetRolesUserService
     {
@@ -21,7 +21,7 @@ namespace Atelier.Application.Services.Users.Queries.GetRolesUser
         }
         public async Task<IList<string>> Execute(User user)
         {
-            var roles=await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             return roles;
         }
     }

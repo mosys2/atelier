@@ -157,6 +157,9 @@ namespace Atelier.Persistence.Contexts
         private void ApplyQueryFilter(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasQueryFilter(p => !p.IsRemoved);
+            //modelBuilder.Entity<Role>().HasQueryFilter(p => !p.IsRemoved);
+            modelBuilder.Entity<AtelierBase>().HasQueryFilter(p => !p.IsRemoved);
+            modelBuilder.Entity<Branch>().HasQueryFilter(p => !p.IsRemoved);
 
         }
 

@@ -19,12 +19,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Atelier.Application.Services.Users.Queries.GetRolesUser;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Atelier.Application.Services.Branches.Commands.AddBranch;
 using Atelier.Application.Services.Users.Commands.DeleteUser;
 using Atelier.Application.Services.Users.Commands.EditUser;
+using Atelier.Application.Services.Users.Queries.GetAllUser;
+using Atelier.Application.Services.Users.Queries.GetDetailsUser;
+using Atelier.Application.Services.Roles.Queries.GetRolesUser;
+using Atelier.Application.Services.Roles.Queries.GetRoles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,6 +101,9 @@ builder.Services.AddScoped<IEditBigAdminService, EditBigAdminService>();
 builder.Services.AddScoped<IEditCustomerService, EditCustomerService>();
 builder.Services.AddScoped<IEditEmployeeService, EditEmployeeService>();
 builder.Services.AddScoped<IEditSecretaryService, EditSecretaryService>();
+builder.Services.AddScoped<IGetUsersService, GetUsersService>();
+builder.Services.AddScoped<IGetDetailsUserService, GetDetailsUserService>();
+builder.Services.AddScoped<IGetRolesService, GetRolesService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

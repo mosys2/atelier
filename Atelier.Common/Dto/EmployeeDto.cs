@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Atelier.Common.Dto
 {
-    public class AddBigAdminDto
+    public class AddEmployeeDto
     {
         [Required]
         public string FirstName { get; set; }
@@ -15,7 +15,6 @@ namespace Atelier.Common.Dto
         public string LastName { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-       
         [Required]
         public string Password { get; set; }
         public string BranchId { get; set; }
@@ -28,7 +27,7 @@ namespace Atelier.Common.Dto
         public string? ProfileImage { get; set; }
         public string? HomeNumber { get; set; }
     }
-    public class EditBigAdminDto
+    public class EditEmployeeDto
     {
         [Required]
         public string FirstName { get; set; }

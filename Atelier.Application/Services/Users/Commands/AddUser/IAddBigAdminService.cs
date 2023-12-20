@@ -45,7 +45,7 @@ namespace Atelier.Application.Services.Users.Commands.AddUser
                 InsertTime = DateTime.Now,
                 IsActive = bigAdmin.IsActive,
                 PhoneNumber = bigAdmin.PhoneNumber,
-                UserName = bigAdmin.UserName,
+                UserName = bigAdmin.PhoneNumber + "_" + branch.Code,
             };
             var result = await _userManager.CreateAsync(user, bigAdmin.Password);
             var UserInRole = _userManager.AddToRolesAsync(user, roles).Result;
