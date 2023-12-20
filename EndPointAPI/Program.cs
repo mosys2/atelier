@@ -32,6 +32,8 @@ using Atelier.Application.Services.Ateliers.Commands.RemoveAtelier;
 using Atelier.Application.Services.Branches.Commands.RemoveBranch;
 using Atelier.Application.Services.Ateliers.Queries.GetDetailAtelier;
 using Atelier.Application.Services.Branches.Queries.GetDetailBranch;
+using Atelier.Application.Services.Ateliers.Commands.EditAtelier;
+using Atelier.Application.Services.Branches.Commands.EditBranch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,6 +114,8 @@ builder.Services.AddScoped<IRemoveAtelierService, RemoveAtelierService>();
 builder.Services.AddScoped<IRemoveBranchService, RemoveBranchService>();
 builder.Services.AddScoped<IGetDetailAtelierService, GetDetailAtelierService>();
 builder.Services.AddScoped<IGetDetailBranchService, GetDetailBranchService>();
+builder.Services.AddScoped<IEditAtelierService, EditAtelierService>();
+builder.Services.AddScoped<IEditBranchService, EditBranchService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

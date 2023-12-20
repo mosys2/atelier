@@ -7,6 +7,7 @@ using Atelier.Application.Services.Branches.Commands.AddBranch;
 using Atelier.Common.Helpers;
 using Atelier.Application.Services.Branches.Commands.RemoveBranch;
 using Atelier.Application.Services.Branches.Queries.GetDetailBranch;
+using Atelier.Application.Services.Branches.Commands.EditBranch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,16 +21,19 @@ namespace EndPointAPI.Controllers
         private readonly IAddBranchService _addBranchService;
         private readonly IRemoveBranchService _removeBranchService;
         private readonly IGetDetailBranchService _getDetailBranchService;
+        private readonly IEditBranchService _editBranchService;
         public BranchController(IGetAllBranches getAllBranches,
             IRemoveBranchService removeBranchService,
             IAddBranchService addBranchService,
-            IGetDetailBranchService getDetailBranchService
+            IGetDetailBranchService getDetailBranchService,
+            IEditBranchService editBranchService
             ) 
         { 
             _getAllBranches = getAllBranches;
             _removeBranchService = removeBranchService;
             _addBranchService = addBranchService;
             _getDetailBranchService = getDetailBranchService;
+            _editBranchService = editBranchService;
         }
         [HttpPost]
         [Authorize(Policy = "BigAdmin")]
@@ -88,6 +92,19 @@ namespace EndPointAPI.Controllers
                 });
             }
             var result = await _getDetailBranchService.Execute(branchId);
+            return Ok(result);
+        }
+        // PUT api/<AdminController>/5
+        [HttpPut("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Put(string id, [FromBody] EditBranchDto editBranch)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _editBranchService.Execute(id, editByUserId, editBranch);
             return Ok(result);
         }
         // DELETE api/<AdminController>/5

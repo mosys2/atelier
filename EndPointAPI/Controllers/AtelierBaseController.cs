@@ -1,4 +1,5 @@
 ﻿using Atelier.Application.Services.Ateliers.Commands;
+using Atelier.Application.Services.Ateliers.Commands.EditAtelier;
 using Atelier.Application.Services.Ateliers.Commands.RemoveAtelier;
 using Atelier.Application.Services.Ateliers.Queries;
 using Atelier.Application.Services.Ateliers.Queries.GetDetailAtelier;
@@ -20,17 +21,20 @@ namespace EndPointAPI.Controllers
         private readonly IAddAtelierService _addAtelierService;
         private readonly IRemoveAtelierService _removeAtelierService;
         private readonly IGetDetailAtelierService _getDetailAtelierService;
+        private readonly IEditAtelierService _editAtelierService;
         public AtelierBaseController
         (IGetAllAtelierBase getAllAtelierBase,
             IAddAtelierService addAtelierService,
             IRemoveAtelierService removeAtelierService,
-            IGetDetailAtelierService getDetailAtelierService
+            IGetDetailAtelierService getDetailAtelierService,
+            IEditAtelierService editAtelierService
         )
         {
             _getAllAtelierBase=getAllAtelierBase;
             _addAtelierService=addAtelierService;
             _removeAtelierService = removeAtelierService;
             _getDetailAtelierService=getDetailAtelierService;
+            _editAtelierService=editAtelierService;
         }
        
         // GET: api/<AtelierBaseController>
@@ -79,7 +83,19 @@ namespace EndPointAPI.Controllers
                 );
             return Ok(result);
         }
-
+        // PUT api/<AdminController>/5
+        [HttpPut("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Put(string id, [FromBody] EditAtelierDto editAtelier)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _editAtelierService.Execute(id, editByUserId, editAtelier);
+            return Ok(result);
+        }
         // DELETE api/<AdminController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdmin")]

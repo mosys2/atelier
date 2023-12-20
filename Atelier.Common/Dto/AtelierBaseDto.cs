@@ -42,4 +42,13 @@ namespace Atelier.Common.Dto
         public bool Status { get; set; }
         public string? StatusMessage { get; set; }
     }
+    public class EditAtelierDto
+    {
+        [Required]
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        [Required]
+        public bool Status { get; set; }
+        public string? StatusMessage { get; set; }
+    }
 }

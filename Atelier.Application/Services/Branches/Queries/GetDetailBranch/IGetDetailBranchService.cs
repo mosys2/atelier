@@ -40,6 +40,7 @@ namespace Atelier.Application.Services.Branches.Queries.GetDetailBranch
                 {
                     BranchId=branch.Id,
                     Address=branch.Address,
+                    AtelierBaseId=branch.AtelierBase.Id,
                     AtelierBaseTitle=branch.AtelierBase.Name,
                     Code=branch.Code,
                     Description = branch.Description,
