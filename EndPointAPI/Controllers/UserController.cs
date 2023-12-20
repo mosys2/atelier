@@ -21,8 +21,8 @@ namespace EndPointAPI.Controllers
             _detailsUserService = getDetailsUserService;
         }
         // GET: api/<UsersController>
-        [HttpGet("ByRole/{roleId}")]
-        public async Task<IActionResult> Get(string roleId)
+        [HttpGet]
+        public async Task<IActionResult> Get(string? roleId)
         {
             var result = await _usersService.Execute("",1,12,roleId);
             return Ok(result);
