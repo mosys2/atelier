@@ -40,9 +40,11 @@ namespace Atelier.Common.Dto
     }
     public class GetUsersDto
     {
+        public  string UserId { get; set; }
         public string FullName { get; set; }
         public string? PhoneNumber { get; set; }
         public bool IsActive { get; set; }
+        public DateTime InsertTime { get; set; }
         public int BranchCode { get; set; }
         public string BranchTitle { get; set; }
     }

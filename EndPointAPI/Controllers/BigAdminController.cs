@@ -54,9 +54,9 @@ namespace EndPointAPI.Controllers
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Delete(string id)
         {
-            if(!ModelState.IsValid)
+            if (string.IsNullOrEmpty(id))
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
             var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
             var result =await _removeBigAdmin.Execute(id, remByUserId);

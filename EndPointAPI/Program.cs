@@ -28,6 +28,8 @@ using Atelier.Application.Services.Users.Queries.GetAllUser;
 using Atelier.Application.Services.Users.Queries.GetDetailsUser;
 using Atelier.Application.Services.Roles.Queries.GetRolesUser;
 using Atelier.Application.Services.Roles.Queries.GetRoles;
+using Atelier.Application.Services.Ateliers.Commands.RemoveAtelier;
+using Atelier.Application.Services.Branches.Commands.RemoveBranch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +106,8 @@ builder.Services.AddScoped<IEditSecretaryService, EditSecretaryService>();
 builder.Services.AddScoped<IGetUsersService, GetUsersService>();
 builder.Services.AddScoped<IGetDetailsUserService, GetDetailsUserService>();
 builder.Services.AddScoped<IGetRolesService, GetRolesService>();
+builder.Services.AddScoped<IRemoveAtelierService, RemoveAtelierService>();
+builder.Services.AddScoped<IRemoveBranchService, RemoveBranchService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

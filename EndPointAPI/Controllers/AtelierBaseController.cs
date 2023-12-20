@@ -1,4 +1,5 @@
 ﻿using Atelier.Application.Services.Ateliers.Commands;
+using Atelier.Application.Services.Ateliers.Commands.RemoveAtelier;
 using Atelier.Application.Services.Ateliers.Queries;
 using Atelier.Common.Dto;
 using EndPointAPI.Utilities;
@@ -15,13 +16,16 @@ namespace EndPointAPI.Controllers
     {
         private readonly IGetAllAtelierBase _getAllAtelierBase;
         private readonly IAddAtelierService _addAtelierService;
+        private readonly IRemoveAtelierService _removeAtelierService;
         public AtelierBaseController
         (IGetAllAtelierBase getAllAtelierBase,
-            IAddAtelierService addAtelierService
+            IAddAtelierService addAtelierService,
+            IRemoveAtelierService removeAtelierService
         )
         {
             _getAllAtelierBase=getAllAtelierBase;
             _addAtelierService=addAtelierService;
+            _removeAtelierService = removeAtelierService;
         }
        
         // GET: api/<AtelierBaseController>
@@ -54,6 +58,18 @@ namespace EndPointAPI.Controllers
                 );
             return Ok(result);
         }
-
+        // DELETE api/<AdminController>/5
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+            var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _removeAtelierService.Execute(id, remByUserId);
+            return Ok(result);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Atelier.Application.Interfaces.Contexts;
+using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Atelier.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
@@ -37,14 +38,20 @@ namespace Atelier.Application.Services.Users.Queries.GetAllUser
             if(!string.IsNullOrEmpty(roleId))
             {
                 var roleName = await _roleManager.FindByIdAsync(roleId);
-                if(roleName != null)
+                if(roleName == null)
                 {
+                    return new ResultDto<ResultUserDto>
+                    {
+                        IsSuccess = false,
+                        Data = new ResultUserDto { },
+                        Message = Messages.NotFind,
+                    };
+                }
                     var usersInRole = await _userManager.GetUsersInRoleAsync(roleName.Name);
                     var userIdsInRole = usersInRole.Select(u => u.Id).ToList();
                     users = users
                         .Where(u => userIdsInRole.Contains(u.Id))
                         .AsQueryable();
-                }
                 return new ResultDto<ResultUserDto>
                 {
                     IsSuccess=true,
@@ -69,10 +76,12 @@ namespace Atelier.Application.Services.Users.Queries.GetAllUser
                 {
                     Users = users.Select(e => new GetUsersDto
                     {
+                        UserId=e.Id,
                         FullName = e.FirstName + " " + e.LastName,
                         BranchCode = e.Branch.Code,
                         BranchTitle = e.Branch.Title,
                         IsActive = e.IsActive,
+                         InsertTime=e.InsertTime,
                         PhoneNumber = e.PhoneNumber
                     }).ToList().ToPaged(page, pagesize, out totalRow).ToList(),
                     TotalRow = totalRow

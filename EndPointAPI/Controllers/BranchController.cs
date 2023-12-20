@@ -5,6 +5,7 @@ using Atelier.Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Atelier.Application.Services.Branches.Commands.AddBranch;
 using Atelier.Common.Helpers;
+using Atelier.Application.Services.Branches.Commands.RemoveBranch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,8 +17,13 @@ namespace EndPointAPI.Controllers
     {
         private readonly IGetAllBranches _getAllBranches;
         private readonly IAddBranchService _addBranchService;
-        public BranchController(IGetAllBranches getAllBranches,IAddBranchService addBranchService) { 
+        private readonly IRemoveBranchService _removeBranchService;
+        public BranchController(IGetAllBranches getAllBranches,
+            IRemoveBranchService removeBranchService,
+            IAddBranchService addBranchService) 
+        { 
             _getAllBranches = getAllBranches;
+            _removeBranchService = removeBranchService;
             _addBranchService = addBranchService;
         }
         [HttpPost]
@@ -64,6 +70,18 @@ namespace EndPointAPI.Controllers
             return Ok(result);
         }
 
-       
+        // DELETE api/<AdminController>/5
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+            var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
+            var result = await _removeBranchService.Execute(id, remByUserId);
+            return Ok(result);
+        }
     }
 }
