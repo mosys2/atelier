@@ -33,4 +33,13 @@ namespace Atelier.Common.Dto
         public bool Status { get; set; }
         public string? StatusMessage { get; set; }
     }
+    public class GetDetailAtelierDto
+    {
+        public string AtelierId { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public DateTime? InsertTime { get; set; }
+        public bool Status { get; set; }
+        public string? StatusMessage { get; set; }
+    }
 }

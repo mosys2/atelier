@@ -81,7 +81,7 @@ namespace Atelier.Application.Services.Users.Queries.GetAllUser
                         BranchCode = e.Branch.Code,
                         BranchTitle = e.Branch.Title,
                         IsActive = e.IsActive,
-                         InsertTime=e.InsertTime,
+                        InsertTime=e.InsertTime,
                         PhoneNumber = e.PhoneNumber
                     }).ToList().ToPaged(page, pagesize, out totalRow).ToList(),
                     TotalRow = totalRow

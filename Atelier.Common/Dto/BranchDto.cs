@@ -54,5 +54,17 @@ namespace Atelier.Common.Dto
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
     }
-
+    public class GetDetailBranchDto
+    {
+        public string BranchId { get; set; }
+        public string AtelierBaseTitle { get; set; }
+        public string Title { get; set; }
+        public string? Description { get; set; }
+        public int Code { get; set; }
+        public bool Status { get; set; } 
+        public string? StatusDescription { get; set; }
+        public DateTime ExpireDate { get; set; }
+        public string? Address { get; set; }
+        public string? PhoneNumber { get; set; }
+    }
 }

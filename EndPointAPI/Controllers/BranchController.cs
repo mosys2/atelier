@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Atelier.Application.Services.Branches.Commands.AddBranch;
 using Atelier.Common.Helpers;
 using Atelier.Application.Services.Branches.Commands.RemoveBranch;
+using Atelier.Application.Services.Branches.Queries.GetDetailBranch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,13 +19,17 @@ namespace EndPointAPI.Controllers
         private readonly IGetAllBranches _getAllBranches;
         private readonly IAddBranchService _addBranchService;
         private readonly IRemoveBranchService _removeBranchService;
+        private readonly IGetDetailBranchService _getDetailBranchService;
         public BranchController(IGetAllBranches getAllBranches,
             IRemoveBranchService removeBranchService,
-            IAddBranchService addBranchService) 
+            IAddBranchService addBranchService,
+            IGetDetailBranchService getDetailBranchService
+            ) 
         { 
             _getAllBranches = getAllBranches;
             _removeBranchService = removeBranchService;
             _addBranchService = addBranchService;
+            _getDetailBranchService = getDetailBranchService;
         }
         [HttpPost]
         [Authorize(Policy = "BigAdmin")]
@@ -69,7 +74,22 @@ namespace EndPointAPI.Controllers
             var result = await _getAllBranches.Excute(new RequestBranchDto { AtelierBaseId=atelierBaseId });
             return Ok(result);
         }
-
+        // GET api/<UsersController>/5
+        [HttpGet("Detail/{branchId}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> GetDetail(string branchId)
+        {
+            if (string.IsNullOrEmpty(branchId))
+            {
+                return NotFound(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.NotFind
+                });
+            }
+            var result = await _getDetailBranchService.Execute(branchId);
+            return Ok(result);
+        }
         // DELETE api/<AdminController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdmin")]
