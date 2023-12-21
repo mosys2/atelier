@@ -64,7 +64,7 @@ namespace Atelier.Application.Services.Users.Queries.GetAllUser
                             BranchTitle=e.Branch.Title,
                             IsActive=e.IsActive,
                             PhoneNumber = e.PhoneNumber
-                        }).ToList().ToPaged(page, pagesize, out totalRow).ToList(),
+                        }).ToList().ToPaged(page, pagesize, out totalRow).ToList().OrderByDescending(e => e.InsertTime).ToList(),
                         TotalRow=totalRow
                     }
                 };
@@ -83,7 +83,7 @@ namespace Atelier.Application.Services.Users.Queries.GetAllUser
                         IsActive = e.IsActive,
                         InsertTime=e.InsertTime,
                         PhoneNumber = e.PhoneNumber
-                    }).ToList().ToPaged(page, pagesize, out totalRow).ToList(),
+                    }).ToList().ToPaged(page, pagesize, out totalRow).OrderByDescending(e=>e.InsertTime).ToList(),
                     TotalRow = totalRow
                 }
             };
