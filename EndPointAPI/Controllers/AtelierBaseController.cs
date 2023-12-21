@@ -1,4 +1,5 @@
-﻿using Atelier.Application.Services.Ateliers.Commands;
+﻿using Atelier.Application.Interfaces.FacadPattern;
+using Atelier.Application.Services.Ateliers.Commands;
 using Atelier.Application.Services.Ateliers.Commands.ChangeStatusAtelier;
 using Atelier.Application.Services.Ateliers.Commands.EditAtelier;
 using Atelier.Application.Services.Ateliers.Commands.RemoveAtelier;
@@ -18,27 +19,10 @@ namespace EndPointAPI.Controllers
     [ApiController]
     public class AtelierBaseController : ControllerBase
     {
-        private readonly IGetAllAtelierBase _getAllAtelierBase;
-        private readonly IAddAtelierService _addAtelierService;
-        private readonly IRemoveAtelierService _removeAtelierService;
-        private readonly IGetDetailAtelierService _getDetailAtelierService;
-        private readonly IEditAtelierService _editAtelierService;
-        private readonly IChangeStatusAtelierService _changeStatusAtelierService;
-        public AtelierBaseController
-        (IGetAllAtelierBase getAllAtelierBase,
-            IAddAtelierService addAtelierService,
-            IRemoveAtelierService removeAtelierService,
-            IGetDetailAtelierService getDetailAtelierService,
-            IEditAtelierService editAtelierService,
-            IChangeStatusAtelierService changeStatusAtelierService
-        )
+        private readonly IAtelierFacad _atelierFacad;
+        public AtelierBaseController(IAtelierFacad atelierFacad)
         {
-            _getAllAtelierBase=getAllAtelierBase;
-            _addAtelierService=addAtelierService;
-            _removeAtelierService = removeAtelierService;
-            _getDetailAtelierService=getDetailAtelierService;
-            _editAtelierService=editAtelierService;
-            _changeStatusAtelierService=changeStatusAtelierService;
+            _atelierFacad = atelierFacad;
         }
        
         // GET: api/<AtelierBaseController>
@@ -46,7 +30,7 @@ namespace EndPointAPI.Controllers
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Get()
         {
-            var result = await _getAllAtelierBase.Excute();
+            var result = await _atelierFacad.GetAllAtelierBase.Excute();
             return Ok(result);
         }
         // GET api/<UsersController>/5
@@ -62,7 +46,7 @@ namespace EndPointAPI.Controllers
                     Message = Messages.NotFind
                 });
             }
-            var result = await _getDetailAtelierService.Execute(atelierId);
+            var result = await _atelierFacad.GetDetailAtelierService.Execute(atelierId);
             return Ok(result);
         }
         [HttpPost]
@@ -74,7 +58,7 @@ namespace EndPointAPI.Controllers
             return BadRequest(ModelState);
             }
             var userId = User.Claims.First(u => u.Type == "UserId").Value;
-            var result = await _addAtelierService.Execute
+            var result = await _atelierFacad.AddAtelierService.Execute
                 (
                 new AddAtelierDto
                 {
@@ -95,7 +79,7 @@ namespace EndPointAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _changeStatusAtelierService.Execute(atelierId);
+            var result = await _atelierFacad.ChangeStatusAtelierService.Execute(atelierId);
             return Ok(result);
         }
         // PUT api/<AdminController>/5
@@ -108,7 +92,7 @@ namespace EndPointAPI.Controllers
                 return BadRequest(ModelState);
             }
             var editByUserId = User.Claims.First(u => u.Type == "UserId").Value;
-            var result = await _editAtelierService.Execute(id, editByUserId, editAtelier);
+            var result = await _atelierFacad.EditAtelierService.Execute(id, editByUserId, editAtelier);
             return Ok(result);
         }
         // DELETE api/<AdminController>/5
@@ -121,7 +105,7 @@ namespace EndPointAPI.Controllers
                 return NotFound();
             }
             var remByUserId = User.Claims.First(u => u.Type == "UserId").Value;
-            var result = await _removeAtelierService.Execute(id, remByUserId);
+            var result = await _atelierFacad.RemoveAtelierService.Execute(id, remByUserId);
             return Ok(result);
         }
 

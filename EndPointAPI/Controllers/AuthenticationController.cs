@@ -1,4 +1,5 @@
-﻿using Atelier.Application.Services.Auth;
+﻿using Atelier.Application.Interfaces.FacadPattern;
+using Atelier.Application.Services.Auth;
 using Atelier.Application.Services.Auth.Commands;
 using Atelier.Application.Services.Users.Queries.FindRefreshToken;
 using Atelier.Common.Dto;
@@ -13,27 +14,23 @@ namespace EndPointAPI.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly ILoginService _loginService;
-        private readonly IFindRefreshTokenService _findRefreshTokenService;
-        private readonly ILogoutService _logoutService;
-        public AuthenticationController(ILoginService loginService,IFindRefreshTokenService findRefreshTokenService,ILogoutService logoutService)
+        private readonly IUserFacad _userFacad;
+        public AuthenticationController(IUserFacad userFacad)
         {
-            _loginService = loginService;
-            _findRefreshTokenService = findRefreshTokenService;
-            _logoutService = logoutService;
+           _userFacad=userFacad;
         }
        // POST api/<AuthenticationController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RequestLoginDto request)
         {
-            var result =await _loginService.Execute(request);
+            var result =await _userFacad.LoginService.Execute(request);
                 return Ok(result);
         }
         [HttpPost]
         [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken(string Refreshtoken)
         {
-            var result = await _findRefreshTokenService.Execute(Refreshtoken);
+            var result = await _userFacad.FindRefreshTokenService.Execute(Refreshtoken);
             return Ok(result);
         }
         [Authorize]
@@ -41,8 +38,8 @@ namespace EndPointAPI.Controllers
         [Route("Logout")]
         public IActionResult Logout()
         {
-            var user = User.Claims.First(p => p.Type == "UserId").Value;
-            _logoutService.Execute(user);
+            var userId = User.Claims.First(p => p.Type == "UserId").Value;
+            _userFacad.LogoutService.Execute(userId);
             return Ok();
         }
     }

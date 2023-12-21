@@ -39,6 +39,11 @@ using Atelier.Application.Services.Auth.Commands;
 using Atelier.Application.Services.Users.Commands.CheckToken;
 using Atelier.Application.Services.Ateliers.Commands.ChangeStatusAtelier;
 using Atelier.Application.Services.Branches.Commands.ChangeStatusBranch;
+using Atelier.Application.Interfaces.FacadPattern;
+using Atelier.Application.Services.Ateliers.FacadPattern;
+using Atelier.Application.Services.Branches.FacadPattern;
+using Atelier.Application.Services.Users.Commands.ChangeStatusUser;
+using Atelier.Application.Services.Users.FacadPattern;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,16 +93,10 @@ builder.Services.Configure<IdentityOptions>(option =>
 
 builder.Services.AddScoped<IDatabaseContext, DatabaseContext>();
 builder.Services.AddScoped<IAddBigAdminService, AddBigAdminService>();
-builder.Services.AddScoped<IGetAllAtelierBase, GetAllAtelierBase>();
-builder.Services.AddScoped<IGetAllBranches, GetAllBranches>();
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IAddAtelierService,AddAtelierService>();
 builder.Services.AddScoped<ISaveUserTokenService, SaveUserTokenService>();
 builder.Services.AddScoped<ITokenValidatorUserService, TokenValidatorUserService>();
 builder.Services.AddScoped<IDeleteTokenUserService, DeleteTokenUserService>();
-builder.Services.AddScoped<IFindRefreshTokenService, FindRefreshTokenService>();
 builder.Services.AddScoped<IGetRolesUserService, GetRolesUserService>();
-builder.Services.AddScoped<IAddBranchService, AddBranchService>();
 builder.Services.AddScoped<IAddAdminService, AddAdminService>();
 builder.Services.AddScoped<IAddSecretaryService, AddSecretaryService>();
 builder.Services.AddScoped<IAddEmployeeService, AddEmployeeService>();
@@ -112,19 +111,11 @@ builder.Services.AddScoped<IEditBigAdminService, EditBigAdminService>();
 builder.Services.AddScoped<IEditCustomerService, EditCustomerService>();
 builder.Services.AddScoped<IEditEmployeeService, EditEmployeeService>();
 builder.Services.AddScoped<IEditSecretaryService, EditSecretaryService>();
-builder.Services.AddScoped<IGetUsersService, GetUsersService>();
-builder.Services.AddScoped<IGetDetailsUserService, GetDetailsUserService>();
 builder.Services.AddScoped<IGetRolesService, GetRolesService>();
-builder.Services.AddScoped<IRemoveAtelierService, RemoveAtelierService>();
-builder.Services.AddScoped<IRemoveBranchService, RemoveBranchService>();
-builder.Services.AddScoped<IGetDetailAtelierService, GetDetailAtelierService>();
-builder.Services.AddScoped<IGetDetailBranchService, GetDetailBranchService>();
-builder.Services.AddScoped<IEditAtelierService, EditAtelierService>();
-builder.Services.AddScoped<IEditBranchService, EditBranchService>();
-builder.Services.AddScoped<ILogoutService, LogoutService>();
 builder.Services.AddScoped<ICheckTokenUserService, CheckTokenUserService>();
-builder.Services.AddScoped<IChangeStatusAtelierService, ChangeStatusAtelierService>();
-builder.Services.AddScoped<IChangeStatusBranchService, ChangeStatusBranchService>();
+builder.Services.AddScoped<IAtelierFacad, AtelierFacad>();
+builder.Services.AddScoped<IBranchFacad, BranchFacad>();
+builder.Services.AddScoped<IUserFacad, UserFacad>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

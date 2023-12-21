@@ -9,8 +9,15 @@
 
   <ItemGroup>
     <Compile Remove="Helpers\**" />
+    <Compile Remove="Services\Users\FacadPattern\**" />
     <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="Services\Users\FacadPattern\**" />
     <None Remove="Helpers\**" />
+    <None Remove="Services\Users\FacadPattern\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Services\Users\FacadPattern\UserFacad.cs" />
   </ItemGroup>
 
   <ItemGroup>
