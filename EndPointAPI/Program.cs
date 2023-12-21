@@ -1,4 +1,4 @@
-using Atelier.Application.Interfaces.Contexts;
+﻿using Atelier.Application.Interfaces.Contexts;
 using Atelier.Application.Services.Ateliers.Queries;
 using Atelier.Application.Services.Ateliers.Commands;
 using Atelier.Application.Services.Ateliers.Queries;
@@ -34,6 +34,11 @@ using Atelier.Application.Services.Ateliers.Queries.GetDetailAtelier;
 using Atelier.Application.Services.Branches.Queries.GetDetailBranch;
 using Atelier.Application.Services.Ateliers.Commands.EditAtelier;
 using Atelier.Application.Services.Branches.Commands.EditBranch;
+using Microsoft.OpenApi.Models;
+using Atelier.Application.Services.Auth.Commands;
+using Atelier.Application.Services.Users.Commands.CheckToken;
+using Atelier.Application.Services.Ateliers.Commands.ChangeStatusAtelier;
+using Atelier.Application.Services.Branches.Commands.ChangeStatusBranch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,6 +121,10 @@ builder.Services.AddScoped<IGetDetailAtelierService, GetDetailAtelierService>();
 builder.Services.AddScoped<IGetDetailBranchService, GetDetailBranchService>();
 builder.Services.AddScoped<IEditAtelierService, EditAtelierService>();
 builder.Services.AddScoped<IEditBranchService, EditBranchService>();
+builder.Services.AddScoped<ILogoutService, LogoutService>();
+builder.Services.AddScoped<ICheckTokenUserService, CheckTokenUserService>();
+builder.Services.AddScoped<IChangeStatusAtelierService, ChangeStatusAtelierService>();
+builder.Services.AddScoped<IChangeStatusBranchService, ChangeStatusBranchService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -168,6 +177,48 @@ builder.Services.AddAuthentication(Options =>
                };
 
            });
+builder.Services.AddSwaggerGen(c =>
+{
+
+    //c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "WebApi.Bugeto.xml"), true);
+
+
+    //c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi.Bugeto", Version = "v1" });
+    //c.SwaggerDoc("v2", new OpenApiInfo { Title = "WebApi.Bugeto", Version = "v2" });
+
+
+    //c.DocInclusionPredicate((doc, apiDescription) =>
+    //{
+    //    if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+
+    //    var version = methodInfo.DeclaringType
+    //        .GetCustomAttributes<ApiVersionAttribute>(true)
+    //        .SelectMany(attr => attr.Versions);
+
+    //    return version.Any(v => $"v{v.ToString()}" == doc);
+    //});
+
+    var security = new OpenApiSecurityScheme
+    {
+        Name = "JWT Auth",
+        Description = "توکن خود را وارد کنید- دقت کنید فقط توکن را وارد کنید",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+    c.AddSecurityDefinition(security.Reference.Id, security);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { security , new string[]{ } }
+                });
+
+});
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

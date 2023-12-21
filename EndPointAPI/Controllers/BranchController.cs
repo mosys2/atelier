@@ -8,6 +8,7 @@ using Atelier.Common.Helpers;
 using Atelier.Application.Services.Branches.Commands.RemoveBranch;
 using Atelier.Application.Services.Branches.Queries.GetDetailBranch;
 using Atelier.Application.Services.Branches.Commands.EditBranch;
+using Atelier.Application.Services.Branches.Commands.ChangeStatusBranch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,11 +23,13 @@ namespace EndPointAPI.Controllers
         private readonly IRemoveBranchService _removeBranchService;
         private readonly IGetDetailBranchService _getDetailBranchService;
         private readonly IEditBranchService _editBranchService;
+        private readonly IChangeStatusBranchService _changeStatusBranchService;
         public BranchController(IGetAllBranches getAllBranches,
             IRemoveBranchService removeBranchService,
             IAddBranchService addBranchService,
             IGetDetailBranchService getDetailBranchService,
-            IEditBranchService editBranchService
+            IEditBranchService editBranchService,
+            IChangeStatusBranchService changeStatusBranchService
             ) 
         { 
             _getAllBranches = getAllBranches;
@@ -34,6 +37,7 @@ namespace EndPointAPI.Controllers
             _addBranchService = addBranchService;
             _getDetailBranchService = getDetailBranchService;
             _editBranchService = editBranchService;
+            _changeStatusBranchService = changeStatusBranchService;
         }
         [HttpPost]
         [Authorize(Policy = "BigAdmin")]
@@ -76,6 +80,17 @@ namespace EndPointAPI.Controllers
                 });
             }
             var result = await _getAllBranches.Excute(new RequestBranchDto { AtelierBaseId=atelierBaseId });
+            return Ok(result);
+        }
+        [HttpPost("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> ChangeStatus(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _changeStatusBranchService.Execute(id);
             return Ok(result);
         }
         // GET api/<UsersController>/5

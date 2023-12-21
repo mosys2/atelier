@@ -90,6 +90,6 @@ namespace Atelier.Common.Constants
         public const string NoExistRoleCustomerInUser = "کاربری با سطح دسترسی مشتری  یافت نشد!";
         public const string NoExistRoleEmployeeInUser = "کاربری با سطح دسترسی کارمند  یافت نشد!";
         public const string NoExistRoleSecretaryInUser = "کاربری با سطح دسترسی منشی  یافت نشد!";
-
+        public const string ChangeStatusAtelier = "تغییر وضعیت آتلیه با موفقیت انجام شد!";
     }
 }

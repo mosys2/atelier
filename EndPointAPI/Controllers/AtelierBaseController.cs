@@ -1,4 +1,5 @@
 ﻿using Atelier.Application.Services.Ateliers.Commands;
+using Atelier.Application.Services.Ateliers.Commands.ChangeStatusAtelier;
 using Atelier.Application.Services.Ateliers.Commands.EditAtelier;
 using Atelier.Application.Services.Ateliers.Commands.RemoveAtelier;
 using Atelier.Application.Services.Ateliers.Queries;
@@ -22,12 +23,14 @@ namespace EndPointAPI.Controllers
         private readonly IRemoveAtelierService _removeAtelierService;
         private readonly IGetDetailAtelierService _getDetailAtelierService;
         private readonly IEditAtelierService _editAtelierService;
+        private readonly IChangeStatusAtelierService _changeStatusAtelierService;
         public AtelierBaseController
         (IGetAllAtelierBase getAllAtelierBase,
             IAddAtelierService addAtelierService,
             IRemoveAtelierService removeAtelierService,
             IGetDetailAtelierService getDetailAtelierService,
-            IEditAtelierService editAtelierService
+            IEditAtelierService editAtelierService,
+            IChangeStatusAtelierService changeStatusAtelierService
         )
         {
             _getAllAtelierBase=getAllAtelierBase;
@@ -35,6 +38,7 @@ namespace EndPointAPI.Controllers
             _removeAtelierService = removeAtelierService;
             _getDetailAtelierService=getDetailAtelierService;
             _editAtelierService=editAtelierService;
+            _changeStatusAtelierService=changeStatusAtelierService;
         }
        
         // GET: api/<AtelierBaseController>
@@ -83,6 +87,17 @@ namespace EndPointAPI.Controllers
                 );
             return Ok(result);
         }
+        [HttpPost("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> ChangeStatus(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _changeStatusAtelierService.Execute(id);
+            return Ok(result);
+        }
         // PUT api/<AdminController>/5
         [HttpPut("{id}")]
         [Authorize(Policy = "BigAdmin")]
@@ -109,5 +124,6 @@ namespace EndPointAPI.Controllers
             var result = await _removeAtelierService.Execute(id, remByUserId);
             return Ok(result);
         }
+
     }
 }

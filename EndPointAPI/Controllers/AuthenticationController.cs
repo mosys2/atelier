@@ -1,6 +1,8 @@
 ﻿using Atelier.Application.Services.Auth;
+using Atelier.Application.Services.Auth.Commands;
 using Atelier.Application.Services.Users.Queries.FindRefreshToken;
 using Atelier.Common.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,10 +15,12 @@ namespace EndPointAPI.Controllers
     {
         private readonly ILoginService _loginService;
         private readonly IFindRefreshTokenService _findRefreshTokenService;
-        public AuthenticationController(ILoginService loginService,IFindRefreshTokenService findRefreshTokenService)
+        private readonly ILogoutService _logoutService;
+        public AuthenticationController(ILoginService loginService,IFindRefreshTokenService findRefreshTokenService,ILogoutService logoutService)
         {
             _loginService = loginService;
             _findRefreshTokenService = findRefreshTokenService;
+            _logoutService = logoutService;
         }
        // POST api/<AuthenticationController>
         [HttpPost]
@@ -31,6 +35,15 @@ namespace EndPointAPI.Controllers
         {
             var result = await _findRefreshTokenService.Execute(Refreshtoken);
             return Ok(result);
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            var user = User.Claims.First(p => p.Type == "UserId").Value;
+            _logoutService.Execute(user);
+            return Ok();
         }
     }
 }
