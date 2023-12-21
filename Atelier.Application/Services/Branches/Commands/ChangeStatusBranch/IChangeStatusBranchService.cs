@@ -22,7 +22,7 @@ namespace Atelier.Application.Services.Branches.Commands.ChangeStatusBranch
         }
         public async Task<ResultDto> Execute(string branchId)
         {
-            var branch = await _context.AtelierBases.FindAsync(branchId);
+            var branch = await _context.Branches.FindAsync(branchId);
             if (branch == null)
             {
                 return new ResultDto
@@ -36,7 +36,7 @@ namespace Atelier.Application.Services.Branches.Commands.ChangeStatusBranch
             return new ResultDto
             {
                 IsSuccess = true,
-                Message = Messages.ChangeStatusAtelier
+                Message = Messages.ChangeStatusBranch
             };
         }
     }
