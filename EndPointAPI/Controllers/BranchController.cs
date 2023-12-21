@@ -82,15 +82,15 @@ namespace EndPointAPI.Controllers
             var result = await _getAllBranches.Excute(new RequestBranchDto { AtelierBaseId=atelierBaseId });
             return Ok(result);
         }
-        [HttpPost("{id}")]
+        [HttpPost("ChangeStatus/{branchId}")]
         [Authorize(Policy = "BigAdmin")]
-        public async Task<IActionResult> ChangeStatus(string id)
+        public async Task<IActionResult> ChangeStatus(string branchId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _changeStatusBranchService.Execute(id);
+            var result = await _changeStatusBranchService.Execute(branchId);
             return Ok(result);
         }
         // GET api/<UsersController>/5

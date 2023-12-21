@@ -87,15 +87,15 @@ namespace EndPointAPI.Controllers
                 );
             return Ok(result);
         }
-        [HttpPost("{id}")]
+        [HttpPost("ChangeStatus/{atelierId}")]
         [Authorize(Policy = "BigAdmin")]
-        public async Task<IActionResult> ChangeStatus(string id)
+        public async Task<IActionResult> ChangeStatus(string atelierId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _changeStatusAtelierService.Execute(id);
+            var result = await _changeStatusAtelierService.Execute(atelierId);
             return Ok(result);
         }
         // PUT api/<AdminController>/5
