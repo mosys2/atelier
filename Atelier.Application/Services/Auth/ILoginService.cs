@@ -115,7 +115,6 @@ namespace Atelier.Application.Services.Auth
                 RefreshToken = securityHelper.Getsha256Hash(refreshToken),
                 RefreshTokenExp = DateTime.Now.AddDays(3),
                 UserId = findUser.Id,
-                BranchId=findUser.BranchId,
             });
             return new ResultDto<ResultLoginDto>
             {

@@ -37,7 +37,7 @@ namespace EndPointAPI.Controllers
         [HttpPost]
         [Authorize(Policy = "BigAdmin")]
 
-        public async Task<IActionResult> Post([FromBody] RequestBankDto request)
+        public async Task<IActionResult> Post()
         {
             if(!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace EndPointAPI.Controllers
                 });
             }
 
-            var result = await _addNewBank.Execute(request,userId,branchId);
+            var result = await _addNewBank.Execute(null,userId,branchId);
             return Ok(result);
         }
 

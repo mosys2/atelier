@@ -12,20 +12,17 @@ namespace EndPointAPI.Controllers
     public class RoleController : ControllerBase
     {
         private readonly IGetRolesService _getRolesService;
-        private readonly ITestMongo _testMongo;
-        public RoleController(IGetRolesService getRolesService,ITestMongo testMongo)
+        public RoleController(IGetRolesService getRolesService)
         {
             _getRolesService = getRolesService;
-            _testMongo = testMongo;
         }
         // GET: api/<RoleController>
         [HttpGet]
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Get()
         {
-            var res=await _testMongo.ExecuteAdd();
-            var resut =await _getRolesService.Execute();
-            return Ok(res);
+            var result =await _getRolesService.Execute();
+            return Ok(result);
         }
     }
 }

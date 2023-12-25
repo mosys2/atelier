@@ -43,7 +43,5 @@ namespace Atelier.Domain.Entities.Users
         public DateTime RefreshTokenExp { get; set; }
         public User User { get; set; }
         public string UserId { get; set; }
-        public string BranchId { get; set; }
-
     }
 }
