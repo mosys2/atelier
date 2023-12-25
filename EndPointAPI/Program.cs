@@ -44,6 +44,10 @@ using Atelier.Application.Services.Ateliers.FacadPattern;
 using Atelier.Application.Services.Branches.FacadPattern;
 using Atelier.Application.Services.Users.Commands.ChangeStatusUser;
 using Atelier.Application.Services.Users.FacadPattern;
+using Atelier.Persistence.MongoDB;
+using Atelier.Domain.MongoEntities;
+using Atelier.Application.Services.TestMongo;
+using Atelier.Application.Services.Banks.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,13 +117,27 @@ builder.Services.AddScoped<IEditEmployeeService, EditEmployeeService>();
 builder.Services.AddScoped<IEditSecretaryService, EditSecretaryService>();
 builder.Services.AddScoped<IGetRolesService, GetRolesService>();
 builder.Services.AddScoped<ICheckTokenUserService, CheckTokenUserService>();
+builder.Services.AddScoped<IAddNewBankService, AddNewBankService>();
 builder.Services.AddScoped<IAtelierFacad, AtelierFacad>();
 builder.Services.AddScoped<IBranchFacad, BranchFacad>();
 builder.Services.AddScoped<IUserFacad, UserFacad>();
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+//Mongo*****************************
+builder.Services.AddMongo()
+    .AddMongoRepository<Bank>("Bank")
+    .AddMongoRepository<Cheque>("Cheque");
+
+builder.Services.AddControllers(option=>option.SuppressAsyncSuffixInActionNames = false);
+
+//**************************************
+
 builder.Services.AddAuthentication(Options =>
 {
     Options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;

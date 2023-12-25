@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Services\Auth\Queries\" />
+    <Folder Include="Services\Banks\Queries\" />
     <Folder Include="Services\Customers\Commands\" />
     <Folder Include="Services\Customers\Queries\" />
   </ItemGroup>
@@ -39,6 +40,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
   </ItemGroup>
 
   <ItemGroup>

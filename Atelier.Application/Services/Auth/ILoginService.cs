@@ -80,8 +80,12 @@ namespace Atelier.Application.Services.Auth
             var claimUser = new List<Claim>
                 {
                     new Claim ("UserId", findUser.Id.ToString()),
+                    new Claim ("‌BranchId", findUser.BranchId.ToString()),
                 };
-            claims.Add(claimUser.First());
+            foreach (var item in claimUser)
+            {
+                claims.Add(item);
+            }
             //Add Role To Claim
             var roles = await _getRolesUserService.Execute(findUser);
             foreach (var role in roles)
@@ -98,6 +102,7 @@ namespace Atelier.Application.Services.Auth
                   expires: tokenexp,
                   notBefore: DateTime.Now,
                   claims: claims,
+
                   signingCredentials: credentials
                   );
             var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -110,6 +115,7 @@ namespace Atelier.Application.Services.Auth
                 RefreshToken = securityHelper.Getsha256Hash(refreshToken),
                 RefreshTokenExp = DateTime.Now.AddDays(3),
                 UserId = findUser.Id,
+                BranchId=findUser.BranchId,
             });
             return new ResultDto<ResultLoginDto>
             {
