@@ -48,6 +48,12 @@ using Atelier.Persistence.MongoDB;
 using Atelier.Domain.MongoEntities;
 using Atelier.Application.Services.TestMongo;
 using Atelier.Application.Services.Banks.Commands;
+using Atelier.Application.Services.Persons.Commands;
+using Atelier.Application.Services.Jobs.Queries;
+using Atelier.Application.Services.Jobs.Commands;
+using Atelier.Application.Services.PersonTypes.Commands;
+using Atelier.Application.Services.PersonTypes.Queries;
+using Atelier.Application.Services.Persons.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,6 +127,14 @@ builder.Services.AddScoped<IAddNewBankService, AddNewBankService>();
 builder.Services.AddScoped<IAtelierFacad, AtelierFacad>();
 builder.Services.AddScoped<IBranchFacad, BranchFacad>();
 builder.Services.AddScoped<IUserFacad, UserFacad>();
+builder.Services.AddScoped<IAddPersonService, AddPersonService>();
+builder.Services.AddScoped<IAddJobService, AddJobService>();
+builder.Services.AddScoped<IGetAllJobService, GetAllJobService>();
+builder.Services.AddScoped<IAddPersonTypeService, AddPersonTypeService>();
+builder.Services.AddScoped<IGetAllPersonTypeService, GetAllPersonType>();
+builder.Services.AddScoped<IGetAllPersonService, GetAllPersonService>();
+builder.Services.AddScoped<IEditPersonService, EditPersonService>();
+builder.Services.AddScoped<IRemovePersonService, RemovePersonService>();
 
 
 builder.Services.AddControllers();
@@ -132,7 +146,11 @@ builder.Services.AddSwaggerGen();
 //Mongo*****************************
 builder.Services.AddMongo()
     .AddMongoRepository<Bank>("Bank")
-    .AddMongoRepository<Cheque>("Cheque");
+    .AddMongoRepository<Cheque>("Cheque")
+    .AddMongoRepository<Job>("Job")
+    .AddMongoRepository<PersonType>("PersonType")
+    .AddMongoRepository<Person>("Person");
+
 
 builder.Services.AddControllers(option=>option.SuppressAsyncSuffixInActionNames = false);
 

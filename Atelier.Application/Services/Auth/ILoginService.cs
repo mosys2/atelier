@@ -39,23 +39,23 @@ namespace Atelier.Application.Services.Auth
             _saveUserTokenService = saveUserTokenService;
             _getRolesUserService= getRolesUserService;
             _context = context;
-           this.configuration = configuration;
+            this.configuration = configuration;
         }
         public async Task<ResultDto<ResultLoginDto>> Execute(RequestLoginDto request)
         {
             SecurityHelper securityHelper = new SecurityHelper();
-            var findUser =await _userManager.FindByNameAsync(request.UserName);
-            if(findUser == null)
+            var findUser = await _userManager.FindByNameAsync(request.UserName);
+            if (findUser == null)
             {
                 return new ResultDto<ResultLoginDto>()
                 {
-                Message=Messages.MessageNotFind,
-                IsSuccess=false
+                    Message=Messages.MessageNotFind,
+                    IsSuccess=false
                 };
             }
-         
+
             var branchCode = _userManager.Users
-           .Include(u => u.Branch) 
+           .Include(u => u.Branch)
            .Where(u => u.Branch.Code == request.BranchCode&&u.UserName==findUser.UserName)
            .FirstOrDefaultAsync()?.Result?.Branch.Code;
 
@@ -67,8 +67,8 @@ namespace Atelier.Application.Services.Auth
                     Message=Messages.NoExistBranchForUser
                 };
             }
-            var checkPassword =await _userManager.CheckPasswordAsync(findUser,request.Password);
-            if(!checkPassword)
+            var checkPassword = await _userManager.CheckPasswordAsync(findUser, request.Password);
+            if (!checkPassword)
             {
                 return new ResultDto<ResultLoginDto>
                 {
@@ -76,7 +76,7 @@ namespace Atelier.Application.Services.Auth
                     Message = Messages.MessageInvalidPassword
                 };
             }
-            var claims =await _userManager.GetClaimsAsync(findUser);
+            var claims = await _userManager.GetClaimsAsync(findUser);
             var claimUser = new List<Claim>
                 {
                     new Claim ("UserId", findUser.Id.ToString()),
@@ -115,7 +115,6 @@ namespace Atelier.Application.Services.Auth
                 RefreshToken = securityHelper.Getsha256Hash(refreshToken),
                 RefreshTokenExp = DateTime.Now.AddDays(3),
                 UserId = findUser.Id,
-                BranchId=findUser.BranchId,
             });
             return new ResultDto<ResultLoginDto>
             {
@@ -123,8 +122,8 @@ namespace Atelier.Application.Services.Auth
                 Message=Messages.LoginSucceed,
                 Data=new ResultLoginDto
                 {
-                JwtToken=jwtToken,
-                RefreshJwtToken=refreshToken,
+                    JwtToken=jwtToken,
+                    RefreshJwtToken=refreshToken,
                 },
                 Id=findUser.Id
             };

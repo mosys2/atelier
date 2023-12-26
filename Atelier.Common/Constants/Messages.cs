@@ -94,6 +94,17 @@ namespace Atelier.Common.Constants
         public const string ChangeStatusBranch = "تغییر وضعیت شعبه با موفقیت انجام شد!";
         public const string ChangeStatusUser = "تغییر وضعیت کاربر با موفقیت انجام شد!";
         public const string NotFoundUserOrBranch = "کاربر یا شعبه شما یافت نشد!";
+        public const string GetSuccess = "با موفقیت دریافت شد!";
+        public const string DuplicatePerson = "این شخص قبلا ثبت شده است!";
+        public const string DuplicateMobile = "این شماره موبایل قبلا ثبت شده است!";
+        public const string DuplicateNationalCode = "این کد ملی قبلا ثبت شده است!";
+        public const string PersonNotFound = "این کاربر یافت نشد!";
+
+
+
+
+
+
 
     }
 }
