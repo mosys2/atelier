@@ -32,14 +32,14 @@ namespace Atelier.Application.Services.Users.Queries.ValidatorUsers
                 context.Fail("claims not found....");
                 return;
             }
-            var userId = claimsidentity.FindFirst("UserId").Value;
-            if (string.IsNullOrEmpty(userId))
+            var userId = claimsidentity.FindFirst(e=>e.Type==ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId.Value))
             {
                 context.Fail("claims not found....");
                 return;
             }
 
-            var user =await _databaseContext.Users.FindAsync(userId);
+            var user =await _databaseContext.Users.FindAsync(userId.Value);
 
             if (user?.IsActive == false)
             {
@@ -49,7 +49,7 @@ namespace Atelier.Application.Services.Users.Queries.ValidatorUsers
             if (!(context.SecurityToken is JwtSecurityToken Token)
                 || !_checkTokenUserService.Execute(Token.RawData))
             {
-                context.Fail("توکد در دیتابیس وجود ندارد");
+                context.Fail("توکن در دیتابیس وجود ندارد");
                 return;
             }
         }

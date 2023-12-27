@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
 using System.ComponentModel;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -48,12 +49,8 @@ namespace EndPointAPI.Controllers
                     Message=Messages.InvalidForm
                 });
             }
-            //Guid userId = Guid.Parse(User.Claims.First(u => u.Type == "UserId").Value);
-            //Guid branchId = Guid.Parse(User.Claims.First(u => u.Type == "BranchId").Value);
-
-            Guid userId = Guid.Parse(User.Claims.ToList()[0].Value ?? "");
-            Guid branchId = Guid.Parse(User.Claims.ToList()[1].Value ?? "");
-
+            var userId =Guid.Parse(ClaimUtility.GetUserId(User)??"");
+            var branchId =Guid.Parse(ClaimUtility.GetBranchId(User)??"");
             if (userId == Guid.Empty || branchId==Guid.Empty)
             {
                 return Ok(new ResultDto
@@ -62,7 +59,6 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFoundUserOrBranch
                 });
             }
-
             var result = await _addNewBank.Execute(request, userId, branchId);
             return Ok(result);
         }
@@ -72,7 +68,6 @@ namespace EndPointAPI.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
-
         // DELETE api/<BankController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)

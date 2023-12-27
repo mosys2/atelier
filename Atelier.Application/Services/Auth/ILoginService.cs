@@ -44,8 +44,10 @@ namespace Atelier.Application.Services.Auth
         public async Task<ResultDto<ResultLoginDto>> Execute(RequestLoginDto request)
         {
             SecurityHelper securityHelper = new SecurityHelper();
-            var findUser = await _userManager.FindByNameAsync(request.UserName);
-            if (findUser == null)
+            var checkUser = _userManager.Users
+         .Include(u => u.Branch)
+         .Where(u => u.Branch.Code == request.BranchCode && u.PhoneNumber == request.UserName).FirstOrDefault();
+            if (checkUser == null)
             {
                 return new ResultDto<ResultLoginDto>()
                 {
@@ -53,21 +55,7 @@ namespace Atelier.Application.Services.Auth
                     IsSuccess=false
                 };
             }
-
-            var branchCode = _userManager.Users
-           .Include(u => u.Branch)
-           .Where(u => u.Branch.Code == request.BranchCode&&u.UserName==findUser.UserName)
-           .FirstOrDefaultAsync()?.Result?.Branch.Code;
-
-            if (branchCode!=request.BranchCode)
-            {
-                return new ResultDto<ResultLoginDto>
-                {
-                    IsSuccess=false,
-                    Message=Messages.NoExistBranchForUser
-                };
-            }
-            var checkPassword = await _userManager.CheckPasswordAsync(findUser, request.Password);
+            var checkPassword = await _userManager.CheckPasswordAsync(checkUser, request.Password);
             if (!checkPassword)
             {
                 return new ResultDto<ResultLoginDto>
@@ -76,18 +64,16 @@ namespace Atelier.Application.Services.Auth
                     Message = Messages.MessageInvalidPassword
                 };
             }
-            var claims = await _userManager.GetClaimsAsync(findUser);
+            var claims = await _userManager.GetClaimsAsync(checkUser);
             var claimUser = new List<Claim>
                 {
-                    new Claim ("UserId", findUser.Id.ToString()),
-                    new Claim ("‌BranchId", findUser.BranchId.ToString()),
+                    new Claim (ClaimTypes.NameIdentifier, checkUser.Id.ToString()),
+                    new Claim ("BranchId", checkUser.BranchId.ToString()),
                 };
-            foreach (var item in claimUser)
-            {
-                claims.Add(item);
-            }
+            await _userManager.AddClaimsAsync(checkUser, claimUser);
+
             //Add Role To Claim
-            var roles = await _getRolesUserService.Execute(findUser);
+            var roles = await _getRolesUserService.Execute(checkUser);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -114,7 +100,7 @@ namespace Atelier.Application.Services.Auth
                 TokenHash = securityHelper.Getsha256Hash(jwtToken),
                 RefreshToken = securityHelper.Getsha256Hash(refreshToken),
                 RefreshTokenExp = DateTime.Now.AddDays(3),
-                UserId = findUser.Id,
+                UserId = checkUser.Id,
             });
             return new ResultDto<ResultLoginDto>
             {
@@ -125,7 +111,7 @@ namespace Atelier.Application.Services.Auth
                     JwtToken=jwtToken,
                     RefreshJwtToken=refreshToken,
                 },
-                Id=findUser.Id
+                Id= checkUser.Id
             };
         }
     }

@@ -4,33 +4,61 @@ using System.Security.Claims;
 
 namespace EndPointAPI.Utilities
 {
-    public class ClaimUtility
+    public static class ClaimUtility
     {
-        public static string? GetUserId(ClaimsPrincipal User)
+        public static string? GetUserId(ClaimsPrincipal user)
         {
             try
             {
-                var claimsIdentity = User.Identity as ClaimsIdentity;
-
-                if (claimsIdentity.FindFirst(ClaimTypes.NameIdentifier) != null)
+                if (user.Identity is ClaimsIdentity claimsIdentity &&
+                    claimsIdentity.TryGetClaimValue(ClaimTypes.NameIdentifier, out string userId))
                 {
-                    string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
                     return userId;
                 }
                 else
                 {
                     return null;
                 }
-
             }
             catch (Exception ex)
             {
-
                 return null;
             }
-
         }
 
-      
+        public static string? GetBranchId(ClaimsPrincipal user)
+        {
+            try
+            {
+                if (user.Identity is ClaimsIdentity claimsIdentity &&claimsIdentity.TryGetClaimValue("BranchId", out string branchId))
+                {
+                    return branchId;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private static bool TryGetClaimValue(this ClaimsIdentity claimsIdentity, string claimType, out string value)
+        {
+            var claim = claimsIdentity.FindFirst(claimType);
+            if (claim != null)
+            {
+                value = claim.Value;
+                return true;
+            }
+            else
+            {
+                value = null;
+                return false;
+            }
+        }
     }
+
 }
