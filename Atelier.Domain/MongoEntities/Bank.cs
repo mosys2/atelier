@@ -11,7 +11,7 @@ namespace Atelier.Domain.MongoEntities
         public Guid Id { get; set; }
         public Guid BranchId { get; set; }
         public string Name { get; set; }
-
+        public string? BankBranch { get; set; }//شعبه بانک
         //Common
         public DateTime? InsertTime { get; set; } = DateTime.Now;
         public Guid? InsertByUserId { get; set; }

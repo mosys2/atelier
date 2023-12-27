@@ -5,7 +5,9 @@ using Atelier.Application.Services.PersonTypes.Queries;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Azure.Core;
+using EndPointAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,18 +19,19 @@ namespace EndPointAPI.Controllers
     {
         private readonly IGetAllPersonTypeService _getAllPersonType ;
         private readonly IAddPersonTypeService _addPersonType;
-
-        public PersonTypeController(IGetAllPersonTypeService getAllPersonType, IAddPersonTypeService addPersonType)
+        private readonly Guid userId;
+        private readonly Guid branchId;
+        public PersonTypeController(IGetAllPersonTypeService getAllPersonType, IAddPersonTypeService addPersonType, ClaimsPrincipal user)
         {
            _addPersonType = addPersonType;
             _getAllPersonType = getAllPersonType;
+            userId = Guid.Parse(ClaimUtility.GetUserId(user) ?? "");
+            branchId = Guid.Parse(ClaimUtility.GetBranchId(user) ?? "");
         }
         // GET: api/<PersonTypeController>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            Guid branchId = Guid.Parse(User.Claims.ToList()[1].Value ?? "");
-
             if (branchId==Guid.Empty)
             {
                 return Ok(new ResultDto
@@ -53,10 +56,6 @@ namespace EndPointAPI.Controllers
                     Message=Messages.InvalidForm
                 });
             }
-
-            Guid userId = Guid.Parse(User.Claims.ToList()[0].Value ?? "");
-            Guid branchId = Guid.Parse(User.Claims.ToList()[1].Value ?? "");
-
             if (userId == Guid.Empty || branchId==Guid.Empty)
             {
                 return Ok(new ResultDto
@@ -68,9 +67,6 @@ namespace EndPointAPI.Controllers
 
             var result = await _addPersonType.Execute(request, userId, branchId);
             return Ok(result);
-        }
-
-        
-        
+        } 
     }
 }

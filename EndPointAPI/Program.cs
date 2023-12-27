@@ -54,6 +54,9 @@ using Atelier.Application.Services.Jobs.Commands;
 using Atelier.Application.Services.PersonTypes.Commands;
 using Atelier.Application.Services.PersonTypes.Queries;
 using Atelier.Application.Services.Persons.Queries;
+using Atelier.Application.Services.Cheques.Commands;
+using Atelier.Application.Services.Cheques.FacadPattern;
+using Atelier.Application.Services.Persons.FacadPattern;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,7 +103,7 @@ builder.Services.Configure<IdentityOptions>(option =>
     //option.SignIn.RequireConfirmedEmail = false;
     //option.SignIn.RequireConfirmedPhoneNumber = false;
 });
-
+builder.Services.AddScoped<ClaimsPrincipal>(provider => provider.GetService<IHttpContextAccessor>().HttpContext.User);
 builder.Services.AddScoped<IDatabaseContext, DatabaseContext>();
 builder.Services.AddScoped<IAddBigAdminService, AddBigAdminService>();
 builder.Services.AddScoped<ISaveUserTokenService, SaveUserTokenService>();
@@ -127,14 +130,13 @@ builder.Services.AddScoped<IAddNewBankService, AddNewBankService>();
 builder.Services.AddScoped<IAtelierFacad, AtelierFacad>();
 builder.Services.AddScoped<IBranchFacad, BranchFacad>();
 builder.Services.AddScoped<IUserFacad, UserFacad>();
-builder.Services.AddScoped<IAddPersonService, AddPersonService>();
+builder.Services.AddScoped<IChequeFacad, ChequeFacad>();
+builder.Services.AddScoped<IPersonFacad, PersonFacad>();
 builder.Services.AddScoped<IAddJobService, AddJobService>();
 builder.Services.AddScoped<IGetAllJobService, GetAllJobService>();
 builder.Services.AddScoped<IAddPersonTypeService, AddPersonTypeService>();
 builder.Services.AddScoped<IGetAllPersonTypeService, GetAllPersonType>();
-builder.Services.AddScoped<IGetAllPersonService, GetAllPersonService>();
-builder.Services.AddScoped<IEditPersonService, EditPersonService>();
-builder.Services.AddScoped<IRemovePersonService, RemovePersonService>();
+
 
 
 builder.Services.AddControllers();

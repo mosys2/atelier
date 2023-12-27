@@ -99,9 +99,14 @@ namespace Atelier.Common.Constants
         public const string DuplicateMobile = "این شماره موبایل قبلا ثبت شده است!";
         public const string DuplicateNationalCode = "این کد ملی قبلا ثبت شده است!";
         public const string PersonNotFound = "این کاربر یافت نشد!";
-
-
-
+        public const string FinancialTypeNotFound = "نوع چک یافت نشد!";
+        public const string BankNotFound = "بانک یافت نشد!";
+        public const string ChequeNumberExists = "شماره چک ثبتی تکراری است!";
+        public const string StatusChequeNotFound = "وضعیت چک یافت نشد!";
+        public const string InsertCheque = "چک با موفقیت ثبت شد!";
+        public const string NotFoundCheque = "چک یافت نشد!";
+        public const string DuplicateChequeNumber = "این شماره چک قبلا ثبت شده است!";
+        //public const string DuplicateAccountNumber = "این شماره شماره قبلا ثبت شده است!";
 
 
 

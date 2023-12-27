@@ -9,8 +9,6 @@ namespace Atelier.Domain.MongoEntities
     public interface IEntity
     {
         Guid Id { get; set; }
-
         bool IsRemoved { get; set; }
-
     }
 }

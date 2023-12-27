@@ -13,16 +13,17 @@ namespace Atelier.Domain.MongoEntities
         public Guid BranchId { get; set; }
         public int FinancialType { get; set; }//نوع : پرداختی یا دریافت 1 و 2Enum
         public int StatusRegistered { get; set; }//ثبت شده یا نشده
+        public string ChequeNumber { get; set; }
         public Bank Bank { get; set; }
-        public Guid? Branch { get; set; }//شعبه بانک
-        public Guid UserId { get; set; }
+        public string? AccountNumber { get; set; }//شماره حساب بانک
+        public Person Person { get; set; }
         public double Price { get; set; }
         public DateTime Date { get; set; }
         public string? Phone { get; set; }
         public int StatusCheque { get; set; }//پاس شده یا نشده Enum
-        public Guid? SpentInTheName { get; set; }//خرج شده به نام
+        public string? SpentInTheName { get; set; }//خرج شده به نام
         public string? Description { get; set; }
-        public string? Underwriter { get; set; }//پشت نویس
+        //public string? Underwriter { get; set; }//پشت نویس
 
         //Common
         public DateTime? InsertTime { get; set; } = DateTime.Now;

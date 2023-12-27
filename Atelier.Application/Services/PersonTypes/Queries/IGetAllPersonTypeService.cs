@@ -23,7 +23,7 @@ namespace Atelier.Application.Services.PersonTypes.Queries
         }
         public async Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId)
         {
-            var result = _personTypeRepository.GetAllAsync(q => q.BranchId==branchId  && q.IsRemoved!=true)
+            var result = _personTypeRepository.GetAllAsync(q => q.BranchId==branchId)
                 .Result.Select(s => new ResponsePersonTypeDto
                 {
                     Id = s.Id,

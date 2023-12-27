@@ -75,7 +75,6 @@ namespace Atelier.Application.Services.Persons.Commands
             {
                 personType =_persontypeRepository.GetAllAsync(p => p.Id==request.PersonTypeId).Result.First();
             }
-
             Person person = new Person()
             {
                 Name = request.Name.Trim(),
@@ -84,7 +83,7 @@ namespace Atelier.Application.Services.Persons.Commands
                 InsertByUserId=userId,
                 Address=request.Address?.Trim(),
                 Description=request.Description?.Trim(),
-                FullName=request.FullName?.Trim(),
+                FullName= request.Name.Trim()+" "+ request.Family.Trim(),
                 InsertTime=DateTime.Now,
                 Job=job,
                 PersonType=personType,
@@ -92,7 +91,6 @@ namespace Atelier.Application.Services.Persons.Commands
                 NationalCode=request.NationalCode.Trim(),
                 Phone=request.Phone?.Trim(),
             };
-
             await _personRepository.CreateAsync(person);
             return new ResultDto
             {
