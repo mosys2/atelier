@@ -34,16 +34,16 @@ namespace Atelier.Common.Dto
     public class ResponseChequeDto
     {
         public Guid Id { get; set; }
-        public int FinancialType { get; set; }//نوع : پرداختی یا دریافت 1 و 2Enum
-        public int StatusRegistered { get; set; }//ثبت شده یا نشده
-        public string ChequeNumber { get; set; }
-        public string BankName { get; set; }
+        public string? FinancialType { get; set; }//نوع : پرداختی یا دریافت 1 و 2Enum
+        public string? StatusRegistered { get; set; }//ثبت شده یا نشده
+        public string? ChequeNumber { get; set; }
+        public string? BankName { get; set; }
         public string? AccountNumber { get; set; }//شماره حساب بانک
-        public string PersonName { get; set; }
+        public string? PersonName { get; set; }
         public double Price { get; set; }
         public DateTime Date { get; set; }
         public string? Phone { get; set; }
-        public int StatusCheque { get; set; }//پاس شده یا نشده Enum
+        public string? StatusCheque { get; set; }//پاس شده یا نشده Enum
         public string? SpentInTheName { get; set; }//خرج شده به نام
         public string? Description { get; set; }
     }

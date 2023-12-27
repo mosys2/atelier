@@ -17,6 +17,23 @@ namespace Atelier.Common.Constants
             list.Add(Receipt);
             return list;
         }
+        public static string GetTitle(int id)
+        {
+            string title = "";
+            switch (id)
+            {
+                case 1:
+                    title= "پرداختی";
+                    break;
+                case 2:
+                    title="دریافتی";
+                    break;
+                default:
+                    title= "نامشخص";
+                    break;
+            }
+            return title;
+        }
     }
 
     public static class StatusCheque
@@ -30,6 +47,23 @@ namespace Atelier.Common.Constants
             list.Add(NotPassed);
             return list;
         }
+        public static string GetTitle(int id)
+        {
+            string title = "";
+            switch (id)
+            {
+                case 1:
+                    title= "پاس شده";
+                    break;
+                case 2:
+                    title="پاس نشده";
+                    break;
+                default:
+                    title= "نامشخص";
+                    break;
+            }
+            return title;
+        }
     }
 
     public static class StatusRegistered
@@ -42,6 +76,23 @@ namespace Atelier.Common.Constants
             list.Add(Registered);
             list.Add(NotRegistered);
             return list;
+        }
+        public static string GetTitle(int id)
+        {
+            string title = "";
+            switch (id)
+            {
+                case 1:
+                    title= "ثبت شده";
+                    break;
+                case 2:
+                    title="ثبت نشده";
+                    break;
+                default:
+                    title= "نامشخص";
+                    break;
+            }
+            return title;
         }
     }
 }

@@ -28,17 +28,17 @@ namespace Atelier.Application.Services.Cheques.Queries
                 {
                     Id = r.Id,
                     AccountNumber = r.AccountNumber,
-                   BankName=r.Bank.Name,
-                   ChequeNumber=r.ChequeNumber,
-                   Date=r.Date,
-                   Description = r.Description,
-                   FinancialType = r.FinancialType,
-                   PersonName=r.Person.FullName,
-                   Phone = r.Phone,
-                   Price = r.Price,
-                   SpentInTheName=r.SpentInTheName,
-                   StatusCheque=r.StatusCheque,
-                   StatusRegistered = r.StatusRegistered
+                    BankName=r.Bank.Name,
+                    ChequeNumber=r.ChequeNumber,
+                    Date=r.Date,
+                    Description = r.Description,
+                    FinancialType =FinancialType.GetTitle(r.FinancialType),
+                    PersonName=r.Person.Name +" "+ r.Person.Family,
+                    Phone = r.Phone,
+                    Price = r.Price,
+                    SpentInTheName=r.SpentInTheName,
+                    StatusCheque=StatusCheque.GetTitle(r.StatusCheque),
+                    StatusRegistered =StatusRegistered.GetTitle(r.StatusRegistered)
 
                 }).ToList();
 

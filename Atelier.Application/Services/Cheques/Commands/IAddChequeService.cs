@@ -62,7 +62,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 return new ResultDto
                 {
                     IsSuccess = false,
-                    Message = Messages.FinancialTypeNotFound
+                    Message = Messages.StatusChequeNotFound
                 };
             }
             bool checkStatusRegistered = StatusRegistered.StatusRegisteredList().Contains(requestCheque.StatusRegistered);
@@ -71,7 +71,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 return new ResultDto
                 {
                     IsSuccess = false,
-                    Message = Messages.FinancialTypeNotFound
+                    Message = Messages.StatusRegisterChequeNotFound
                 };
             }
             var person = _personRepository.GetAllAsync(b => b.Id == requestCheque.PersonId).Result.FirstOrDefault();

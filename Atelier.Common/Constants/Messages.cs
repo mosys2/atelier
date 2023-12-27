@@ -103,6 +103,7 @@ namespace Atelier.Common.Constants
         public const string BankNotFound = "بانک یافت نشد!";
         public const string ChequeNumberExists = "شماره چک ثبتی تکراری است!";
         public const string StatusChequeNotFound = "وضعیت چک یافت نشد!";
+        public const string StatusRegisterChequeNotFound = "وضعیت ثبت چک یافت نشد!";
         public const string InsertCheque = "چک با موفقیت ثبت شد!";
         public const string NotFoundCheque = "چک یافت نشد!";
         public const string DuplicateChequeNumber = "این شماره چک قبلا ثبت شده است!";

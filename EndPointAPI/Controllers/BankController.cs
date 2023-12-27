@@ -17,15 +17,17 @@ namespace EndPointAPI.Controllers
     public class BankController : ControllerBase
     {
         private readonly IAddNewBankService _addNewBank;
+       
         public BankController(IAddNewBankService addNewBank)
         {
             _addNewBank = addNewBank;
         }
         // GET: api/<BankController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+
+            return Ok();
         }
 
         // GET api/<BankController>/5

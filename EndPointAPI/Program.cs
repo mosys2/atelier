@@ -46,7 +46,6 @@ using Atelier.Application.Services.Users.Commands.ChangeStatusUser;
 using Atelier.Application.Services.Users.FacadPattern;
 using Atelier.Persistence.MongoDB;
 using Atelier.Domain.MongoEntities;
-using Atelier.Application.Services.TestMongo;
 using Atelier.Application.Services.Banks.Commands;
 using Atelier.Application.Services.Persons.Commands;
 using Atelier.Application.Services.Jobs.Queries;

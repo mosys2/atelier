@@ -1,5 +1,4 @@
 ﻿using Atelier.Application.Services.Roles.Queries.GetRoles;
-using Atelier.Application.Services.TestMongo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +11,7 @@ namespace EndPointAPI.Controllers
     public class RoleController : ControllerBase
     {
         private readonly IGetRolesService _getRolesService;
-        public RoleController(IGetRolesService getRolesService,ITestMongo testMongo)
+        public RoleController(IGetRolesService getRolesService)
         {
             _getRolesService = getRolesService;
         }
