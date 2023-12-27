@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Atelier.Domain.MongoEntities
 {
-    public class Bank:IEntity
+    public class Bank : IEntity
     {
         public Guid Id { get; set; }
         public Guid BranchId { get; set; }

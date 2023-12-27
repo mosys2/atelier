@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Atelier.Domain.MongoEntities
 {
-    public class Cheque:IEntity
+    public class Cheque : IEntity
     {
         public Guid Id { get; set; }
         public Guid BranchId { get; set; }
@@ -17,7 +17,7 @@ namespace Atelier.Domain.MongoEntities
         public Guid? Branch { get; set; }//شعبه بانک
         public Guid UserId { get; set; }
         public double Price { get; set; }
-        public DateTime Date { get; set; }    
+        public DateTime Date { get; set; }
         public string? Phone { get; set; }
         public int StatusCheque { get; set; }//پاس شده یا نشده Enum
         public Guid? SpentInTheName { get; set; }//خرج شده به نام

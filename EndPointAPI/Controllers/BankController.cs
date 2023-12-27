@@ -52,7 +52,7 @@ namespace EndPointAPI.Controllers
             //Guid branchId = Guid.Parse(User.Claims.First(u => u.Type == "BranchId").Value);
 
             Guid userId = Guid.Parse(User.Claims.ToList()[0].Value ?? "");
-            var branchId = Guid.Parse(User.Claims.ToList()[1].Value ?? "");
+            Guid branchId = Guid.Parse(User.Claims.ToList()[1].Value ?? "");
 
             if (userId == Guid.Empty || branchId==Guid.Empty)
             {
