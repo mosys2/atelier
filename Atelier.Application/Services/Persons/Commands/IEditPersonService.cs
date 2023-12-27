@@ -31,7 +31,8 @@ namespace Atelier.Application.Services.Persons.Commands
         }
         public async Task<ResultDto> Execute(RequestPersonDto request, Guid userId, Guid branchId)
         {
-            if (!request.Id.HasValue)
+            var curentPerson = _personRepository.GetAllAsync(p => p.Id==request.Id && p.IsRemoved==false).Result.FirstOrDefault();
+            if(curentPerson==null)
             {
                 return new ResultDto
                 {
@@ -39,8 +40,6 @@ namespace Atelier.Application.Services.Persons.Commands
                     Message=Messages.PersonNotFound
                 };
             }
-            var curentPerson = _personRepository.GetAllAsync(p => p.Id==request.Id && p.IsRemoved==false).Result.First();
-
             //چک کردن شماره تلفن و یا کد ملی تکراری
             //خالی وارد کردن هر دو باید ثبت شود
 
