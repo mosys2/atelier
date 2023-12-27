@@ -1,6 +1,7 @@
 ﻿using Atelier.Application.Services.Banks.Commands;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
+using EndPointAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
@@ -37,9 +38,9 @@ namespace EndPointAPI.Controllers
         [HttpPost]
         [Authorize(Policy = "BigAdmin")]
 
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post([FromBody] RequestBankDto request )
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return Ok(new ResultDto
                 {
@@ -47,10 +48,14 @@ namespace EndPointAPI.Controllers
                     Message=Messages.InvalidForm
                 });
             }
-            Guid userId =Guid.Parse(User.Claims.First(u => u.Type == "UserId").Value);
-            Guid branchId = Guid.Parse(User.Claims.First(u => u.Type == "BranchId").Value);
+            //Guid userId = Guid.Parse(User.Claims.First(u => u.Type == "UserId").Value);
+            //Guid branchId = Guid.Parse(User.Claims.First(u => u.Type == "BranchId").Value);
 
-            if (userId == Guid.Empty || branchId==Guid.Empty) {
+            Guid userId = Guid.Parse(User.Claims.ToList()[0].Value ?? "");
+            var branchId = Guid.Parse(User.Claims.ToList()[1].Value ?? "");
+
+            if (userId == Guid.Empty || branchId==Guid.Empty)
+            {
                 return Ok(new ResultDto
                 {
                     IsSuccess = false,
@@ -58,7 +63,7 @@ namespace EndPointAPI.Controllers
                 });
             }
 
-            var result = await _addNewBank.Execute(null,userId,branchId);
+            var result = await _addNewBank.Execute(request, userId, branchId);
             return Ok(result);
         }
 

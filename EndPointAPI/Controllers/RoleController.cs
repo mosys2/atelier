@@ -12,7 +12,7 @@ namespace EndPointAPI.Controllers
     public class RoleController : ControllerBase
     {
         private readonly IGetRolesService _getRolesService;
-        public RoleController(IGetRolesService getRolesService)
+        public RoleController(IGetRolesService getRolesService,ITestMongo testMongo)
         {
             _getRolesService = getRolesService;
         }
