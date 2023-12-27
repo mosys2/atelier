@@ -21,22 +21,30 @@ namespace Atelier.Persistence.MongoDB
 
         public async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
-            return await collection.Find(filterBuilder.Empty).ToListAsync();
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+            return await collection.Find(isRemoveFilter).ToListAsync();
         }
 
         public async Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T,bool>> filter)
         {
-            return await collection.Find(filter).ToListAsync();
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+
+            return await collection.Find(combinedFilter).ToListAsync();
         }
 
         public async Task<T> GetAsync(Guid id)
         {
             FilterDefinition<T> filter=filterBuilder.Eq(e=>e.Id,id);
-            return await collection.Find(filter).FirstOrDefaultAsync();
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved,false);
+            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+            return await collection.Find(combinedFilter).FirstOrDefaultAsync();
         }
         public async Task<T> GetAsync(Expression<Func<T, bool>> filter)
         {
-            return await collection.Find(filter).FirstOrDefaultAsync();
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+            return await collection.Find(combinedFilter).FirstOrDefaultAsync();
         }
         public async Task CreateAsync(T entity)
         {
@@ -54,13 +62,19 @@ namespace Atelier.Persistence.MongoDB
                 throw new ArgumentNullException(nameof(entity));
             }
             FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, entity.Id);
-            await collection.ReplaceOneAsync(filter,entity);
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+
+            await collection.ReplaceOneAsync(combinedFilter, entity);
         }
 
         public async Task RemoveAsync(Guid id)
         {
             FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, id);
-            await collection.DeleteOneAsync(filter);
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+
+            await collection.DeleteOneAsync(combinedFilter);
         }
 
     }

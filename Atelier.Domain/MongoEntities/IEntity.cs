@@ -10,5 +10,7 @@ namespace Atelier.Domain.MongoEntities
     {
         Guid Id { get; set; }
 
+        bool IsRemoved { get; set; }
+
     }
 }

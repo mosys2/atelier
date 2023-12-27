@@ -31,7 +31,7 @@ namespace Atelier.Application.Services.Persons.Commands
         }
         public async Task<ResultDto> Execute(RequestPersonDto request, Guid userId, Guid branchId)
         {
-            var curentPerson = _personRepository.GetAllAsync(p => p.Id==request.Id && p.IsRemoved==false).Result.FirstOrDefault();
+            var curentPerson = _personRepository.GetAllAsync(p => p.Id==request.Id).Result.FirstOrDefault();
             if(curentPerson==null)
             {
                 return new ResultDto
@@ -47,8 +47,7 @@ namespace Atelier.Application.Services.Persons.Commands
             {
                 var findUser = await _personRepository.GetAllAsync(p =>
                 p.BranchId==branchId &&
-                p.Mobile==request.Mobile.Trim() &&
-                p.IsRemoved==false);
+                p.Mobile==request.Mobile.Trim());
 
                 if (findUser.Count>0)
                 {
@@ -63,8 +62,7 @@ namespace Atelier.Application.Services.Persons.Commands
             {
                 var findUser = await _personRepository.GetAllAsync(p =>
                 p.BranchId==branchId &&
-                p.NationalCode==request.NationalCode.Trim()&&
-                p.IsRemoved==false);
+                p.NationalCode==request.NationalCode.Trim());
 
                 if (findUser.Count>0)
                 {
@@ -81,11 +79,11 @@ namespace Atelier.Application.Services.Persons.Commands
             PersonType personType = null;
             if (request.JobId.HasValue)
             {
-                job = _jobRepository.GetAllAsync(j => j.Id==request.JobId && j.IsRemoved==false).Result.First();
+                job =_jobRepository.GetAllAsync(j => j.Id==request.JobId).Result.First();
             }
             if (request.PersonTypeId.HasValue)
             {
-                personType =_persontypeRepository.GetAllAsync(p => p.Id==request.PersonTypeId && p.IsRemoved==false).Result.First();
+                personType =_persontypeRepository.GetAllAsync(p => p.Id==request.PersonTypeId).Result.First();
             }
 
             Person person = new Person()

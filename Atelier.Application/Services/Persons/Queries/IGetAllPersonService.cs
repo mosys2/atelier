@@ -31,7 +31,7 @@ namespace Atelier.Application.Services.Persons.Queries
         public async Task<ResultDto<List<ResponsePersonDto>>> Execute(Guid branchId)
         {
 
-            var result = _personRepository.GetAllAsync(q => q.BranchId==branchId  && q.IsRemoved!=true)
+            var result = _personRepository.GetAllAsync(q => q.BranchId==branchId)
                 .Result.Select(r => new ResponsePersonDto
                 {
                     Id =r.Id,
@@ -40,7 +40,7 @@ namespace Atelier.Application.Services.Persons.Queries
                     JobTitle =r.Job?.Title,
                     Mobile = r.Mobile,
                     NationalCode = r.NationalCode,
-                    PersonTypeTitle =r.PersonType?.Title,/*(!r.PersonType.IsRemoved) ? null : r.PersonType?.Title*/
+                    PersonTypeTitle =r.PersonType?.Title,
                     Phone = r.Phone,
                     
                 }).ToList();
