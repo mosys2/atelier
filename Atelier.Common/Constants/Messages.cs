@@ -107,10 +107,9 @@ namespace Atelier.Common.Constants
         public const string InsertCheque = "چک با موفقیت ثبت شد!";
         public const string NotFoundCheque = "چک یافت نشد!";
         public const string DuplicateChequeNumber = "این شماره چک قبلا ثبت شده است!";
-        //public const string DuplicateAccountNumber = "این شماره شماره قبلا ثبت شده است!";
-
-
-
+        public const string PRICE_INVALID = "قیمت وارد شده نامعتبر!";
+        public const string INVALID_ID = "آی دی  نامعتبر است!";
+        public const string NOT_FOUND_RECORD = "رکورد یافت نشد!";
 
     }
 }
