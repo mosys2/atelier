@@ -155,7 +155,6 @@ builder.Services.AddMongo()
     .AddMongoRepository<Job>("Job")
     .AddMongoRepository<PersonType>("PersonType")
     .AddMongoRepository<OurService>("OurService")
-    .AddMongoRepository<Person>("Person");
     .AddMongoRepository<Person>("Person")
     .AddMongoRepository<Reservation>("Reservation");
 

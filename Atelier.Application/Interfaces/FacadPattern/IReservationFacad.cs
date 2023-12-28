@@ -16,5 +16,6 @@ namespace Atelier.Application.Interfaces.FacadPattern
         IGetReservedPersonService GetReservedPersonService { get; }
         IEditReservationService EditReservationService { get; }
         IRemoveReservationService RemoveReservationService { get; }
+        IGetAllReservationService GetAllReservationService { get; }
     }
 }

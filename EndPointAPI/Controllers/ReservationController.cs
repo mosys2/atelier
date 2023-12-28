@@ -27,9 +27,19 @@ namespace EndPointAPI.Controllers
         }
         // GET: api/<ReservationController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            if (branchId == Guid.Empty)
+            {
+                return Ok(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.NotFoundUserOrBranch
+                });
+            }
+            var result = await _reservationFacad.GetAllReservationService.Execute();
+            return Ok(result);
         }
 
         // GET api/<ReservationController>/5
@@ -37,6 +47,14 @@ namespace EndPointAPI.Controllers
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult>  Get([FromBody] RequestDateTimeReservation request)
         {
+            if (branchId == Guid.Empty)
+            {
+                return Ok(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.NotFoundUserOrBranch
+                });
+            }
             var result =await _reservationFacad.GetReservedPersonService.Execute(branchId, request.StartDateTime, request.EndDateTime);
             return Ok(result);
         }

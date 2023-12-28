@@ -25,6 +25,7 @@ namespace Atelier.Application.Services.Reservations.FacadPattern
         private IGetReservedPersonService _getReservedPersonService;
         private IEditReservationService _editReservationService;
         private IRemoveReservationService _removeReservationService;
+        private IGetAllReservationService _getAllReservationService;
         public IAddReservationService AddReservationService
         {
             get
@@ -54,6 +55,14 @@ namespace Atelier.Application.Services.Reservations.FacadPattern
             get
             {
                 return _removeReservationService = _removeReservationService ?? new RemoveReservationService(_reservationRepository);
+            }
+        }
+
+        public IGetAllReservationService GetAllReservationService
+        {
+            get
+            {
+                return _getAllReservationService = _getAllReservationService ?? new GetAllReservationService(_reservationRepository);
             }
         }
     }

@@ -31,4 +31,13 @@ namespace Atelier.Common.Dto
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
     }
+    public class ResponseReservationDto
+    {
+        public Guid Id { get; set; }
+        public string PersonFullName { get; set; }
+        public DateTime StartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
+        public long ReservationNumber { get; set; }
+        public string? Description { get; set; }
+    }
 }
