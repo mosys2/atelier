@@ -111,6 +111,9 @@ namespace Atelier.Common.Constants
         public const string INVAILD_DATETIME = "تاریخ انتخابی نامعتبر است!";
 
 
+        public const string PRICE_INVALID = "قیمت وارد شده نامعتبر!";
+        public const string INVALID_ID = "آی دی  نامعتبر است!";
+        public const string NOT_FOUND_RECORD = "رکورد یافت نشد!";
 
     }
 }

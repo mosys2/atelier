@@ -56,6 +56,7 @@ using Atelier.Application.Services.Persons.Queries;
 using Atelier.Application.Services.Cheques.Commands;
 using Atelier.Application.Services.Cheques.FacadPattern;
 using Atelier.Application.Services.Persons.FacadPattern;
+using Atelier.Application.Services.OurServices.FacadPattern;
 using Atelier.Application.Services.Reservations.FacadPattern;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -137,6 +138,7 @@ builder.Services.AddScoped<IAddJobService, AddJobService>();
 builder.Services.AddScoped<IGetAllJobService, GetAllJobService>();
 builder.Services.AddScoped<IAddPersonTypeService, AddPersonTypeService>();
 builder.Services.AddScoped<IGetAllPersonTypeService, GetAllPersonType>();
+builder.Services.AddScoped<IOurServiceFacad, OurServiceFacad>();
 
 
 
@@ -152,6 +154,8 @@ builder.Services.AddMongo()
     .AddMongoRepository<Cheque>("Cheque")
     .AddMongoRepository<Job>("Job")
     .AddMongoRepository<PersonType>("PersonType")
+    .AddMongoRepository<OurService>("OurService")
+    .AddMongoRepository<Person>("Person");
     .AddMongoRepository<Person>("Person")
     .AddMongoRepository<Reservation>("Reservation");
 
@@ -252,6 +256,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
