@@ -31,7 +31,15 @@ namespace Atelier.Application.Services.Persons.Commands
         }
         public async Task<ResultDto> Execute(RequestPersonDto request, Guid userId, Guid branchId)
         {
-            var curentPerson = _personRepository.GetAllAsync(p => p.Id==request.Id).Result.FirstOrDefault();
+            if (request.Id == null)
+            {
+                return new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.NotFind
+                };
+            }
+            var curentPerson =await _personRepository.GetAsync(request.Id.Value);
             if(curentPerson==null)
             {
                 return new ResultDto
@@ -86,26 +94,23 @@ namespace Atelier.Application.Services.Persons.Commands
                 personType =_persontypeRepository.GetAllAsync(p => p.Id==request.PersonTypeId).Result.First();
             }
 
-            Person person = new Person()
-            {
-                Id=curentPerson.Id,
-                Name = request.Name.Trim(),
-                Family=request.Family.Trim(),
-                BranchId=branchId,
-                InsertByUserId=userId,
-                Address=request.Address?.Trim(),
-                Description=request.Description?.Trim(),
-                FullName=request.FullName?.Trim(),
-                UpdateByUserId=userId,
-                UpdateTime=DateTime.Now,
-                Job=job,
-                PersonType=personType,
-                Mobile=request.Mobile.Trim(),
-                NationalCode=request.NationalCode.Trim(),
-                Phone=request.Phone?.Trim(),
-            };
-
-            await _personRepository.UpdateAsync(person);
+           
+            curentPerson.Name = request.Name.Trim();
+            curentPerson.Family = request.Family.Trim();
+            curentPerson.BranchId = branchId;
+            curentPerson.InsertByUserId = userId;
+            curentPerson.Address = request.Address?.Trim();
+            curentPerson.Description = request.Description?.Trim();
+            curentPerson.FullName = request.FullName?.Trim();
+            curentPerson.UpdateByUserId = userId;
+            curentPerson.UpdateTime = DateTime.Now;
+            curentPerson.Job=job;
+            curentPerson.PersonType=personType;
+            curentPerson.Mobile=request.Mobile.Trim();
+            curentPerson.NationalCode=request.NationalCode.Trim();
+            curentPerson.Phone =request.Phone?.Trim();
+           
+            await _personRepository.UpdateAsync(curentPerson);
             return new ResultDto
             {
                 IsSuccess = true,

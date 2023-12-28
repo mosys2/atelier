@@ -1,0 +1,80 @@
+﻿using Atelier.Application.Interfaces.Repository;
+using Atelier.Common.Constants;
+using Atelier.Common.Dto;
+using Atelier.Domain.MongoEntities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Atelier.Application.Services.Reservations.Commands
+{
+    public interface IEditReservationService
+    {
+        Task<ResultDto> Execute(RequestReservationDto request, Guid userId, Guid branchId);
+    }
+    public class EditReservationService : IEditReservationService
+    {
+        private readonly IMongoRepository<Person> _personRepository;
+        private readonly IMongoRepository<Reservation> _reservationRepository;
+        public EditReservationService(IMongoRepository<Person> personRepository, IMongoRepository<Reservation> reservationRepository)
+        {
+            _personRepository = personRepository;
+            _reservationRepository = reservationRepository;
+        }
+        public async Task<ResultDto> Execute(RequestReservationDto request, Guid userId, Guid branchId)
+        {
+            if (request.Id == null)
+            {
+                return new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.NotFind
+                };
+            }
+            var currentReservation =await _reservationRepository.GetAsync(request.Id.Value);
+            if(currentReservation==null)
+            {
+                return new ResultDto
+                {
+                    IsSuccess=false,
+                    Message=Messages.NotFind,
+                };
+            }
+            var person = _personRepository.GetAllAsync(p => p.BranchId == branchId && p.Id == request.PersonId).Result.FirstOrDefault();
+            if (person == null)
+            {
+                return new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.PersonNotFound
+                };
+            }
+            if (request.StartDateTime > request.EndDateTime)
+            {
+                return new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.INVAILD_DATETIME
+                };
+            }
+
+            currentReservation.BranchId = branchId;
+            currentReservation.UpdateByUserId = userId;
+            currentReservation.UpdateTime = DateTime.Now;
+            currentReservation.Person = person;
+            currentReservation.Description = request.Description;
+            currentReservation.PhoneNumber = request.PhoneNumber;
+            currentReservation.StartDateTime = request.StartDateTime;
+            currentReservation.EndDateTime = request.EndDateTime;
+          
+            await _reservationRepository.UpdateAsync(currentReservation);
+            return new ResultDto
+            {
+                IsSuccess = true,
+                Message = Messages.MessageUpdate
+            };
+        }
+    }
+}

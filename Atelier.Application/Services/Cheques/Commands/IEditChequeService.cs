@@ -32,7 +32,15 @@ namespace Atelier.Application.Services.Cheques.Commands
         }
         public async Task<ResultDto> Execute(RequestChequeDto requestCheque, Guid userId, Guid branchId)
         {
-            var curentCheque = _chequeRepository.GetAllAsync(p => p.Id == requestCheque.Id).Result.FirstOrDefault();
+            if(requestCheque.Id==null)
+            {
+                return new ResultDto
+                {
+                    IsSuccess = false,
+                    Message=Messages.NotFind
+                };
+            }
+            var curentCheque =await _chequeRepository.GetAsync(requestCheque.Id.Value);
             if (curentCheque == null)
             {
                 return new ResultDto
@@ -56,7 +64,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                     };
                 }
             }
-           
+
             //check Value
             bool checkFinancialType = FinancialType.FinancialTypeList().Contains(requestCheque.FinancialType);
             if (!checkFinancialType)
@@ -108,7 +116,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 };
             }
 
-            var person = _personRepository.GetAllAsync(b => b.Id == requestCheque.PersonId).Result.FirstOrDefault();
+            var person = _personRepository.GetAllAsync(b => b.BranchId == branchId && b.Id == requestCheque.PersonId).Result.FirstOrDefault();
             if (person == null)
             {
                 return new ResultDto
@@ -117,26 +125,23 @@ namespace Atelier.Application.Services.Cheques.Commands
                     Message = Messages.MessageNotfindUser
                 };
             }
-            Cheque cheque = new Cheque()
-            {
-                Id=curentCheque.Id,
-                BranchId = branchId,
-                UpdateByUserId = userId,
-                StatusRegistered = requestCheque.StatusRegistered,
-                FinancialType = requestCheque.FinancialType,
-                UpdateTime = DateTime.Now,
-                Date = requestCheque.Date,
-                ChequeNumber = requestCheque.ChequeNumber.Trim(),
-                Bank = bank,
-                Person = person,
-                AccountNumber = requestCheque.AccountNumber,
-                Price = requestCheque.Price,
-                Phone = requestCheque.Phone,
-                StatusCheque = requestCheque.StatusCheque,
-                SpentInTheName = requestCheque.SpentInTheName,
-                Description = requestCheque.Description,
-            };
-            await _chequeRepository.UpdateAsync(cheque);
+            curentCheque.BranchId = branchId;
+            curentCheque.UpdateByUserId = userId;
+            curentCheque.StatusRegistered = requestCheque.StatusRegistered;
+            curentCheque.FinancialType = requestCheque.FinancialType;
+            curentCheque.UpdateTime = DateTime.Now;
+            curentCheque.Date = requestCheque.Date;
+            curentCheque.ChequeNumber = requestCheque.ChequeNumber.Trim();
+            curentCheque.Bank = bank;
+            curentCheque.BankBranch = requestCheque.BankBranch;
+            curentCheque.Person = person;
+            curentCheque.AccountNumber = requestCheque.AccountNumber;
+            curentCheque.Price = requestCheque.Price;
+            curentCheque.Phone = requestCheque.Phone;
+            curentCheque.StatusCheque = requestCheque.StatusCheque;
+            curentCheque.SpentInTheName = requestCheque.SpentInTheName;
+            curentCheque.Description = requestCheque.Description;
+            await _chequeRepository.UpdateAsync(curentCheque);
             return new ResultDto
             {
                 IsSuccess = true,

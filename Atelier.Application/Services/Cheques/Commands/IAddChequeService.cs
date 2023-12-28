@@ -74,7 +74,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                     Message = Messages.StatusRegisterChequeNotFound
                 };
             }
-            var person = _personRepository.GetAllAsync(b => b.Id == requestCheque.PersonId).Result.FirstOrDefault();
+            var person = _personRepository.GetAllAsync(b =>b.BranchId==branchId&&b.Id == requestCheque.PersonId).Result.FirstOrDefault();
             if (person==null)
             {
                 return new ResultDto
@@ -94,6 +94,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 Date=requestCheque.Date,
                 ChequeNumber=requestCheque.ChequeNumber.Trim(),
                 Bank=bank,
+                BankBranch=requestCheque.BankBranch,
                 Person=person,
                 AccountNumber=requestCheque.AccountNumber,
                 Price=requestCheque.Price,

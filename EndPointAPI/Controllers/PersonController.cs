@@ -25,7 +25,6 @@ namespace EndPointAPI.Controllers
             userId = Guid.Parse(ClaimUtility.GetUserId(user) ?? "");
             branchId = Guid.Parse(ClaimUtility.GetBranchId(user) ?? "");
         }
-
         [HttpGet]
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Get()
@@ -56,11 +55,9 @@ namespace EndPointAPI.Controllers
                     Message=Messages.InvalidForm
                 });
             }
-
             var result = await _personFacad.AddPersonService.Execute(request, userId, branchId);
             return Ok(result);
         }
-
         [HttpPut]
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Put([FromBody] RequestPersonDto request)
@@ -83,6 +80,5 @@ namespace EndPointAPI.Controllers
             var result = await _personFacad.RemovePersonService.Execute(id,userId, branchId);
             return Ok(result);
         }
-
     }
 }

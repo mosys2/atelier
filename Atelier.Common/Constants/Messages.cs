@@ -108,7 +108,7 @@ namespace Atelier.Common.Constants
         public const string NotFoundCheque = "چک یافت نشد!";
         public const string DuplicateChequeNumber = "این شماره چک قبلا ثبت شده است!";
         //public const string DuplicateAccountNumber = "این شماره شماره قبلا ثبت شده است!";
-
+        public const string INVAILD_DATETIME = "تاریخ انتخابی نامعتبر است!";
 
 
 

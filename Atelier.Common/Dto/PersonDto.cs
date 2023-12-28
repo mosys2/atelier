@@ -33,6 +33,5 @@ namespace Atelier.Common.Dto
         public string? JobTitle { get; set; }
         public string? Phone { get; set; }
         public string? Mobile { get; set; }
-
     }
 }
