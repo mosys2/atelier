@@ -16,6 +16,7 @@ namespace Atelier.Domain.MongoEntities
         public string ChequeNumber { get; set; }
         public Bank Bank { get; set; }
         public string? AccountNumber { get; set; }//شماره حساب بانک
+        public string? BankBranch { get; set; }//شعبه بانک
         public Person Person { get; set; }
         public double Price { get; set; }
         public DateTime Date { get; set; }

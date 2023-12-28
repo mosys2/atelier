@@ -33,7 +33,6 @@ namespace Atelier.Application.Services.Persons.Commands
                     Message=Messages.PersonNotFound,
                 };
             }
-
             person.IsRemoved = true;
             person.RemoveTime = DateTime.Now;
             person.RemoveByUserId = userId;

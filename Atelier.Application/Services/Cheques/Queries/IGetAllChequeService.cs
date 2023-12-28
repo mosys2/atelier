@@ -29,6 +29,7 @@ namespace Atelier.Application.Services.Cheques.Queries
                     Id = r.Id,
                     AccountNumber = r.AccountNumber,
                     BankName=r.Bank.Name,
+                    BankBranch=r.BankBranch,
                     ChequeNumber=r.ChequeNumber,
                     Date=r.Date,
                     Description = r.Description,
@@ -39,9 +40,7 @@ namespace Atelier.Application.Services.Cheques.Queries
                     SpentInTheName=r.SpentInTheName,
                     StatusCheque=StatusCheque.GetTitle(r.StatusCheque),
                     StatusRegistered =StatusRegistered.GetTitle(r.StatusRegistered)
-
                 }).ToList();
-
             return new ResultDto<List<ResponseChequeDto>>
             {
                 Data = result,

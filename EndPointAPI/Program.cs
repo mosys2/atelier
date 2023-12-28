@@ -57,6 +57,7 @@ using Atelier.Application.Services.Cheques.Commands;
 using Atelier.Application.Services.Cheques.FacadPattern;
 using Atelier.Application.Services.Persons.FacadPattern;
 using Atelier.Application.Services.OurServices.FacadPattern;
+using Atelier.Application.Services.Reservations.FacadPattern;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -132,6 +133,7 @@ builder.Services.AddScoped<IBranchFacad, BranchFacad>();
 builder.Services.AddScoped<IUserFacad, UserFacad>();
 builder.Services.AddScoped<IChequeFacad, ChequeFacad>();
 builder.Services.AddScoped<IPersonFacad, PersonFacad>();
+builder.Services.AddScoped<IReservationFacad, ReservationFacad>();
 builder.Services.AddScoped<IAddJobService, AddJobService>();
 builder.Services.AddScoped<IGetAllJobService, GetAllJobService>();
 builder.Services.AddScoped<IAddPersonTypeService, AddPersonTypeService>();
@@ -153,7 +155,8 @@ builder.Services.AddMongo()
     .AddMongoRepository<Job>("Job")
     .AddMongoRepository<PersonType>("PersonType")
     .AddMongoRepository<OurService>("OurService")
-    .AddMongoRepository<Person>("Person");
+    .AddMongoRepository<Person>("Person")
+    .AddMongoRepository<Reservation>("Reservation");
 
 
 builder.Services.AddControllers(option=>option.SuppressAsyncSuffixInActionNames = false);

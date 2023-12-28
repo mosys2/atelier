@@ -19,6 +19,7 @@ namespace Atelier.Common.Dto
         [Required]
         public Guid BankId { get; set; }
         public string? AccountNumber { get; set; }//شماره حساب بانک
+        public string? BankBranch { get; set; }//شعبه بانک
         [Required]
         public Guid PersonId { get; set; }
         [Required]
@@ -39,6 +40,7 @@ namespace Atelier.Common.Dto
         public string? ChequeNumber { get; set; }
         public string? BankName { get; set; }
         public string? AccountNumber { get; set; }//شماره حساب بانک
+        public string? BankBranch { get; set; }//شعبه بانک
         public string? PersonName { get; set; }
         public double Price { get; set; }
         public DateTime Date { get; set; }
