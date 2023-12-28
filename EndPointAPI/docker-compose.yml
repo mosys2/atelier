@@ -7,7 +7,7 @@ services:
      - 27017:27017
    volumes:
      - type: bind
-       source: ./MongoDockerData
+       source: C:/MongoDockerData
        target: /data/db
 
  mongo-express:
