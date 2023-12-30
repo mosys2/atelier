@@ -38,7 +38,7 @@ namespace EndPointAPI.Controllers
                     Message = Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _reservationFacad.GetAllReservationService.Execute();
+            var result = await _reservationFacad.GetAllReservationService.Execute(branchId);
             return Ok(result);
         }
 

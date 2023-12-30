@@ -1,6 +1,7 @@
 ﻿using Atelier.Application.Interfaces.Repository;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
+using Atelier.Common.Helpers;
 using Atelier.Domain.MongoEntities;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -34,12 +35,13 @@ namespace Atelier.Application.Services.Persons.Commands
             //چک کردن شماره تلفن و یا کد ملی تکراری
             //خالی وارد کردن هر دو باید ثبت شود
 
+
             if (!request.Mobile.Trim().IsNullOrEmpty())
             {
-                var findUser = await _personRepository.GetAllAsync(p => p.BranchId==branchId &&
+                var findUser = await _personRepository.GetAsync(p => p.BranchId==branchId &&
                 p.Mobile==request.Mobile.Trim());
 
-                if (findUser.Count>0)
+                if (findUser!=null)
                 {
                     return new ResultDto
                     {
@@ -51,10 +53,10 @@ namespace Atelier.Application.Services.Persons.Commands
 
             if (!request.NationalCode.Trim().IsNullOrEmpty())
             {
-                var findUser = await _personRepository.GetAllAsync(p => p.BranchId==branchId &&
+                var findUser = await _personRepository.GetAsync(p => p.BranchId==branchId &&
                 p.NationalCode==request.NationalCode.Trim());
 
-                if (findUser.Count>0)
+                if (findUser!=null)
                 {
                     return new ResultDto
                     {
@@ -69,12 +71,40 @@ namespace Atelier.Application.Services.Persons.Commands
             PersonType personType = null;
             if (request.JobId.HasValue)
             {
-                job = _jobRepository.GetAllAsync(j => j.Id==request.JobId).Result.First();
+                job =await _jobRepository.GetAsync(j =>j.BranchId==branchId && j.Id==request.JobId);
             }
             if (request.PersonTypeId.HasValue)
             {
-                personType =_persontypeRepository.GetAllAsync(p => p.Id==request.PersonTypeId).Result.First();
+                personType =await _persontypeRepository.GetAsync(p =>p.BranchId==branchId && p.Id==request.PersonTypeId);
             }
+
+            //INSERT FAKE DATA
+
+            //for (int i = 0; i<1000000; i++)
+            //{
+            //    string randomMobile = Assistants.LongRandomBetween(99999999999, 00000000000).ToString();
+            //    string randoMeli = Assistants.LongRandomBetween(9999999999, 0000000000).ToString();
+
+            //    Person person = new Person()
+            //    {
+            //        Name = "محمد"+i,
+            //        Family="سعادتی"+i,
+            //        BranchId=branchId,
+            //        InsertByUserId=userId,
+            //        Address=request.Address?.Trim(),
+            //        Description=request.Description?.Trim(),
+            //        FullName= "محمد"+i+" "+ "سعادتی"+i,
+            //        InsertTime=DateTime.Now,
+            //        Job=job,
+            //        PersonType=personType,
+            //        Mobile=randomMobile.ToString(),
+            //        NationalCode=randoMeli.ToString(),
+            //        Phone=request.Phone?.Trim(),
+            //    };
+               
+            //    await _personRepository.CreateAsync(person);
+            //}
+
             Person person = new Person()
             {
                 Name = request.Name.Trim(),

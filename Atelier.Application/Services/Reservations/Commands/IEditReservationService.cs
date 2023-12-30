@@ -33,7 +33,7 @@ namespace Atelier.Application.Services.Reservations.Commands
                     Message = Messages.NotFind
                 };
             }
-            var currentReservation =await _reservationRepository.GetAsync(request.Id.Value);
+            var currentReservation =await _reservationRepository.GetAsync(r=>r.BranchId==branchId && r.Id==request.Id.Value);
             if(currentReservation==null)
             {
                 return new ResultDto
@@ -42,7 +42,7 @@ namespace Atelier.Application.Services.Reservations.Commands
                     Message=Messages.NotFind,
                 };
             }
-            var person = _personRepository.GetAllAsync(p => p.BranchId == branchId && p.Id == request.PersonId).Result.FirstOrDefault();
+            var person = await _personRepository.GetAsync(p => p.BranchId == branchId && p.Id == request.PersonId);
             if (person == null)
             {
                 return new ResultDto

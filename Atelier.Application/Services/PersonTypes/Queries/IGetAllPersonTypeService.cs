@@ -14,7 +14,7 @@ namespace Atelier.Application.Services.PersonTypes.Queries
     {
         Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId);
     }
-    public class GetAllPersonType: IGetAllPersonTypeService
+    public class GetAllPersonType : IGetAllPersonTypeService
     {
         private readonly IMongoRepository<PersonType> _personTypeRepository;
         public GetAllPersonType(IMongoRepository<PersonType> personTypeRepository)
@@ -23,16 +23,17 @@ namespace Atelier.Application.Services.PersonTypes.Queries
         }
         public async Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId)
         {
-            var result = _personTypeRepository.GetAllAsync(q => q.BranchId==branchId)
-                .Result.Select(s => new ResponsePersonTypeDto
-                {
-                    Id = s.Id,
-                    Title  = s.Title,
-                }).ToList();
+            var (personTypes, total) = await _personTypeRepository.GetAllAsync(q => q.BranchId==branchId, null);
+            var personTypeList = personTypes.Select(s => new ResponsePersonTypeDto
+            {
+                Id = s.Id,
+                Title  = s.Title,
+            }).ToList();
 
             return new ResultDto<List<ResponsePersonTypeDto>>
             {
-                Data=result,
+                Data=personTypeList,
+                Total=total,
                 IsSuccess = true,
                 Message=Messages.GetSuccess
             };

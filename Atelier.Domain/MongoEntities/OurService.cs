@@ -15,7 +15,7 @@ namespace Atelier.Domain.MongoEntities
         public double PriceWithProfit { get; set; } = 0;//قیمت با محاسبه سود
         public string? Description { get; set; }
         //Common
-        public DateTime? InsertTime { get; set; } = DateTime.Now;
+        public DateTime InsertTime { get; set; } = DateTime.Now;
         public Guid? InsertByUserId { get; set; }
         public DateTime? UpdateTime { get; set; }
         public Guid? UpdateByUserId { get; set; }

@@ -24,8 +24,8 @@ namespace Atelier.Application.Services.Jobs.Queries
         }
         public async Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId)
         {
-            var result = _jobRepository.GetAllAsync(q => q.BranchId==branchId && q.IsRemoved!=true)
-                .Result.Select(s => new ResponseJobListDto
+            var (jobs,total) = await _jobRepository.GetAllAsync(q => q.BranchId==branchId, null);
+                var jobList= jobs.Select(s => new ResponseJobListDto
                 {
                     Id = s.Id,
                     Title  = s.Title,
@@ -33,7 +33,8 @@ namespace Atelier.Application.Services.Jobs.Queries
 
             return new ResultDto<List<ResponseJobListDto>>
             {
-                Data=result,
+                Data=jobList,
+                Total=total,
                 IsSuccess = true,
                 Message=Messages.GetSuccess
             };

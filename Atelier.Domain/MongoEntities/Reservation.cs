@@ -18,7 +18,7 @@ namespace Atelier.Domain.MongoEntities
         public DateTime EndDateTime { get; set; }
         public string? Description { get; set; }
         //Common
-        public DateTime? InsertTime { get; set; } = DateTime.Now;
+        public DateTime InsertTime { get; set; } = DateTime.Now;
         public Guid? InsertByUserId { get; set; }
         public DateTime? UpdateTime { get; set; }
         public Guid? UpdateByUserId { get; set; }

@@ -2,6 +2,7 @@
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Atelier.Domain.MongoEntities;
+using Store.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Atelier.Application.Services.Persons.Queries
 {
     public interface IGetAllPersonService
     {
-        Task<ResultDto<List<ResponsePersonDto>>> Execute(Guid branchId);
+        Task<ResultDto<List<ResponsePersonDto>>> Execute(Guid branchId, RequstPaginateDto pagination);
     }
     public class GetAllPersonService: IGetAllPersonService
     {
@@ -28,26 +29,25 @@ namespace Atelier.Application.Services.Persons.Queries
             _jobRepository = jobRepository;
             _personTypeRepository = personTypeRepository;
         }
-        public async Task<ResultDto<List<ResponsePersonDto>>> Execute(Guid branchId)
+        public async Task<ResultDto<List<ResponsePersonDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
         {
-
-            var result = _personRepository.GetAllAsync(q => q.BranchId==branchId)
-                .Result.Select(r => new ResponsePersonDto
-                {
-                    Id =r.Id,
-                    Name = r.Name,
-                    Family=r.Family,
-                    JobTitle =r.Job?.Title,
-                    Mobile = r.Mobile,
-                    NationalCode = r.NationalCode,
-                    PersonTypeTitle =r.PersonType?.Title,
-                    Phone = r.Phone,
-                    
-                }).ToList();
+            var (persons, total) = await _personRepository.GetAllAsync(q => q.BranchId == branchId, pagination);
+            var resultPersons=persons.Select(r => new ResponsePersonDto
+             {
+                 Id =r.Id,
+                 Name = r.Name,
+                 Family=r.Family,
+                 JobTitle =r.Job?.Title,
+                 Mobile = r.Mobile,
+                 NationalCode = r.NationalCode,
+                 PersonTypeTitle =r.PersonType?.Title,
+                 Phone = r.Phone,
+             }).ToList();
 
             return new ResultDto<List<ResponsePersonDto>>
             {
-                Data=result,
+                Data=resultPersons,
+                Total=total,
                 IsSuccess = true,
                 Message=Messages.GetSuccess
             };

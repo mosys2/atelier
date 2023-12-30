@@ -1,4 +1,6 @@
-﻿using Atelier.Application.Interfaces.Repository;
+﻿using Amazon.Auth.AccessControlPolicy;
+using Atelier.Application.Interfaces.Repository;
+using Atelier.Common.Dto;
 using Atelier.Domain.MongoEntities;
 using MongoDB.Driver;
 using System;
@@ -19,18 +21,32 @@ namespace Atelier.Persistence.MongoDB
             collection=database.GetCollection<T>(collectionName);
         }
 
-        public async Task<IReadOnlyCollection<T>> GetAllAsync()
+        public async Task<(IReadOnlyCollection<T>,long? Total)> GetAllAsync(RequstPaginateDto? paginate)
         {
             FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-            return await collection.Find(isRemoveFilter).ToListAsync();
+            long total = 0;
+            IReadOnlyCollection<T> resultCollection;
+            resultCollection= await collection.Find(isRemoveFilter).ToListAsync();
+            return (resultCollection, total);
         }
 
-        public async Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T,bool>> filter)
+        public async Task<(IReadOnlyCollection<T>,long? Total)> GetAllAsync(Expression<Func<T,bool>> filter, RequstPaginateDto? paginate)
         {
             FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
             FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+            long total =await collection.Find(combinedFilter).CountAsync();
+            IReadOnlyCollection<T> resultCollection;
 
-            return await collection.Find(combinedFilter).ToListAsync();
+            if (paginate==null)
+            {
+                resultCollection= await collection.Find(combinedFilter).ToListAsync();
+            }
+
+            resultCollection= await collection.Find(combinedFilter)
+                .Skip((paginate.Page-1)*paginate.PageSize)
+                .Limit(paginate.PageSize)
+                .ToListAsync();
+            return(resultCollection,total);
         }
 
         public async Task<T> GetAsync(Guid id)
@@ -46,25 +62,24 @@ namespace Atelier.Persistence.MongoDB
             FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
             return await collection.Find(combinedFilter).FirstOrDefaultAsync();
         }
+
+        public async Task<T> GetLastAsync(Expression<Func<T, bool>> filter)
+        {
+            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+            return await collection.Find(combinedFilter).Limit(1).SortByDescending(q=>q.InsertTime).FirstOrDefaultAsync();
+        }
+
         public async Task CreateAsync(T entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
             await collection.InsertOneAsync(entity);
         }
 
         public async Task UpdateAsync(T entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
             FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, entity.Id);
             FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
             FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-
             await collection.ReplaceOneAsync(combinedFilter, entity);
         }
 
@@ -77,5 +92,6 @@ namespace Atelier.Persistence.MongoDB
             await collection.DeleteOneAsync(combinedFilter);
         }
 
+      
     }
 }

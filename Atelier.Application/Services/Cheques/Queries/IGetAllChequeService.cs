@@ -23,8 +23,8 @@ namespace Atelier.Application.Services.Cheques.Queries
         }
         public async Task<ResultDto<List<ResponseChequeDto>>> Execute(Guid branchId)
         {
-            var result = _chequeRepository.GetAllAsync(q => q.BranchId == branchId)
-                .Result.Select(r => new ResponseChequeDto
+            var (cheques, total) =await _chequeRepository.GetAllAsync(q => q.BranchId == branchId, null);
+                var chequeList= cheques.Select(r => new ResponseChequeDto
                 {
                     Id = r.Id,
                     AccountNumber = r.AccountNumber,
@@ -43,7 +43,8 @@ namespace Atelier.Application.Services.Cheques.Queries
                 }).ToList();
             return new ResultDto<List<ResponseChequeDto>>
             {
-                Data = result,
+                Data = chequeList,
+                Total = total,
                 IsSuccess = true,
                 Message = Messages.GetSuccess
             };

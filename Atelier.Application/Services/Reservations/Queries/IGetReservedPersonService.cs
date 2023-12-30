@@ -23,7 +23,7 @@ namespace Atelier.Application.Services.Reservations.Queries
         }
         public async Task<ResultDto<List<ResponseDateReservation>>> Execute(Guid branchId, DateTime startDateTime, DateTime endDateTime)
         {
-            var dateReservation = _reservationRepository.GetAllAsync(w =>w.BranchId==branchId&&((w.StartDateTime <= startDateTime && w.EndDateTime >= endDateTime))||(w.StartDateTime<=endDateTime&&w.EndDateTime>=startDateTime)).Result.ToList();
+            var (dateReservation,total) =await _reservationRepository.GetAllAsync(w =>w.BranchId==branchId&&((w.StartDateTime <= startDateTime && w.EndDateTime >= endDateTime))||(w.StartDateTime<=endDateTime&&w.EndDateTime>=startDateTime), null);
            
                 return new ResultDto<List<ResponseDateReservation>>
                 {

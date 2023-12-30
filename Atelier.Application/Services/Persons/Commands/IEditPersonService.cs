@@ -53,11 +53,11 @@ namespace Atelier.Application.Services.Persons.Commands
 
             if (!request.Mobile.Trim().IsNullOrEmpty() && request.Mobile!=curentPerson.Mobile)
             {
-                var findUser = await _personRepository.GetAllAsync(p =>
+                var findUser = await _personRepository.GetAsync(p =>
                 p.BranchId==branchId &&
                 p.Mobile==request.Mobile.Trim());
 
-                if (findUser.Count>0)
+                if (findUser!=null)
                 {
                     return new ResultDto
                     {
@@ -68,11 +68,11 @@ namespace Atelier.Application.Services.Persons.Commands
             }
             if (!request.NationalCode.Trim().IsNullOrEmpty() && request.NationalCode!=curentPerson.NationalCode)
             {
-                var findUser = await _personRepository.GetAllAsync(p =>
+                var findUser = await _personRepository.GetAsync(p =>
                 p.BranchId==branchId &&
                 p.NationalCode==request.NationalCode.Trim());
 
-                if (findUser.Count>0)
+                if (findUser!=null)
                 {
                     return new ResultDto
                     {
@@ -87,11 +87,11 @@ namespace Atelier.Application.Services.Persons.Commands
             PersonType personType = null;
             if (request.JobId.HasValue)
             {
-                job =_jobRepository.GetAllAsync(j => j.Id==request.JobId).Result.First();
+                job =await _jobRepository.GetAsync(j =>j.BranchId==branchId && j.Id==request.JobId);
             }
             if (request.PersonTypeId.HasValue)
             {
-                personType =_persontypeRepository.GetAllAsync(p => p.Id==request.PersonTypeId).Result.First();
+                personType =await _persontypeRepository.GetAsync(p =>p.BranchId==branchId && p.Id==request.PersonTypeId);
             }
 
            

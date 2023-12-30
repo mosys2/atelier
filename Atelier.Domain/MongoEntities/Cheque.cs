@@ -27,7 +27,7 @@ namespace Atelier.Domain.MongoEntities
         //public string? Underwriter { get; set; }//پشت نویس
 
         //Common
-        public DateTime? InsertTime { get; set; } = DateTime.Now;
+        public DateTime InsertTime { get; set; } = DateTime.Now;
         public Guid? InsertByUserId { get; set; }
         public DateTime? UpdateTime { get; set; }
         public Guid? UpdateByUserId { get; set; }

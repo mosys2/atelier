@@ -27,7 +27,7 @@ namespace EndPointAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var ourServices = await _ourService.GetOurServiceService.Execute();
+            var ourServices = await _ourService.GetOurServiceService.Execute(branchId);
             return Ok(ourServices);
         }
 

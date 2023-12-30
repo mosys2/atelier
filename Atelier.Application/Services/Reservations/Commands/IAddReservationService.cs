@@ -25,7 +25,7 @@ namespace Atelier.Application.Services.Reservations.Commands
         }
         public async Task<ResultDto> Execute(RequestReservationDto request, Guid userId, Guid branchId)
         {
-            var person=_personRepository.GetAllAsync(p => p.BranchId == branchId && p.Id==request.PersonId).Result.FirstOrDefault();
+            var person=await _personRepository.GetAsync(p => p.BranchId == branchId && p.Id==request.PersonId);
             if(person==null)
             {
                 return new ResultDto
@@ -42,7 +42,7 @@ namespace Atelier.Application.Services.Reservations.Commands
                     Message = Messages.INVAILD_DATETIME
                 };
             }
-            var lastReservation = _reservationRepository.GetAllAsync(o => o.BranchId == branchId).Result.LastOrDefault();
+            var lastReservation =await _reservationRepository.GetLastAsync(o => o.BranchId == branchId);
             Reservation reservation=new Reservation()
             {
                 BranchId = branchId,

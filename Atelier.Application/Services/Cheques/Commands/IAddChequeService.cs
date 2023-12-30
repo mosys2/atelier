@@ -38,7 +38,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 Message=Messages.FinancialTypeNotFound
                 };
             }
-            var bank = _bankRepository.GetAllAsync(b => b.Id == requestCheque.BankId).Result.FirstOrDefault();
+            var bank=await _bankRepository.GetAsync(b => b.BranchId==branchId && b.Id == requestCheque.BankId);
             if (bank == null)
             {
                 return new ResultDto
@@ -47,8 +47,8 @@ namespace Atelier.Application.Services.Cheques.Commands
                     Message = Messages.BankNotFound
                 };
             }
-            bool checkChequeNumber = _chequeRepository.GetAllAsync(b => b.ChequeNumber == requestCheque.ChequeNumber).Result.Count > 0;
-            if (checkChequeNumber)
+            var check =await _chequeRepository.GetAsync(b => b.BranchId==branchId && b.ChequeNumber == requestCheque.ChequeNumber);
+            if (check!=null)
             {
                 return new ResultDto
                 {
@@ -74,7 +74,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                     Message = Messages.StatusRegisterChequeNotFound
                 };
             }
-            var person = _personRepository.GetAllAsync(b =>b.BranchId==branchId&&b.Id == requestCheque.PersonId).Result.FirstOrDefault();
+            var person = await _personRepository.GetAsync(b =>b.BranchId==branchId && b.Id == requestCheque.PersonId);
             if (person==null)
             {
                 return new ResultDto

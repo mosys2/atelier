@@ -27,7 +27,7 @@ namespace EndPointAPI.Controllers
         }
         [HttpGet]
         [Authorize(Policy = "BigAdmin")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery]int page,int pageSize=20)
         {
             if (branchId==Guid.Empty)
             {
@@ -37,7 +37,8 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _personFacad.GetAllPersonService.Execute(branchId);
+            
+            var result = await _personFacad.GetAllPersonService.Execute(branchId,new RequstPaginateDto {Page=page,PageSize=pageSize});
             return Ok(result);
 
         }

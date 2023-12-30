@@ -51,11 +51,11 @@ namespace Atelier.Application.Services.Cheques.Commands
             }
             if (!requestCheque.ChequeNumber.Trim().IsNullOrEmpty() && requestCheque.ChequeNumber != curentCheque.ChequeNumber)
             {
-                var findCheque = await _chequeRepository.GetAllAsync(p =>
+                var findCheque = await _chequeRepository.GetAsync(p =>
                 p.BranchId == branchId &&
                 p.ChequeNumber == requestCheque.ChequeNumber.Trim());
 
-                if (findCheque.Count > 0)
+                if (findCheque!=null)
                 {
                     return new ResultDto
                     {
@@ -76,7 +76,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 };
             }
 
-            var bank = _bankRepository.GetAllAsync(b => b.Id == requestCheque.BankId).Result.FirstOrDefault();
+            var bank =await _bankRepository.GetAsync(b => b.BranchId==branchId && b.Id == requestCheque.BankId);
             if (bank == null)
             {
                 return new ResultDto
@@ -86,8 +86,8 @@ namespace Atelier.Application.Services.Cheques.Commands
                 };
             }
 
-            bool checkChequeNumber = _chequeRepository.GetAllAsync(b => b.ChequeNumber == requestCheque.ChequeNumber).Result.Count > 0;
-            if (checkChequeNumber)
+            var checkChequeNumber =await _chequeRepository.GetAsync(b => b.ChequeNumber == requestCheque.ChequeNumber);
+            if (checkChequeNumber!=null)
             {
                 return new ResultDto
                 {
@@ -116,7 +116,7 @@ namespace Atelier.Application.Services.Cheques.Commands
                 };
             }
 
-            var person = _personRepository.GetAllAsync(b => b.BranchId == branchId && b.Id == requestCheque.PersonId).Result.FirstOrDefault();
+            var person =await _personRepository.GetAsync(b => b.BranchId == branchId && b.Id == requestCheque.PersonId);
             if (person == null)
             {
                 return new ResultDto

@@ -12,7 +12,7 @@ namespace Atelier.Application.Services.Reservations.Queries
 {
     public interface IGetAllReservationService
     {
-        Task<ResultDto<List<ResponseReservationDto>>> Execute();
+        Task<ResultDto<List<ResponseReservationDto>>> Execute(Guid branchId);
     }
     public class GetAllReservationService : IGetAllReservationService
     {
@@ -21,9 +21,10 @@ namespace Atelier.Application.Services.Reservations.Queries
         {
             _reservationRepository = reservationRepository;
         }
-        public async Task<ResultDto<List<ResponseReservationDto>>> Execute()
+        public async Task<ResultDto<List<ResponseReservationDto>>> Execute(Guid branchId)
         {
-            var reservation = _reservationRepository.GetAllAsync().Result.Select(o => new ResponseReservationDto
+            var (reservation,total) =await _reservationRepository.GetAllAsync(q=>q.BranchId==branchId, null);
+            var reservationList=reservation.Select(o => new ResponseReservationDto
             {
                 Id = o.Id,
                 StartDateTime = o.StartDateTime,
@@ -34,7 +35,8 @@ namespace Atelier.Application.Services.Reservations.Queries
             }).ToList();
             return new ResultDto<List<ResponseReservationDto>>()
             {
-                Data = reservation,
+                Data = reservationList,
+                Total=total,
                 IsSuccess = true,
                 Message = Messages.GetSuccess
             };

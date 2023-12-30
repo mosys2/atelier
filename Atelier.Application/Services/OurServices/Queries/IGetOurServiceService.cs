@@ -12,7 +12,7 @@ namespace Atelier.Application.Services.OurServices.Queries
 {
     public interface IGetOurServiceService
     {
-        Task<ResultDto<List<ResponseOurServiceDto>>> Execute();
+        Task<ResultDto<List<ResponseOurServiceDto>>> Execute(Guid branchId);
     }
     public class GetOurServiceService : IGetOurServiceService
     {
@@ -21,9 +21,10 @@ namespace Atelier.Application.Services.OurServices.Queries
         {
             _ourServiceRepository=ourServiceRepository;
         }
-        public async Task<ResultDto<List<ResponseOurServiceDto>>> Execute()
+        public async Task<ResultDto<List<ResponseOurServiceDto>>> Execute(Guid branchId)
         {
-            var ourServices= _ourServiceRepository.GetAllAsync().Result.Select(o =>new ResponseOurServiceDto
+            var (ourServices,total) =await _ourServiceRepository.GetAllAsync(q => q.BranchId==branchId, null);
+            var ourServiceList= ourServices.Select(o =>new ResponseOurServiceDto
             {
                 Id=o.Id,
                 PriceWithProfit=o.PriceWithProfit,
@@ -32,7 +33,8 @@ namespace Atelier.Application.Services.OurServices.Queries
             }).ToList();
             return new ResultDto<List<ResponseOurServiceDto>>()
             {
-                Data=ourServices,
+                Data=ourServiceList,
+                Total=total,
                 IsSuccess=true,
                 Message=Messages.GetSuccess
             };
