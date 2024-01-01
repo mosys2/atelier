@@ -1,5 +1,4 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using Atelier.Application.Interfaces.Repository;
+﻿using Atelier.Application.Interfaces.Repository;
 using Atelier.Common.Dto;
 using Atelier.Domain.MongoEntities;
 using Microsoft.AspNetCore.Http;
@@ -8,217 +7,136 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Atelier.Persistence.MongoDB
 {
-    public class MongoRepository<T>: IMongoRepository<T> where T : IEntity
+    public class MongoRepository<T> : IMongoRepository<T> where T : IEntity
     {
         private readonly IMongoCollection<T> collection;
         private readonly FilterDefinitionBuilder<T> filterBuilder = Builders<T>.Filter;
-        public MongoRepository(IMongoDatabase database,string collectionName)
+
+        public MongoRepository(IMongoDatabase database, string collectionName)
         {
             collection = database.GetCollection<T>(collectionName);
         }
-        public async Task<(IReadOnlyCollection<T>,long? Total)> GetAllAsync(RequstPaginateDto? paginate, IClientSessionHandle session = null)
-        {
-<<<<<<< HEAD
-            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-            long total = 0;
-            IReadOnlyCollection<T> resultCollection;
-            resultCollection= await collection.Find(isRemoveFilter).ToListAsync();
-            return (resultCollection, total);
-        }
 
-        [Obsolete]
-        public async Task<(IReadOnlyCollection<T>,long? Total)> GetAllAsync(Expression<Func<T,bool>> filter, RequstPaginateDto? paginate)
-        {
-            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-            long total =await collection.Find(combinedFilter).CountAsync();
-            IReadOnlyCollection<T> resultCollection;
-
-            if (paginate==null)
-            {
-                resultCollection= await collection.Find(combinedFilter).SortByDescending(q => q.InsertTime).ToListAsync();
-=======
-            try
-            {
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                long total = 0;
-                IReadOnlyCollection<T> resultCollection;
-                if(session==null)
-                {
-                    resultCollection = await collection.Find(isRemoveFilter).ToListAsync();
-                    return (resultCollection, total);
-                }
-                else
-                {
-                    resultCollection = await collection.Find(session,isRemoveFilter).ToListAsync();
-                    return (resultCollection, total);
-                }
->>>>>>> 7db3bf34157b36cc879f11fe7a99f0fafe418b29
-            }
-            catch (Exception)
-            {
-
-<<<<<<< HEAD
-            resultCollection= await collection.Find(combinedFilter)
-                .SortByDescending(q => q.InsertTime)
-                .Skip((paginate?.Page-1)*paginate?.PageSize)
-                .Limit(paginate?.PageSize)
-                .ToListAsync();
-            return(resultCollection,total);
-=======
-                throw;
-            }
->>>>>>> 7db3bf34157b36cc879f11fe7a99f0fafe418b29
-        }
-
-        public async Task<(IReadOnlyCollection<T>,long? Total)> GetAllAsync(Expression<Func<T,bool>> filter, RequstPaginateDto? paginate, IClientSessionHandle session = null)
+        public async Task<(IReadOnlyCollection<T>, long? Total)> GetAllAsync(RequstPaginateDto? paginate, IClientSessionHandle session = null)
         {
             try
             {
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var resultCollection = session == null
+                    ? await collection.Find(isRemoveFilter).ToListAsync()
+                    : await collection.Find(session, isRemoveFilter).ToListAsync();
+
+                return (resultCollection, resultCollection.Count);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<(IReadOnlyCollection<T>, long? Total)> GetAllAsync(Expression<Func<T, bool>> filter, RequstPaginateDto? paginate, IClientSessionHandle session = null)
+        {
+            try
+            {
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var combinedFilter = filter & isRemoveFilter;
+
                 long total = await collection.Find(combinedFilter).CountAsync();
-                IReadOnlyCollection<T> resultCollection;
-                if(session== null)
-                {
-                    if (paginate == null)
-                    {
-                        resultCollection = await collection.Find(combinedFilter).ToListAsync();
-                    }
-                    else
-                    {
-                        resultCollection = await collection.Find(combinedFilter)
-                            .Skip((paginate.Page - 1) * paginate.PageSize)
-                            .Limit(paginate.PageSize)
-                            .ToListAsync();
-                    }
-                    return (resultCollection, total);
-                }
-                else
-                {
-                    if (paginate == null)
-                    {
-                        resultCollection = await collection.Find(session,combinedFilter).ToListAsync();
-                    }
-                    else
-                    {
-                        resultCollection = await collection.Find(session, combinedFilter)
-                            .Skip((paginate.Page - 1) * paginate.PageSize)
-                            .Limit(paginate.PageSize)
-                            .ToListAsync();
-                    }
-                    return (resultCollection, total);
-                }
-            }
-            catch (Exception)
-            {
 
-                throw;
+                var resultCollection = session == null
+                    ? await ApplyPagination(collection.Find(combinedFilter), paginate).ToListAsync()
+                    : await ApplyPagination(collection.Find(session, combinedFilter), paginate).ToListAsync();
+
+                return (resultCollection, total);
             }
-            
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<T> GetAsync(Guid id, IClientSessionHandle session = null)
         {
             try
             {
-                FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, id);
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-                if(session==null)
-                {
-                    return await collection.Find(combinedFilter).FirstOrDefaultAsync();
-                }
-                else
-                {
-                    return await collection.Find(session, combinedFilter).FirstOrDefaultAsync();
-                }
-            }
-            catch (Exception)
-            {
+                var filter = filterBuilder.Eq(e => e.Id, id);
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var combinedFilter = filter & isRemoveFilter;
 
-                throw;
+                return session == null
+                    ? await collection.Find(combinedFilter).FirstOrDefaultAsync()
+                    : await collection.Find(session, combinedFilter).FirstOrDefaultAsync();
             }
-           
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+
         public async Task<T> GetAsync(Expression<Func<T, bool>> filter, IClientSessionHandle session = null)
         {
             try
             {
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-                if(session==null)
-                {
-                    return await collection.Find(combinedFilter).FirstOrDefaultAsync();
-                }
-                else
-                {
-                    return await collection.Find(session,combinedFilter).FirstOrDefaultAsync();
-                }
-            }
-            catch (Exception)
-            {
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var combinedFilter = filter & isRemoveFilter;
 
-                throw;
+                return session == null
+                    ? await collection.Find(combinedFilter).FirstOrDefaultAsync()
+                    : await collection.Find(session, combinedFilter).FirstOrDefaultAsync();
             }
-           
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<T> GetLastAsync(Expression<Func<T, bool>> filter, IClientSessionHandle session = null)
         {
             try
             {
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-                if(session==null)
-                {
-                    return await collection.Find(combinedFilter).Limit(1).SortByDescending(q => q.InsertTime).FirstOrDefaultAsync();
-                }
-                else
-                {
-                    return await collection.Find(session,combinedFilter).Limit(1).SortByDescending(q => q.InsertTime).FirstOrDefaultAsync();
-                }
-            }
-            catch (Exception)
-            {
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var combinedFilter = filter & isRemoveFilter;
 
-                throw;
+                return session == null
+                    ? await collection.Find(combinedFilter).Limit(1).SortByDescending(q => q.InsertTime).FirstOrDefaultAsync()
+                    : await collection.Find(session, combinedFilter).Limit(1).SortByDescending(q => q.InsertTime).FirstOrDefaultAsync();
             }
-           
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task CreateAsync(T entity, IClientSessionHandle session = null)
         {
-            if(session==null)
+            try
             {
-                await collection.InsertOneAsync(entity);
+                if (session == null)
+                {
+                    await collection.InsertOneAsync(entity);
+                }
+                else
+                {
+                    await collection.InsertOneAsync(session, entity);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await collection.InsertOneAsync(session,entity);
+                throw ex;
             }
         }
 
         public async Task UpdateAsync(T entity, IClientSessionHandle session = null)
         {
-<<<<<<< HEAD
-            FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, id);
-            FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-            FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-            await collection.DeleteOneAsync(combinedFilter);
-=======
             try
             {
-                FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, entity.Id);
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
+                var filter = filterBuilder.Eq(e => e.Id, entity.Id);
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var combinedFilter = filter & isRemoveFilter;
 
                 if (session == null)
                 {
@@ -231,19 +149,19 @@ namespace Atelier.Persistence.MongoDB
             }
             catch (Exception ex)
             {
-                // Handle the exception as needed
                 throw ex;
             }
->>>>>>> 7db3bf34157b36cc879f11fe7a99f0fafe418b29
         }
+
         public async Task RemoveAsync(Guid id, IClientSessionHandle session = null)
         {
             try
             {
-                FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, id);
-                FilterDefinition<T> isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
-                FilterDefinition<T> combinedFilter = filter & isRemoveFilter;
-                if(session==null)
+                var filter = filterBuilder.Eq(e => e.Id, id);
+                var isRemoveFilter = filterBuilder.Eq(e => e.IsRemoved, false);
+                var combinedFilter = filter & isRemoveFilter;
+
+                if (session == null)
                 {
                     await collection.DeleteOneAsync(combinedFilter);
                 }
@@ -252,16 +170,24 @@ namespace Atelier.Persistence.MongoDB
                     await collection.DeleteOneAsync(session, combinedFilter);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
-           
         }
+
         public async Task<IClientSessionHandle> StartSessionAsync()
         {
             return await collection.Database.Client.StartSessionAsync();
+        }
+
+        private IFindFluent<T, T> ApplyPagination(IFindFluent<T, T> query, RequstPaginateDto? paginate)
+        {
+            if (paginate == null) return query;
+
+            return query
+                .Skip((paginate.Page - 1) * paginate.PageSize)
+                .Limit(paginate.PageSize);
         }
     }
 }

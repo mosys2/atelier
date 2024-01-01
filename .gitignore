@@ -415,3 +415,4 @@ FodyWeavers.xsd
 /.vs/Atelier/v17/.suo
 /.vs/Atelier/FileContentIndex/0b8216c2-845e-4ffe-a67e-e1f44fabd083.vsidx
 /.vs/Atelier/FileContentIndex/cc20f175-8970-44c2-ac93-00a4f5094831.vsidx
+/Atelier.Application/Services/Persons/Commands/IAddPersonService.cs

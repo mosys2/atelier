@@ -3,11 +3,8 @@ using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Atelier.Common.Helpers;
 using Atelier.Domain.MongoEntities;
-using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Atelier.Application.Services.Persons.Commands
@@ -16,77 +13,51 @@ namespace Atelier.Application.Services.Persons.Commands
     {
         Task<ResultDto> Execute(RequestPersonDto request, Guid userId, Guid branchId);
     }
+
     public class AddPersonService : IAddPersonService
     {
         private readonly IMongoRepository<Person> _personRepository;
         private readonly IMongoRepository<Job> _jobRepository;
-        private readonly IMongoRepository<PersonType> _persontypeRepository;
+        private readonly IMongoRepository<PersonType> _personTypeRepository;
 
-        public AddPersonService(IMongoRepository<Person> personRepository,
+        public AddPersonService(
+            IMongoRepository<Person> personRepository,
             IMongoRepository<Job> jobRepository,
-            IMongoRepository<PersonType> persontypeRepository)
+            IMongoRepository<PersonType> personTypeRepository)
         {
             _personRepository = personRepository;
             _jobRepository = jobRepository;
-            _persontypeRepository = persontypeRepository;
+            _personTypeRepository = personTypeRepository;
         }
+
         public async Task<ResultDto> Execute(RequestPersonDto request, Guid userId, Guid branchId)
         {
-<<<<<<< HEAD
-            //چک کردن شماره تلفن و یا کد ملی تکراری
-            //خالی وارد کردن هر دو باید ثبت شود
-
-            if (!request.Mobile.Trim().IsNullOrEmpty())
-=======
             using (var session = await _personRepository.StartSessionAsync())
->>>>>>> 7db3bf34157b36cc879f11fe7a99f0fafe418b29
             {
                 try
                 {
                     session.StartTransaction();
-                    //چک کردن شماره تلفن و یا کد ملی تکراری
-                    //خالی وارد کردن هر دو باید ثبت شود
 
-                    if (!request.Mobile.Trim().IsNullOrEmpty())
+                    // Check for duplicate mobile number
+                    if (!string.IsNullOrEmpty(request.Mobile.Trim()))
                     {
-                        var findUser = await _personRepository.GetAsync(p => p.BranchId == branchId &&
-                        p.Mobile == request.Mobile.Trim(),session);
+                        var duplicateMobile = await CheckDuplicateAsync(branchId, p => p.Mobile == request.Mobile.Trim(), Messages.DuplicateMobile, session);
+                        if (!duplicateMobile.IsSuccess)
+                            return duplicateMobile;
+                    }
 
-                        if (findUser != null)
-                        {
-                            return new ResultDto
-                            {
-                                IsSuccess = false,
-                                Message = Messages.DuplicateMobile
-                            };
-                        }
-                    }
-                    if (!request.NationalCode.Trim().IsNullOrEmpty())
+                    // Check for duplicate national code
+                    if (!string.IsNullOrEmpty(request.NationalCode.Trim()))
                     {
-                        var findUser = await _personRepository.GetAsync(p => p.BranchId == branchId &&
-                        p.NationalCode == request.NationalCode.Trim(),session);
+                        var duplicateNationalCode = await CheckDuplicateAsync(branchId, p => p.NationalCode == request.NationalCode.Trim(), Messages.DuplicateNationalCode, session);
+                        if (!duplicateNationalCode.IsSuccess)
+                            return duplicateNationalCode;
+                    }
 
-                        if (findUser != null)
-                        {
-                            return new ResultDto
-                            {
-                                IsSuccess = false,
-                                Message = Messages.DuplicateNationalCode
-                            };
-                        }
-                    }
-                    //گرفتن فیلد ها ی شغل و نوع شخص در صورت انتخاب
-                    Job job = null;
-                    PersonType personType = null;
-                    if (request.JobId.HasValue)
-                    {
-                        job = await _jobRepository.GetAsync(j => j.BranchId == branchId && j.Id == request.JobId, session);
-                    }
-                    if (request.PersonTypeId.HasValue)
-                    {
-                        personType = await _persontypeRepository.GetAsync(p => p.BranchId == branchId && p.Id == request.PersonTypeId, session);
-                    }
-                    Person person = new Person()
+                    var job = await GetEntityByIdAsync(request.JobId, branchId, _jobRepository, session);
+                    var personType = await GetEntityByIdAsync(request.PersonTypeId, branchId, _personTypeRepository, session);
+
+                    var person = new Person
                     {
                         Name = request.Name.Trim(),
                         Family = request.Family.Trim(),
@@ -94,7 +65,7 @@ namespace Atelier.Application.Services.Persons.Commands
                         InsertByUserId = userId,
                         Address = request.Address?.Trim(),
                         Description = request.Description?.Trim(),
-                        FullName = request.Name.Trim() + " " + request.Family.Trim(),
+                        FullName = $"{request.Name.Trim()} {request.Family.Trim()}",
                         InsertTime = DateTime.Now,
                         Job = job,
                         PersonType = personType,
@@ -102,13 +73,11 @@ namespace Atelier.Application.Services.Persons.Commands
                         NationalCode = request.NationalCode.Trim(),
                         Phone = request.Phone?.Trim(),
                     };
+
                     await _personRepository.CreateAsync(person, session);
                     await session.CommitTransactionAsync();
-                    return new ResultDto
-                    {
-                        IsSuccess = true,
-                        Message = Messages.RegisterSuccess
-                    };
+
+                    return new ResultDto { IsSuccess = true, Message = Messages.RegisterSuccess };
                 }
                 catch (Exception ex)
                 {
@@ -118,5 +87,22 @@ namespace Atelier.Application.Services.Persons.Commands
                 }
             }
         }
+
+        private async Task<ResultDto> CheckDuplicateAsync(Guid branchId, Func<Person, bool> condition, string errorMessage, IClientSessionHandle session)
+        {
+            var duplicateEntity = await _personRepository.GetAsync(p => p.BranchId == branchId && condition(p), session);
+
+            return duplicateEntity != null
+                ? new ResultDto { IsSuccess = false, Message = errorMessage }
+                : new ResultDto { IsSuccess = true };
+        }
+
+        private Task<T> GetEntityByIdAsync<T>(Guid? entityId, Guid branchId, IMongoRepository<T> repository, IClientSessionHandle session) where T : IEntity
+        {
+            return entityId.HasValue
+                ? repository.GetAsync(e => e.BranchId == branchId && e.Id == entityId, session)
+                : Task.FromResult<T>(default);
+        }
+
     }
 }
