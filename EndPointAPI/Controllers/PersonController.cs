@@ -40,7 +40,6 @@ namespace EndPointAPI.Controllers
             
             var result = await _personFacad.GetAllPersonService.Execute(branchId,new RequstPaginateDto {Page=page,PageSize=pageSize});
             return Ok(result);
-
         }
 
         // POST api/<PersonController>
@@ -59,6 +58,7 @@ namespace EndPointAPI.Controllers
             var result = await _personFacad.AddPersonService.Execute(request, userId, branchId);
             return Ok(result);
         }
+
         [HttpPut]
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Put([FromBody] RequestPersonDto request)
@@ -74,6 +74,7 @@ namespace EndPointAPI.Controllers
             var result = await _personFacad.EditPersonService.Execute(request, userId, branchId);
             return Ok(result);
         }
+
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Delete(Guid id)

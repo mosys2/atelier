@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace Atelier.Domain.MongoEntities
 {
-    public class PersonType:IEntity
+    public class Contract:IEntity
     {
         public Guid Id { get; set; }
         public Guid BranchId { get; set; }
-        public string Title { get; set; }
+        //طرفین قرارداد
+           
+
+        
+
         //Common
         public DateTime InsertTime { get; set; } = DateTime.Now;
         public Guid? InsertByUserId { get; set; }

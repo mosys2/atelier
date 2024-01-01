@@ -35,7 +35,6 @@ namespace Atelier.Application.Services.Persons.Commands
             //چک کردن شماره تلفن و یا کد ملی تکراری
             //خالی وارد کردن هر دو باید ثبت شود
 
-
             if (!request.Mobile.Trim().IsNullOrEmpty())
             {
                 var findUser = await _personRepository.GetAsync(p => p.BranchId==branchId &&

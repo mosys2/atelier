@@ -4,6 +4,7 @@ using Atelier.Application.Services.Cheques.Commands;
 using Atelier.Application.Services.Persons.Commands;
 using Atelier.Application.Services.Persons.Queries;
 using Atelier.Domain.MongoEntities;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,11 @@ namespace Atelier.Application.Services.Persons.FacadPattern
         private readonly IMongoRepository<Person> _personRepository;
         private readonly IMongoRepository<Job> _jobRepository;
         private readonly IMongoRepository<PersonType> _persontypeRepository;
-        public PersonFacad(IMongoRepository<Person> personRepository, IMongoRepository<Job> jobRepository,  IMongoRepository<PersonType> persontypeRepository)
+        private readonly IMongoClient _mongoClient;
+
+        public PersonFacad(IMongoRepository<Person> personRepository,
+            IMongoRepository<Job> jobRepository,
+            IMongoRepository<PersonType> persontypeRepository)
         {
             _jobRepository = jobRepository;
             _personRepository = personRepository;
