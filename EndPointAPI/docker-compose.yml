@@ -5,7 +5,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./data/mongo1:/data/db
+      - C:/MongoDockerData/mongo1:/data/db
     command: --replSet rs0
 
   mongo2:
@@ -13,7 +13,7 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - ./data/mongo2:/data/db
+      - C:/MongoDockerData/mongo2:/data/db
     command: --replSet rs0
 
   mongo3:
@@ -21,5 +21,5 @@ services:
     ports:
       - "27019:27017"
     volumes:
-      - ./data/mongo3:/data/db
+      - C:/MongoDockerData/mongo3:/data/db
     command: --replSet rs0
