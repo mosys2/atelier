@@ -58,6 +58,9 @@ using Atelier.Application.Services.Cheques.FacadPattern;
 using Atelier.Application.Services.Persons.FacadPattern;
 using Atelier.Application.Services.OurServices.FacadPattern;
 using Atelier.Application.Services.Reservations.FacadPattern;
+using Atelier.Application.Services.Banks.FacadPattern;
+using Atelier.Application.Services.Jobs.FacadPattern;
+using Atelier.Application.Services.PersonTypes.FacadPattern;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -127,17 +130,15 @@ builder.Services.AddScoped<IEditEmployeeService, EditEmployeeService>();
 builder.Services.AddScoped<IEditSecretaryService, EditSecretaryService>();
 builder.Services.AddScoped<IGetRolesService, GetRolesService>();
 builder.Services.AddScoped<ICheckTokenUserService, CheckTokenUserService>();
-builder.Services.AddScoped<IAddNewBankService, AddNewBankService>();
 builder.Services.AddScoped<IAtelierFacad, AtelierFacad>();
 builder.Services.AddScoped<IBranchFacad, BranchFacad>();
 builder.Services.AddScoped<IUserFacad, UserFacad>();
 builder.Services.AddScoped<IChequeFacad, ChequeFacad>();
 builder.Services.AddScoped<IPersonFacad, PersonFacad>();
 builder.Services.AddScoped<IReservationFacad, ReservationFacad>();
-builder.Services.AddScoped<IAddJobService, AddJobService>();
-builder.Services.AddScoped<IGetAllJobService, GetAllJobService>();
-builder.Services.AddScoped<IAddPersonTypeService, AddPersonTypeService>();
-builder.Services.AddScoped<IGetAllPersonTypeService, GetAllPersonType>();
+builder.Services.AddScoped<IBankFacad, BankFacad>();
+builder.Services.AddScoped<IJobFacad, JobFacad>();
+builder.Services.AddScoped<IPersonTypeFacad, PersonTypeFacad>();
 builder.Services.AddScoped<IOurServiceFacad, OurServiceFacad>();
 
 

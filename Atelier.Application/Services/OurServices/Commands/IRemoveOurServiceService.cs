@@ -25,26 +25,41 @@ namespace Atelier.Application.Services.OurServices.Commands
         }
         public async Task<ResultDto> Execute(Guid id, Guid userId)
         {
-            var person = await _ourServiceRepository.GetAsync(id);
-            if (person == null)
+            using (var session = await _ourServiceRepository.StartSessionAsync())
             {
-                return new ResultDto()
+                try
                 {
-                    IsSuccess = false,
-                    Message=Messages.PersonNotFound,
-                };
+                    session.StartTransaction();
+                    var person = await _ourServiceRepository.GetAsync(id, session);
+                    if (person == null)
+                    {
+                        return new ResultDto()
+                        {
+                            IsSuccess = false,
+                            Message = Messages.PersonNotFound,
+                        };
+                    }
+
+                    person.IsRemoved = true;
+                    person.RemoveTime = DateTime.Now;
+                    person.RemoveByUserId = userId;
+
+                    await _ourServiceRepository.UpdateAsync(person, session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto()
+                    {
+                        IsSuccess = true,
+                        Message = Messages.Remove
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
             }
-
-            person.IsRemoved = true;
-            person.RemoveTime = DateTime.Now;
-            person.RemoveByUserId = userId;
-
-            await _ourServiceRepository.UpdateAsync(person);
-            return new ResultDto()
-            {
-                IsSuccess=true,
-                Message=Messages.Remove
-            };
+           
         }
     }
 }

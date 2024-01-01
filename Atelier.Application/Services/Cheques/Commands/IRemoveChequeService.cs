@@ -23,26 +23,39 @@ namespace Atelier.Application.Services.Cheques.Commands
         }
         public async Task<ResultDto> Execute(Guid id, Guid userId, Guid branchId)
         {
-            var cheque = await _chequeRepository.GetAsync(id);
-            if (cheque == null)
+            using (var session = await _chequeRepository.StartSessionAsync())
             {
-                return new ResultDto()
+                try
                 {
-                    IsSuccess = false,
-                    Message = Messages.PersonNotFound,
-                };
-            }
+                    session.StartTransaction();
+                    var cheque = await _chequeRepository.GetAsync(id, session);
+                    if (cheque == null)
+                    {
+                        return new ResultDto()
+                        {
+                            IsSuccess = false,
+                            Message = Messages.PersonNotFound,
+                        };
+                    }
+                    cheque.IsRemoved = true;
+                    cheque.RemoveTime = DateTime.Now;
+                    cheque.RemoveByUserId = userId;
 
-            cheque.IsRemoved = true;
-            cheque.RemoveTime = DateTime.Now;
-            cheque.RemoveByUserId = userId;
-
-            await _chequeRepository.UpdateAsync(cheque);
-            return new ResultDto()
-            {
-                IsSuccess = true,
-                Message = Messages.Remove
-            };
+                    await _chequeRepository.UpdateAsync(cheque, session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto()
+                    {
+                        IsSuccess = true,
+                        Message = Messages.Remove
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            } 
         }
     }
 }

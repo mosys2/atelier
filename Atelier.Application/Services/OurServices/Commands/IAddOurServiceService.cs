@@ -24,29 +24,44 @@ namespace Atelier.Application.Services.OurServices.Commands
         }
         public async Task<ResultDto> Execute(RequestOurServiceDto request, Guid userId, Guid branchId)
         {
-            if(request.PriceWithProfit<0)
+            using (var session = await _ourServiceRepository.StartSessionAsync())
             {
-                return new ResultDto
+                try
                 {
-                    IsSuccess = false,
-                    Message=Messages.PRICE_INVALID
-                };
+                    session.StartTransaction();
+                    if (request.PriceWithProfit < 0)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.PRICE_INVALID
+                        };
+                    }
+                    OurService ourService = new OurService()
+                    {
+                        BranchId = branchId,
+                        Title = request.Title,
+                        InsertByUserId = userId,
+                        Description = request.Description,
+                        PriceWithProfit = request.PriceWithProfit,
+                        RawPrice = request.RawPrice,
+                    };
+                    await _ourServiceRepository.CreateAsync(ourService,session);
+                    await session.CommitTransactionAsync(); 
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.RegisterSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
             }
-            OurService ourService = new OurService()
-            {
-                BranchId = branchId,
-                Title = request.Title,
-                InsertByUserId = userId,
-                Description = request.Description,
-                PriceWithProfit = request.PriceWithProfit,
-                RawPrice = request.RawPrice,
-            };
-            await _ourServiceRepository.CreateAsync(ourService);
-            return new ResultDto
-            {
-                IsSuccess = true,
-                Message=Messages.RegisterSuccess
-            };
+           
         }
     }
 }

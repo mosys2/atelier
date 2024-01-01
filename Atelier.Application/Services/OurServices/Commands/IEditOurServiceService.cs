@@ -23,35 +23,50 @@ namespace Atelier.Application.Services.OurServices.Commands
         }
         public async Task<ResultDto> Execute(RequestOurServiceDto request, Guid userId, Guid branchId)
         {
-            if (request.Id==null)
+            using (var session = await _ourServiceRepository.StartSessionAsync())
             {
-                return new ResultDto
+                try
                 {
-                    IsSuccess = false,
-                    Message=Messages.INVALID_ID
-                };
-            }
-            var ourService = await _ourServiceRepository.GetAsync(request.Id.Value);
-            if (ourService == null)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.NOT_FOUND_RECORD
-                };
-            }
-            ourService.Title = request.Title;
-            ourService.Description = request.Description;
-            ourService.PriceWithProfit = request.PriceWithProfit;
-            ourService.RawPrice = request.RawPrice;
-            ourService.UpdateByUserId=userId;
-            ourService.UpdateTime=DateTime.Now;
+                    session.StartTransaction();
+                    if (request.Id == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.INVALID_ID
+                        };
+                    }
+                    var ourService = await _ourServiceRepository.GetAsync(request.Id.Value,session);
+                    if (ourService == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.NOT_FOUND_RECORD
+                        };
+                    }
+                    ourService.Title = request.Title;
+                    ourService.Description = request.Description;
+                    ourService.PriceWithProfit = request.PriceWithProfit;
+                    ourService.RawPrice = request.RawPrice;
+                    ourService.UpdateByUserId = userId;
+                    ourService.UpdateTime = DateTime.Now;
 
-            await _ourServiceRepository.UpdateAsync(ourService);
-            return new ResultDto { 
-                IsSuccess = true,
-                Message= Messages.MessageUpdate
-            };
+                    await _ourServiceRepository.UpdateAsync(ourService,session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.MessageUpdate
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            } 
         }
     }
 }

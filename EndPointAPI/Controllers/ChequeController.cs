@@ -31,7 +31,7 @@ namespace EndPointAPI.Controllers
         // GET: api/<ChequeController>
         [HttpGet]
         [Authorize(Policy = "BigAdmin")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] int page, int pageSize = 20)
         {
             if (branchId == Guid.Empty)
             {
@@ -41,7 +41,7 @@ namespace EndPointAPI.Controllers
                     Message = Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _chequeFacad.GetAllChequesService.Execute(branchId);
+            var result = await _chequeFacad.GetAllChequesService.Execute(branchId, new RequstPaginateDto { Page = page, PageSize = pageSize });
             return Ok(result);
 
         }

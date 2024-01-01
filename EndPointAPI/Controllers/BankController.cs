@@ -1,6 +1,9 @@
-﻿using Atelier.Application.Services.Banks.Commands;
+﻿using Atelier.Application.Interfaces.FacadPattern;
+using Atelier.Application.Services.Banks.Commands;
+using Atelier.Application.Services.Persons.FacadPattern;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
+using Atelier.Domain.Entities.Users;
 using EndPointAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +19,14 @@ namespace EndPointAPI.Controllers
     [ApiController]
     public class BankController : ControllerBase
     {
-        private readonly IAddNewBankService _addNewBank;
-       
-        public BankController(IAddNewBankService addNewBank)
+        private readonly IBankFacad _bankFacad;
+        private readonly Guid userId;
+        private readonly Guid branchId;
+        public BankController(IBankFacad bankFacad, ClaimsPrincipal user)
         {
-            _addNewBank = addNewBank;
+            _bankFacad = bankFacad;
+            userId = Guid.Parse(ClaimUtility.GetUserId(user) ?? "");
+            branchId = Guid.Parse(ClaimUtility.GetBranchId(user) ?? "");
         }
         // GET: api/<BankController>
         [HttpGet]
@@ -51,8 +57,7 @@ namespace EndPointAPI.Controllers
                     Message=Messages.InvalidForm
                 });
             }
-            var userId =Guid.Parse(ClaimUtility.GetUserId(User)??"");
-            var branchId =Guid.Parse(ClaimUtility.GetBranchId(User)??"");
+           
             if (userId == Guid.Empty || branchId==Guid.Empty)
             {
                 return Ok(new ResultDto
@@ -61,14 +66,25 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _addNewBank.Execute(request, userId, branchId);
+            var result = await _bankFacad.AddNewBankService.Execute(request, userId, branchId);
             return Ok(result);
         }
 
         // PUT api/<BankController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut()]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Put([FromBody] RequestBankDto request)
         {
+            if (!ModelState.IsValid)
+            {
+                return Ok(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message = Messages.InvalidForm
+                });
+            }
+            var result = await _bankFacad.EditBankService.Execute(request, userId, branchId);
+            return Ok(result);
         }
         // DELETE api/<BankController>/5
         [HttpDelete("{id}")]

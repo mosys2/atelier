@@ -25,56 +25,70 @@ namespace Atelier.Application.Services.Reservations.Commands
         }
         public async Task<ResultDto> Execute(RequestReservationDto request, Guid userId, Guid branchId)
         {
-            if (request.Id == null)
+            using (var session = await _reservationRepository.StartSessionAsync())
             {
-                return new ResultDto
+                try
                 {
-                    IsSuccess = false,
-                    Message = Messages.NotFind
-                };
-            }
-            var currentReservation =await _reservationRepository.GetAsync(r=>r.BranchId==branchId && r.Id==request.Id.Value);
-            if(currentReservation==null)
-            {
-                return new ResultDto
-                {
-                    IsSuccess=false,
-                    Message=Messages.NotFind,
-                };
-            }
-            var person = await _personRepository.GetAsync(p => p.BranchId == branchId && p.Id == request.PersonId);
-            if (person == null)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.PersonNotFound
-                };
-            }
-            if (request.StartDateTime > request.EndDateTime)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.INVAILD_DATETIME
-                };
-            }
+                    session.StartTransaction();
+                    if (request.Id == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.NotFind
+                        };
+                    }
+                    var currentReservation = await _reservationRepository.GetAsync(r => r.BranchId == branchId && r.Id == request.Id.Value, session);
+                    if (currentReservation == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.NotFind,
+                        };
+                    }
+                    var person = await _personRepository.GetAsync(p => p.BranchId == branchId && p.Id == request.PersonId, session);
+                    if (person == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.PersonNotFound
+                        };
+                    }
+                    if (request.StartDateTime > request.EndDateTime)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.INVAILD_DATETIME
+                        };
+                    }
 
-            currentReservation.BranchId = branchId;
-            currentReservation.UpdateByUserId = userId;
-            currentReservation.UpdateTime = DateTime.Now;
-            currentReservation.Person = person;
-            currentReservation.Description = request.Description;
-            currentReservation.PhoneNumber = request.PhoneNumber;
-            currentReservation.StartDateTime = request.StartDateTime;
-            currentReservation.EndDateTime = request.EndDateTime;
-          
-            await _reservationRepository.UpdateAsync(currentReservation);
-            return new ResultDto
-            {
-                IsSuccess = true,
-                Message = Messages.MessageUpdate
-            };
+                    currentReservation.BranchId = branchId;
+                    currentReservation.UpdateByUserId = userId;
+                    currentReservation.UpdateTime = DateTime.Now;
+                    currentReservation.Person = person;
+                    currentReservation.Description = request.Description;
+                    currentReservation.PhoneNumber = request.PhoneNumber;
+                    currentReservation.StartDateTime = request.StartDateTime;
+                    currentReservation.EndDateTime = request.EndDateTime;
+
+                    await _reservationRepository.UpdateAsync(currentReservation,session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.MessageUpdate
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
         }
     }
 }

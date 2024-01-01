@@ -24,25 +24,39 @@ namespace Atelier.Application.Services.Persons.Commands
         }
         public async Task<ResultDto> Execute(Guid id, Guid userId, Guid branchId)
         {
-            var person = await _personRepository.GetAsync(id);
-            if (person == null)
+            using (var session = await _personRepository.StartSessionAsync())
             {
-                return new ResultDto()
+                try
                 {
-                    IsSuccess = false,
-                    Message=Messages.PersonNotFound,
-                };
-            }
-            person.IsRemoved = true;
-            person.RemoveTime = DateTime.Now;
-            person.RemoveByUserId = userId;
+                    session.StartTransaction();
+                    var person = await _personRepository.GetAsync(id,session);
+                    if (person == null)
+                    {
+                        return new ResultDto()
+                        {
+                            IsSuccess = false,
+                            Message = Messages.PersonNotFound,
+                        };
+                    }
+                    person.IsRemoved = true;
+                    person.RemoveTime = DateTime.Now;
+                    person.RemoveByUserId = userId;
 
-            await _personRepository.UpdateAsync(person);
-            return new ResultDto()
-            {
-                IsSuccess=true,
-                Message=Messages.Remove
-            };
+                    await _personRepository.UpdateAsync(person, session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto()
+                    {
+                        IsSuccess = true,
+                        Message = Messages.Remove
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            } 
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Atelier.Application.Services.Reservations.Queries
 {
     public interface IGetAllReservationService
     {
-        Task<ResultDto<List<ResponseReservationDto>>> Execute(Guid branchId);
+        Task<ResultDto<List<ResponseReservationDto>>> Execute(Guid branchId, RequstPaginateDto pagination);
     }
     public class GetAllReservationService : IGetAllReservationService
     {
@@ -21,25 +21,39 @@ namespace Atelier.Application.Services.Reservations.Queries
         {
             _reservationRepository = reservationRepository;
         }
-        public async Task<ResultDto<List<ResponseReservationDto>>> Execute(Guid branchId)
+        public async Task<ResultDto<List<ResponseReservationDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
         {
-            var (reservation,total) =await _reservationRepository.GetAllAsync(q=>q.BranchId==branchId, null);
-            var reservationList=reservation.Select(o => new ResponseReservationDto
+            using (var session = await _reservationRepository.StartSessionAsync())
             {
-                Id = o.Id,
-                StartDateTime = o.StartDateTime,
-                EndDateTime = o.EndDateTime,
-                PersonFullName = o.Person.FullName,
-                Description=o.Description,
-                ReservationNumber=o.ReservationNumber
-            }).ToList();
-            return new ResultDto<List<ResponseReservationDto>>()
-            {
-                Data = reservationList,
-                Total=total,
-                IsSuccess = true,
-                Message = Messages.GetSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    var (reservation, total) = await _reservationRepository.GetAllAsync(q => q.BranchId == branchId, pagination,session);
+                    var reservationList = reservation.Select(o => new ResponseReservationDto
+                    {
+                        Id = o.Id,
+                        StartDateTime = o.StartDateTime,
+                        EndDateTime = o.EndDateTime,
+                        PersonFullName = o.Person.FullName,
+                        Description = o.Description,
+                        ReservationNumber = o.ReservationNumber
+                    }).ToList();
+                    await session.CommitTransactionAsync();
+                    return new ResultDto<List<ResponseReservationDto>>()
+                    {
+                        Data = reservationList,
+                        Total = total,
+                        IsSuccess = true,
+                        Message = Messages.GetSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto<List<ResponseReservationDto>>() { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
         }
     }
 }

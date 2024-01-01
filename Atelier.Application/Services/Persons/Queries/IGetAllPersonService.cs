@@ -31,26 +31,40 @@ namespace Atelier.Application.Services.Persons.Queries
         }
         public async Task<ResultDto<List<ResponsePersonDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
         {
-            var (persons, total) = await _personRepository.GetAllAsync(q => q.BranchId == branchId, pagination);
-            var resultPersons=persons.Select(r => new ResponsePersonDto
-             {
-                 Id =r.Id,
-                 Name = r.Name,
-                 Family=r.Family,
-                 JobTitle =r.Job?.Title,
-                 Mobile = r.Mobile,
-                 NationalCode = r.NationalCode,
-                 PersonTypeTitle =r.PersonType?.Title,
-                 Phone = r.Phone,
-             }).ToList();
-
-            return new ResultDto<List<ResponsePersonDto>>
+            using (var session = await _personRepository.StartSessionAsync())
             {
-                Data=resultPersons,
-                Total=total,
-                IsSuccess = true,
-                Message=Messages.GetSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    var (persons, total) = await _personRepository.GetAllAsync(q => q.BranchId == branchId, pagination,session);
+                    var resultPersons = persons.Select(r => new ResponsePersonDto
+                    {
+                        Id = r.Id,
+                        Name = r.Name,
+                        Family = r.Family,
+                        JobTitle = r.Job?.Title,
+                        Mobile = r.Mobile,
+                        NationalCode = r.NationalCode,
+                        PersonTypeTitle = r.PersonType?.Title,
+                        Phone = r.Phone,
+                    }).ToList();
+                    await session.CommitTransactionAsync();
+                    return new ResultDto<List<ResponsePersonDto>>
+                    {
+                        Data = resultPersons,
+                        Total = total,
+                        IsSuccess = true,
+                        Message = Messages.GetSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto<List<ResponsePersonDto>> { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
         }
     }
 }

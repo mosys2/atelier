@@ -23,19 +23,33 @@ namespace Atelier.Application.Services.PersonTypes.Commands
         }
         public async Task<ResultDto> Execute(RequestPersonTypeDto request, Guid userId, Guid branchId)
         {
-            PersonType personType = new PersonType()
+            using (var session = await _personTypeRepository.StartSessionAsync())
             {
-                BranchId = branchId,
-                InsertByUserId = userId,
-                Title = request.Title,
-                InsertTime = DateTime.Now,
-            };
-            await _personTypeRepository.CreateAsync(personType);
-            return new ResultDto
-            {
-                IsSuccess = true,
-                Message=Messages.RegisterSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    PersonType personType = new PersonType()
+                    {
+                        BranchId = branchId,
+                        InsertByUserId = userId,
+                        Title = request.Title,
+                        InsertTime = DateTime.Now,
+                    };
+                    await _personTypeRepository.CreateAsync(personType, session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.RegisterSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
         }
     }
 }

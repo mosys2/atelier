@@ -114,6 +114,9 @@ namespace Atelier.Common.Constants
         public const string PRICE_INVALID = "قیمت وارد شده نامعتبر!";
         public const string INVALID_ID = "آی دی  نامعتبر است!";
         public const string NOT_FOUND_RECORD = "رکورد یافت نشد!";
+        public const string NOT_FOUND_BANK = "بانک یافت نشد!";
+        public const string EXISTS_NAME_BANK = "نام بانک تکراری است!";
+        public const string FAILED_OPERATION = " عملیات با شکست مواجه شد!";
 
     }
 }

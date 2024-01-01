@@ -12,7 +12,7 @@ namespace Atelier.Application.Services.PersonTypes.Queries
 {
     public interface IGetAllPersonTypeService
     {
-        Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId);
+        Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId, RequstPaginateDto pagination);
     }
     public class GetAllPersonType : IGetAllPersonTypeService
     {
@@ -21,22 +21,37 @@ namespace Atelier.Application.Services.PersonTypes.Queries
         {
             _personTypeRepository=personTypeRepository;
         }
-        public async Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId)
+        public async Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
         {
-            var (personTypes, total) = await _personTypeRepository.GetAllAsync(q => q.BranchId==branchId, null);
-            var personTypeList = personTypes.Select(s => new ResponsePersonTypeDto
+            using (var session = await _personTypeRepository.StartSessionAsync())
             {
-                Id = s.Id,
-                Title  = s.Title,
-            }).ToList();
+                try
+                {
+                    session.StartTransaction();
+                    var (personTypes, total) = await _personTypeRepository.GetAllAsync(q => q.BranchId == branchId, pagination,session);
+                    var personTypeList = personTypes.Select(s => new ResponsePersonTypeDto
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                    }).ToList();
+                    await session.CommitTransactionAsync();
+                    return new ResultDto<List<ResponsePersonTypeDto>>
+                    {
+                        Data = personTypeList,
+                        Total = total,
+                        IsSuccess = true,
+                        Message = Messages.GetSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
 
-            return new ResultDto<List<ResponsePersonTypeDto>>
-            {
-                Data=personTypeList,
-                Total=total,
-                IsSuccess = true,
-                Message=Messages.GetSuccess
-            };
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto<List<ResponsePersonTypeDto>> { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
+           
         }
     }
 }

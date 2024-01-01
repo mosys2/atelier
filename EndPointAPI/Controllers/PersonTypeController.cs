@@ -1,4 +1,5 @@
-﻿using Atelier.Application.Services.Jobs.Commands;
+﻿using Atelier.Application.Interfaces.FacadPattern;
+using Atelier.Application.Services.Jobs.Commands;
 using Atelier.Application.Services.Jobs.Queries;
 using Atelier.Application.Services.PersonTypes.Commands;
 using Atelier.Application.Services.PersonTypes.Queries;
@@ -17,20 +18,18 @@ namespace EndPointAPI.Controllers
     [ApiController]
     public class PersonTypeController : ControllerBase
     {
-        private readonly IGetAllPersonTypeService _getAllPersonType ;
-        private readonly IAddPersonTypeService _addPersonType;
+        private readonly IPersonTypeFacad _personTypeFacad;
         private readonly Guid userId;
         private readonly Guid branchId;
-        public PersonTypeController(IGetAllPersonTypeService getAllPersonType, IAddPersonTypeService addPersonType, ClaimsPrincipal user)
+        public PersonTypeController(IPersonTypeFacad personTypeFacad, ClaimsPrincipal user)
         {
-           _addPersonType = addPersonType;
-            _getAllPersonType = getAllPersonType;
+            _personTypeFacad = personTypeFacad;
             userId = Guid.Parse(ClaimUtility.GetUserId(user) ?? "");
             branchId = Guid.Parse(ClaimUtility.GetBranchId(user) ?? "");
         }
         // GET: api/<PersonTypeController>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] int page, int pageSize = 20)
         {
             if (branchId==Guid.Empty)
             {
@@ -40,7 +39,7 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _getAllPersonType.Execute(branchId);
+            var result = await _personTypeFacad.GetAllPersonTypeService.Execute(branchId, new RequstPaginateDto { Page = page, PageSize = pageSize });
             return Ok(result);
         }
 
@@ -65,7 +64,7 @@ namespace EndPointAPI.Controllers
                 });
             }
 
-            var result = await _addPersonType.Execute(request, userId, branchId);
+            var result = await _personTypeFacad.AddPersonTypeService.Execute(request, userId, branchId);
             return Ok(result);
         } 
     }
