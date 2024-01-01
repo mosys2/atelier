@@ -23,21 +23,36 @@ namespace Atelier.Application.Services.OurServices.Queries
         }
         public async Task<ResultDto<List<ResponseOurServiceDto>>> Execute(Guid branchId)
         {
-            var (ourServices,total) =await _ourServiceRepository.GetAllAsync(q => q.BranchId==branchId, null);
-            var ourServiceList= ourServices.Select(o =>new ResponseOurServiceDto
+            using (var session = await _ourServiceRepository.StartSessionAsync())
             {
-                Id=o.Id,
-                PriceWithProfit=o.PriceWithProfit,
-                RawPrice=o.RawPrice,
-                Title=o.Title,
-            }).ToList();
-            return new ResultDto<List<ResponseOurServiceDto>>()
-            {
-                Data=ourServiceList,
-                Total=total,
-                IsSuccess=true,
-                Message=Messages.GetSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    var (ourServices, total) = await _ourServiceRepository.GetAllAsync(q => q.BranchId == branchId, null,session);
+                    var ourServiceList = ourServices.Select(o => new ResponseOurServiceDto
+                    {
+                        Id = o.Id,
+                        PriceWithProfit = o.PriceWithProfit,
+                        RawPrice = o.RawPrice,
+                        Title = o.Title,
+                    }).ToList();
+                    await session.CommitTransactionAsync();
+                    return new ResultDto<List<ResponseOurServiceDto>>()
+                    {
+                        Data = ourServiceList,
+                        Total = total,
+                        IsSuccess = true,
+                        Message = Messages.GetSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto<List<ResponseOurServiceDto>>() { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
+            
         }
     }
 

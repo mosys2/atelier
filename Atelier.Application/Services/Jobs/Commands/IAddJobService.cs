@@ -24,19 +24,35 @@ namespace Atelier.Application.Services.Jobs.Commands
         }
         public async Task<ResultDto> Execute(RequestJobDto request, Guid userId, Guid branchId)
         {
-            Job job = new Job() 
+            using (var session = await _jobRepository.StartSessionAsync())
             {
-                BranchId = branchId,
-                InsertByUserId = userId,
-                Title = request.Title,
-                InsertTime = DateTime.Now,
-            };
-            await _jobRepository.CreateAsync(job);
-            return new ResultDto
-            {
-                IsSuccess = true,
-                Message=Messages.RegisterSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    Job job = new Job()
+                    {
+                        BranchId = branchId,
+                        InsertByUserId = userId,
+                        Title = request.Title,
+                        InsertTime = DateTime.Now,
+                    };
+                    await _jobRepository.CreateAsync(job, session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.RegisterSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
+           
         }
     }
 }

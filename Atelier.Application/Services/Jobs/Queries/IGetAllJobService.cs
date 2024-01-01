@@ -13,7 +13,7 @@ namespace Atelier.Application.Services.Jobs.Queries
 {
     public interface IGetAllJobService
     {
-        Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId);
+        Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId, RequstPaginateDto pagination);
     }
     public class GetAllJobService : IGetAllJobService
     {
@@ -22,24 +22,36 @@ namespace Atelier.Application.Services.Jobs.Queries
         {
             _jobRepository = jobRepository;
         }
-        public async Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId)
+        public async Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
         {
-            var (jobs,total) = await _jobRepository.GetAllAsync(q => q.BranchId==branchId, null);
-                var jobList= jobs.Select(s => new ResponseJobListDto
-                {
-                    Id = s.Id,
-                    Title  = s.Title,
-                }).ToList();
-
-            return new ResultDto<List<ResponseJobListDto>>
+            using (var session = await _jobRepository.StartSessionAsync())
             {
-                Data=jobList,
-                Total=total,
-                IsSuccess = true,
-                Message=Messages.GetSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    var (jobs, total) = await _jobRepository.GetAllAsync(q => q.BranchId == branchId, pagination,session);
+                    var jobList = jobs.Select(s => new ResponseJobListDto
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                    }).ToList();
+                    await session.CommitTransactionAsync();
+                    return new ResultDto<List<ResponseJobListDto>>
+                    {
+                        Data = jobList,
+                        Total = total,
+                        IsSuccess = true,
+                        Message = Messages.GetSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto<List<ResponseJobListDto>> { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
         }
-
-
     }
 }

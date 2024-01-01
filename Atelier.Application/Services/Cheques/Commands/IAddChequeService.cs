@@ -29,86 +29,101 @@ namespace Atelier.Application.Services.Cheques.Commands
         }
         public async Task<ResultDto> Execute(RequestChequeDto requestCheque, Guid userId, Guid branchId)
         {
-           bool checkFinancialType= FinancialType.FinancialTypeList().Contains(requestCheque.FinancialType);
-            if (!checkFinancialType)
+            using (var session = await _chequeRepository.StartSessionAsync())
             {
-                return new ResultDto
+                try
                 {
-                IsSuccess = false,
-                Message=Messages.FinancialTypeNotFound
-                };
-            }
-            var bank=await _bankRepository.GetAsync(b => b.BranchId==branchId && b.Id == requestCheque.BankId);
-            if (bank == null)
-            {
-                return new ResultDto
+                    session.StartTransaction();
+                    bool checkFinancialType = FinancialType.FinancialTypeList().Contains(requestCheque.FinancialType);
+                    if (!checkFinancialType)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.FinancialTypeNotFound
+                        };
+                    }
+                    var bank = await _bankRepository.GetAsync(b => b.BranchId == branchId && b.Id == requestCheque.BankId,session);
+                    if (bank == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.BankNotFound
+                        };
+                    }
+                    var check = await _chequeRepository.GetAsync(b => b.BranchId == branchId && b.ChequeNumber == requestCheque.ChequeNumber,session);
+                    if (check != null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.ChequeNumberExists
+                        };
+                    }
+                    bool checkStatusCheque = StatusCheque.StatusChequeList().Contains(requestCheque.StatusCheque);
+                    if (!checkStatusCheque)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.StatusChequeNotFound
+                        };
+                    }
+                    bool checkStatusRegistered = StatusRegistered.StatusRegisteredList().Contains(requestCheque.StatusRegistered);
+                    if (!checkStatusRegistered)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.StatusRegisterChequeNotFound
+                        };
+                    }
+                    var person = await _personRepository.GetAsync(b => b.BranchId == branchId && b.Id == requestCheque.PersonId, session);
+                    if (person == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.MessageNotfindUser
+                        };
+                    }
+                    //
+                    Cheque cheque = new Cheque()
+                    {
+                        BranchId = branchId,
+                        InsertByUserId = userId,
+                        StatusRegistered = requestCheque.StatusRegistered,
+                        FinancialType = requestCheque.FinancialType,
+                        InsertTime = DateTime.Now,
+                        Date = requestCheque.Date,
+                        ChequeNumber = requestCheque.ChequeNumber.Trim(),
+                        Bank = bank,
+                        BankBranch = requestCheque.BankBranch,
+                        Person = person,
+                        AccountNumber = requestCheque.AccountNumber,
+                        Price = requestCheque.Price,
+                        Phone = requestCheque.Phone,
+                        StatusCheque = requestCheque.StatusCheque,
+                        SpentInTheName = requestCheque.SpentInTheName,
+                        Description = requestCheque.Description,
+                    };
+                    await _chequeRepository.CreateAsync(cheque,session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.InsertCheque
+                    };
+                }
+                catch (Exception ex)
                 {
-                    IsSuccess = false,
-                    Message = Messages.BankNotFound
-                };
+
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
             }
-            var check =await _chequeRepository.GetAsync(b => b.BranchId==branchId && b.ChequeNumber == requestCheque.ChequeNumber);
-            if (check!=null)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.ChequeNumberExists
-                };
-            }
-            bool checkStatusCheque = StatusCheque.StatusChequeList().Contains(requestCheque.StatusCheque);
-            if (!checkStatusCheque)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.StatusChequeNotFound
-                };
-            }
-            bool checkStatusRegistered = StatusRegistered.StatusRegisteredList().Contains(requestCheque.StatusRegistered);
-            if (!checkStatusRegistered)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.StatusRegisterChequeNotFound
-                };
-            }
-            var person = await _personRepository.GetAsync(b =>b.BranchId==branchId && b.Id == requestCheque.PersonId);
-            if (person==null)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = Messages.MessageNotfindUser
-                };
-            }
-            //
-            Cheque cheque = new Cheque()
-            {
-                BranchId=branchId,
-                InsertByUserId=userId,
-                StatusRegistered=requestCheque.StatusRegistered,
-                FinancialType=requestCheque.FinancialType,
-                InsertTime=DateTime.Now,
-                Date=requestCheque.Date,
-                ChequeNumber=requestCheque.ChequeNumber.Trim(),
-                Bank=bank,
-                BankBranch=requestCheque.BankBranch,
-                Person=person,
-                AccountNumber=requestCheque.AccountNumber,
-                Price=requestCheque.Price,
-                Phone=requestCheque.Phone,
-                StatusCheque=requestCheque.StatusCheque,
-                SpentInTheName=requestCheque.SpentInTheName,
-                Description=requestCheque.Description,           
-            };
-            await _chequeRepository.CreateAsync(cheque);
-            return new ResultDto
-            {
-                IsSuccess = true, 
-               Message=Messages.InsertCheque
-            };
         }
     }
 }

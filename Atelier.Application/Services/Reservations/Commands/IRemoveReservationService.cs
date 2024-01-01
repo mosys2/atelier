@@ -23,26 +23,42 @@ namespace Atelier.Application.Services.Reservations.Commands
         }
         public async Task<ResultDto> Execute(Guid id, Guid userId, Guid branchId)
         {
-            var reservation = await _reservationRepository.GetAsync(id);
-            if (reservation == null)
+            using (var session = await _reservationRepository.StartSessionAsync())
             {
-                return new ResultDto()
+                try
                 {
-                    IsSuccess = false,
-                    Message = Messages.NotFind,
-                };
+                    session.StartTransaction();
+                    var reservation = await _reservationRepository.GetAsync(id,session);
+                    if (reservation == null)
+                    {
+                        return new ResultDto()
+                        {
+                            IsSuccess = false,
+                            Message = Messages.NotFind,
+                        };
+                    }
+
+                    reservation.IsRemoved = true;
+                    reservation.RemoveTime = DateTime.Now;
+                    reservation.RemoveByUserId = userId;
+
+                    await _reservationRepository.UpdateAsync(reservation,session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto()
+                    {
+                        IsSuccess = true,
+                        Message = Messages.Remove
+                    };
+                }
+                catch (Exception ex)
+                {
+
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
             }
-
-            reservation.IsRemoved = true;
-            reservation.RemoveTime = DateTime.Now;
-            reservation.RemoveByUserId = userId;
-
-            await _reservationRepository.UpdateAsync(reservation);
-            return new ResultDto()
-            {
-                IsSuccess = true,
-                Message = Messages.Remove
-            };
+          
         }
     }
 }

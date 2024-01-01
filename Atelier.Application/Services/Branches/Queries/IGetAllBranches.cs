@@ -34,7 +34,7 @@ namespace Atelier.Application.Services.Branches.Queries
                 };
             }
             DateTime dateNow = DateTime.Now;
-            var result=await _context.Branches.Select(p=>new ResultBranchDto
+            var result=await _context.Branches.Where(b => b.AtelierBaseId == atelierBase.Id).Select(p=>new ResultBranchDto
             {
                 Id = p.Id,
                 Title = p.Title,
@@ -48,7 +48,7 @@ namespace Atelier.Application.Services.Branches.Queries
                 StatusDescription = p.StatusDescription,
                 AtelierBaseId=p.AtelierBaseId,
                 
-            }).Where(b=>b.AtelierBaseId==atelierBase.Id)
+            })
             .ToListAsync();
 
             return new ResultDto<List<ResultBranchDto>> {

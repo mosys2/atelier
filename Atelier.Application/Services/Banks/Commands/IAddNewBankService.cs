@@ -25,19 +25,33 @@ namespace Atelier.Application.Services.Banks.Commands
         }
         public async Task<ResultDto> Execute(RequestBankDto request, Guid userId, Guid branchId)
         {
-            Bank bank = new Bank()
+            using (var session = await _bankRepository.StartSessionAsync())
             {
-                BranchId = branchId,
-                Name=request.Name,
-                InsertTime=DateTime.Now,
-                InsertByUserId=userId
-            };
-            await _bankRepository.CreateAsync(bank);
-            return new ResultDto
-            {
-                IsSuccess = true,
-                Message=Messages.RegisterSuccess
-            };
+                try
+                {
+                    session.StartTransaction();
+                    Bank bank = new Bank()
+                    {
+                        BranchId = branchId,
+                        Name = request.Name,
+                        InsertTime = DateTime.Now,
+                        InsertByUserId = userId
+                    };
+                    await _bankRepository.CreateAsync(bank,session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto
+                    {
+                        IsSuccess = true,
+                        Message = Messages.RegisterSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                } 
+            }
         }
     }
 }

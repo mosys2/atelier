@@ -28,7 +28,7 @@ namespace EndPointAPI.Controllers
         // GET: api/<ReservationController>
         [HttpGet]
         [Authorize(Policy = "BigAdmin")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] int page, int pageSize = 20)
         {
             if (branchId == Guid.Empty)
             {
@@ -38,10 +38,9 @@ namespace EndPointAPI.Controllers
                     Message = Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _reservationFacad.GetAllReservationService.Execute(branchId);
+            var result = await _reservationFacad.GetAllReservationService.Execute(branchId,new RequstPaginateDto { Page = page, PageSize = pageSize });
             return Ok(result);
         }
-
         // GET api/<ReservationController>/5
         [HttpGet("GetConflictReservation")]
         [Authorize(Policy = "BigAdmin")]

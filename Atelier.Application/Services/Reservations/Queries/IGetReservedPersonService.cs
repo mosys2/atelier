@@ -23,20 +23,33 @@ namespace Atelier.Application.Services.Reservations.Queries
         }
         public async Task<ResultDto<List<ResponseDateReservation>>> Execute(Guid branchId, DateTime startDateTime, DateTime endDateTime)
         {
-            var (dateReservation,total) =await _reservationRepository.GetAllAsync(w =>w.BranchId==branchId&&((w.StartDateTime <= startDateTime && w.EndDateTime >= endDateTime))||(w.StartDateTime<=endDateTime&&w.EndDateTime>=startDateTime), null);
-           
-                return new ResultDto<List<ResponseDateReservation>>
+            using (var session = await _reservationRepository.StartSessionAsync())
+            {
+                try
                 {
-                    Data = dateReservation.Select(e => new ResponseDateReservation
+                    session.StartTransaction();
+                    var (dateReservation, total) = await _reservationRepository.GetAllAsync(w => w.BranchId == branchId && ((w.StartDateTime <= startDateTime && w.EndDateTime >= endDateTime)) || (w.StartDateTime <= endDateTime && w.EndDateTime >= startDateTime), null,session);
+                    await session.CommitTransactionAsync();
+                    return new ResultDto<List<ResponseDateReservation>>
                     {
-                        FullName = e.Person.FullName,
-                        StartDateTime = e.StartDateTime,
-                        EndDateTime = e.EndDateTime,
-                        ReservationNumber = e.ReservationNumber
-                    }).ToList(),
-                    IsSuccess = true,
-                    Message = Messages.GetSuccess
-                };
+                        Data = dateReservation.Select(e => new ResponseDateReservation
+                        {
+                            FullName = e.Person.FullName,
+                            StartDateTime = e.StartDateTime,
+                            EndDateTime = e.EndDateTime,
+                            ReservationNumber = e.ReservationNumber
+                        }).ToList(),
+                        IsSuccess = true,
+                        Message = Messages.GetSuccess
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto<List<ResponseDateReservation>> { IsSuccess = false, Message = Messages.FAILED_OPERATION };
+                }
+            }
         }
     }
 }

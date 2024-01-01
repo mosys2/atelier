@@ -24,7 +24,8 @@ namespace Atelier.Application.Services.Branches.Commands.AddBranch
         }
         public async Task<ResultDto> Execute(AddBranchDto branch)
         {
-            var checkAtelir =await _context.AtelierBases.FindAsync(branch.AtelierBaseId);
+           
+                var checkAtelir =await _context.AtelierBases.FindAsync(branch.AtelierBaseId);
             if(checkAtelir == null)
             {
                 return new ResultDto

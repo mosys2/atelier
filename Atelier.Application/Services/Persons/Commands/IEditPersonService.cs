@@ -31,91 +31,104 @@ namespace Atelier.Application.Services.Persons.Commands
         }
         public async Task<ResultDto> Execute(RequestPersonDto request, Guid userId, Guid branchId)
         {
-            if (request.Id == null)
+            using (var session = await _personRepository.StartSessionAsync())
             {
-                return new ResultDto
+                try
                 {
-                    IsSuccess = false,
-                    Message = Messages.NotFind
-                };
-            }
-            var curentPerson =await _personRepository.GetAsync(request.Id.Value);
-            if(curentPerson==null)
-            {
-                return new ResultDto
-                {
-                    IsSuccess = false,
-                    Message=Messages.PersonNotFound
-                };
-            }
-            //چک کردن شماره تلفن و یا کد ملی تکراری
-            //خالی وارد کردن هر دو باید ثبت شود
+                    session.StartTransaction();
+                    if (request.Id == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.NotFind
+                        };
+                    }
+                    var curentPerson = await _personRepository.GetAsync(request.Id.Value,session);
+                    if (curentPerson == null)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.PersonNotFound
+                        };
+                    }
+                    //چک کردن شماره تلفن و یا کد ملی تکراری
+                    //خالی وارد کردن هر دو باید ثبت شود
 
-            if (!request.Mobile.Trim().IsNullOrEmpty() && request.Mobile!=curentPerson.Mobile)
-            {
-                var findUser = await _personRepository.GetAsync(p =>
-                p.BranchId==branchId &&
-                p.Mobile==request.Mobile.Trim());
+                    if (!request.Mobile.Trim().IsNullOrEmpty() && request.Mobile != curentPerson.Mobile)
+                    {
+                        var findUser = await _personRepository.GetAsync(p =>
+                        p.BranchId == branchId &&
+                        p.Mobile == request.Mobile.Trim(), session);
 
-                if (findUser!=null)
-                {
+                        if (findUser != null)
+                        {
+                            return new ResultDto
+                            {
+                                IsSuccess = false,
+                                Message = Messages.DuplicateMobile
+                            };
+                        }
+                    }
+                    if (!request.NationalCode.Trim().IsNullOrEmpty() && request.NationalCode != curentPerson.NationalCode)
+                    {
+                        var findUser = await _personRepository.GetAsync(p =>
+                        p.BranchId == branchId &&
+                        p.NationalCode == request.NationalCode.Trim(), session);
+
+                        if (findUser != null)
+                        {
+                            return new ResultDto
+                            {
+                                IsSuccess = false,
+                                Message = Messages.DuplicateNationalCode
+                            };
+                        }
+                    }
+
+                    //گرفتن فیلد ها ی شغل و نوع شخص در صورت انتخاب
+                    Job job = null;
+                    PersonType personType = null;
+                    if (request.JobId.HasValue)
+                    {
+                        job = await _jobRepository.GetAsync(j => j.BranchId == branchId && j.Id == request.JobId, session);
+                    }
+                    if (request.PersonTypeId.HasValue)
+                    {
+                        personType = await _persontypeRepository.GetAsync(p => p.BranchId == branchId && p.Id == request.PersonTypeId, session);
+                    }
+                    curentPerson.Name = request.Name.Trim();
+                    curentPerson.Family = request.Family.Trim();
+                    curentPerson.BranchId = branchId;
+                    curentPerson.InsertByUserId = userId;
+                    curentPerson.Address = request.Address?.Trim();
+                    curentPerson.Description = request.Description?.Trim();
+                    curentPerson.FullName = request.FullName?.Trim();
+                    curentPerson.UpdateByUserId = userId;
+                    curentPerson.UpdateTime = DateTime.Now;
+                    curentPerson.Job = job;
+                    curentPerson.PersonType = personType;
+                    curentPerson.Mobile = request.Mobile.Trim();
+                    curentPerson.NationalCode = request.NationalCode.Trim();
+                    curentPerson.Phone = request.Phone?.Trim();
+
+                    await _personRepository.UpdateAsync(curentPerson, session);
+                    await session.CommitTransactionAsync();
                     return new ResultDto
                     {
-                        IsSuccess = false,
-                        Message=Messages.DuplicateMobile
+                        IsSuccess = true,
+                        Message = Messages.MessageUpdate
                     };
                 }
-            }
-            if (!request.NationalCode.Trim().IsNullOrEmpty() && request.NationalCode!=curentPerson.NationalCode)
-            {
-                var findUser = await _personRepository.GetAsync(p =>
-                p.BranchId==branchId &&
-                p.NationalCode==request.NationalCode.Trim());
-
-                if (findUser!=null)
+                catch (Exception ex)
                 {
-                    return new ResultDto
-                    {
-                        IsSuccess = false,
-                        Message=Messages.DuplicateNationalCode
-                    };
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(ex.Message);
+                    return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
                 }
             }
-
-            //گرفتن فیلد ها ی شغل و نوع شخص در صورت انتخاب
-            Job job = null;
-            PersonType personType = null;
-            if (request.JobId.HasValue)
-            {
-                job =await _jobRepository.GetAsync(j =>j.BranchId==branchId && j.Id==request.JobId);
-            }
-            if (request.PersonTypeId.HasValue)
-            {
-                personType =await _persontypeRepository.GetAsync(p =>p.BranchId==branchId && p.Id==request.PersonTypeId);
-            }
-
-           
-            curentPerson.Name = request.Name.Trim();
-            curentPerson.Family = request.Family.Trim();
-            curentPerson.BranchId = branchId;
-            curentPerson.InsertByUserId = userId;
-            curentPerson.Address = request.Address?.Trim();
-            curentPerson.Description = request.Description?.Trim();
-            curentPerson.FullName = request.FullName?.Trim();
-            curentPerson.UpdateByUserId = userId;
-            curentPerson.UpdateTime = DateTime.Now;
-            curentPerson.Job=job;
-            curentPerson.PersonType=personType;
-            curentPerson.Mobile=request.Mobile.Trim();
-            curentPerson.NationalCode=request.NationalCode.Trim();
-            curentPerson.Phone =request.Phone?.Trim();
-           
-            await _personRepository.UpdateAsync(curentPerson);
-            return new ResultDto
-            {
-                IsSuccess = true,
-                Message=Messages.MessageUpdate
-            };
+          
         }
     }
 }

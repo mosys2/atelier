@@ -1,21 +1,25 @@
-﻿version: "3.8"
+﻿version: '3'
 services:
- mongo:
-   image: mongo
-   container_name: mongo
-   ports:
-     - 27017:27017
-   volumes:
-     - type: bind
-       source: C:/MongoDockerData
-       target: /data/db
+  mongo1:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - C:/MongoDockerData/mongo1:/data/db
+    command: --replSet rs0
 
- mongo-express:
-  image: mongo-express:latest
-  container_name: mongo-express
-  restart: unless-stopped
-  ports:
-    - 8081:8081
+  mongo2:
+    image: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - C:/MongoDockerData/mongo2:/data/db
+    command: --replSet rs0
 
-    
-  
+  mongo3:
+    image: mongo
+    ports:
+      - "27019:27017"
+    volumes:
+      - C:/MongoDockerData/mongo3:/data/db
+    command: --replSet rs0
