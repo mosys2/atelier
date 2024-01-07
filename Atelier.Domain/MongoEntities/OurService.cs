@@ -14,6 +14,8 @@ namespace Atelier.Domain.MongoEntities
         public double RawPrice { get; set; } = 0; //قیمت خام
         public double PriceWithProfit { get; set; } = 0;//قیمت با محاسبه سود
         public string? Description { get; set; }
+        public int Unit { get; set; }//1-number 2minutes
+
         //Common
         public DateTime InsertTime { get; set; } = DateTime.Now;
         public Guid? InsertByUserId { get; set; }
@@ -24,4 +26,5 @@ namespace Atelier.Domain.MongoEntities
         public Guid? RemoveByUserId { get; set; }
 
     }
+
 }

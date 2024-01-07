@@ -13,7 +13,7 @@ namespace Atelier.Application.Services.Jobs.Queries
 {
     public interface IGetAllJobService
     {
-        Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId, RequstPaginateDto pagination);
+        Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId);
     }
     public class GetAllJobService : IGetAllJobService
     {
@@ -22,14 +22,14 @@ namespace Atelier.Application.Services.Jobs.Queries
         {
             _jobRepository = jobRepository;
         }
-        public async Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
+        public async Task<ResultDto<List<ResponseJobListDto>>> Execute(Guid branchId)
         {
             using (var session = await _jobRepository.StartSessionAsync())
             {
                 try
                 {
                     session.StartTransaction();
-                    var (jobs, total) = await _jobRepository.GetAllAsync(q => q.BranchId == branchId, pagination,session);
+                    var (jobs, total) = await _jobRepository.GetAllAsync(q => q.BranchId == branchId, null,session);
                     var jobList = jobs.Select(s => new ResponseJobListDto
                     {
                         Id = s.Id,

@@ -73,12 +73,12 @@ builder.Services.AddIdentity<User, Role>(
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddAuthorization(option =>
 {
-   
-   option.AddPolicy("BigAdminOrAdminOrSecretary", policy =>
-   {
-    policy.RequireRole(RoleesName.BigAdmin, RoleesName.Admin,RoleesName.Secretary);
+
+    option.AddPolicy("BigAdminOrAdminOrSecretary", policy =>
+    {
+        policy.RequireRole(RoleesName.BigAdmin, RoleesName.Admin, RoleesName.Secretary);
     });
-    option.AddPolicy(RoleesName.BigAdmin, policy =>{policy.RequireClaim(ClaimTypes.Role, RoleesName.BigAdmin);});
+    option.AddPolicy(RoleesName.BigAdmin, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.BigAdmin); });
     option.AddPolicy(RoleesName.Admin, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Admin); });
     option.AddPolicy(RoleesName.Secretary, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Secretary); });
     option.AddPolicy(RoleesName.Employee, policy => { policy.RequireClaim(ClaimTypes.Role, RoleesName.Employee); });
@@ -157,10 +157,11 @@ builder.Services.AddMongo()
     .AddMongoRepository<PersonType>("PersonType")
     .AddMongoRepository<OurService>("OurService")
     .AddMongoRepository<Person>("Person")
-    .AddMongoRepository<Reservation>("Reservation");
+    .AddMongoRepository<Reservation>("Reservation")
+    .AddMongoRepository<Contract>("Contract");
 
 
-builder.Services.AddControllers(option=>option.SuppressAsyncSuffixInActionNames = false);
+builder.Services.AddControllers(option => option.SuppressAsyncSuffixInActionNames = false);
 
 //**************************************
 
@@ -262,7 +263,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:44356",
+                          policy.WithOrigins("https://localhost:44356", "https://localhost:5212",
                                               "http://www.google.com").AllowAnyMethod();
                       });
 });

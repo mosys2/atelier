@@ -7,6 +7,7 @@ using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using Azure.Core;
 using EndPointAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -21,6 +22,7 @@ namespace EndPointAPI.Controllers
         private readonly IPersonTypeFacad _personTypeFacad;
         private readonly Guid userId;
         private readonly Guid branchId;
+
         public PersonTypeController(IPersonTypeFacad personTypeFacad, ClaimsPrincipal user)
         {
             _personTypeFacad = personTypeFacad;
@@ -29,7 +31,9 @@ namespace EndPointAPI.Controllers
         }
         // GET: api/<PersonTypeController>
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int page, int pageSize = 20)
+        [Authorize(Policy = "BigAdmin")]
+
+        public async Task<IActionResult> Get()
         {
             if (branchId==Guid.Empty)
             {
@@ -39,12 +43,13 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _personTypeFacad.GetAllPersonTypeService.Execute(branchId, new RequstPaginateDto { Page = page, PageSize = pageSize });
+            var result = await _personTypeFacad.GetAllPersonTypeService.Execute(branchId);
             return Ok(result);
         }
 
         // POST api/<PersonTypeController>
         [HttpPost]
+        [Authorize(Policy = "BigAdmin")]
         public async Task<IActionResult> Post([FromBody] RequestPersonTypeDto request)
         {
             if (!ModelState.IsValid)

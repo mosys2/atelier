@@ -31,7 +31,7 @@ namespace EndPointAPI.Controllers
         [HttpGet]
         [Authorize(Policy = "BigAdmin")]
 
-        public async Task<IActionResult> Get([FromQuery] int page, int pageSize = 20)
+        public async Task<IActionResult> Get()
         {
 
             if (branchId==Guid.Empty)
@@ -42,7 +42,7 @@ namespace EndPointAPI.Controllers
                     Message=Messages.NotFoundUserOrBranch
                 });
             }
-            var result = await _jobFacad.GetAllJobService.Execute(branchId, new RequstPaginateDto { Page = page, PageSize = pageSize });
+            var result = await _jobFacad.GetAllJobService.Execute(branchId);
             return Ok(result);
         }
         // POST api/<JobController>

@@ -12,7 +12,7 @@ namespace Atelier.Application.Services.PersonTypes.Queries
 {
     public interface IGetAllPersonTypeService
     {
-        Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId, RequstPaginateDto pagination);
+        Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId);
     }
     public class GetAllPersonType : IGetAllPersonTypeService
     {
@@ -21,14 +21,14 @@ namespace Atelier.Application.Services.PersonTypes.Queries
         {
             _personTypeRepository=personTypeRepository;
         }
-        public async Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId, RequstPaginateDto pagination)
+        public async Task<ResultDto<List<ResponsePersonTypeDto>>> Execute(Guid branchId)
         {
             using (var session = await _personTypeRepository.StartSessionAsync())
             {
                 try
                 {
                     session.StartTransaction();
-                    var (personTypes, total) = await _personTypeRepository.GetAllAsync(q => q.BranchId == branchId, pagination,session);
+                    var (personTypes, total) = await _personTypeRepository.GetAllAsync(q => q.BranchId == branchId, null);
                     var personTypeList = personTypes.Select(s => new ResponsePersonTypeDto
                     {
                         Id = s.Id,

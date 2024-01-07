@@ -34,7 +34,7 @@ namespace Atelier.Application.Services.Reservations.Queries
                         Id = o.Id,
                         StartDateTime = o.StartDateTime,
                         EndDateTime = o.EndDateTime,
-                        PersonFullName = o.Person.FullName,
+                        PersonFullName = o.Person.FullName ?? "",
                         Description = o.Description,
                         ReservationNumber = o.ReservationNumber
                     }).ToList();
