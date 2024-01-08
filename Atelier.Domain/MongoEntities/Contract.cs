@@ -44,6 +44,7 @@ namespace Atelier.Domain.MongoEntities
         public bool IsRemoved { get; set; } = false;
         public DateTime? RemoveTime { get; set; }
         public Guid? RemoveByUserId { get; set; }
+
     }
 
     public class PaymentTerms

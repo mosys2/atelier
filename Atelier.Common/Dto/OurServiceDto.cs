@@ -12,6 +12,8 @@ namespace Atelier.Common.Dto
         public Guid? Id { get; set; }
         [Required]
         public string Title { get; set; }
+        [Required]
+        public int Unit {  get; set; }
         public double RawPrice { get; set; }
         public double PriceWithProfit { get; set; } 
         public string? Description { get; set; }

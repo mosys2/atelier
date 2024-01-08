@@ -9,7 +9,6 @@ namespace Atelier.Common.Dto
     public class RequestContractDto
     {
         public Guid? Id { get; set; }
-        public Guid BranchId { get; set; }
         //طرفین قرارداد
         public string? ExecutorContract { get; set; }//مجری قرارداد
         public string? UnitHead { get; set; }//مدیر مسئول واحد
@@ -19,7 +18,7 @@ namespace Atelier.Common.Dto
         public string? GuildNumber { get; set; }//شماره پروانه صنفی
 
         public string? ContractTitle { get; set; }//موضوع قرارداد
-        public DateTime? ContractDate { get; set; }//تاریخ قرارداد
+        public DateTime ContractDate { get; set; }//تاریخ قرارداد
         public DateTime? CeremonyStartDateTime { get; set; }//تاریخ وساعت شروع مراسم
         public DateTime? CeremonyEndDateTime { get; set; }//تاریخ و ساعت پایان مراسم
         public string? CeremonyAddress { get; set; }//آدرس مراسم
@@ -27,12 +26,12 @@ namespace Atelier.Common.Dto
 
 
         public Guid PersonId { get; set; }//طرف قرارداد
-        public List<PaymentTerms>? PaymentTermsList { get; set; }//شرایط پرداخت لیست
-        public List<ServiceContract>? ServiceContractList { get; set; }//خدمات
+        public List<PaymentTermsDto>? PaymentTermsList { get; set; }//شرایط پرداخت لیست
+        public List<ServiceContractDto>? ServiceContractList { get; set; }//خدمات
 
         public double Discount { get; set; } = 0;
     }
-    public class PaymentTerms
+    public class PaymentTermsDto
     {
         public Guid? Id { get; set; }
         public int TypePay { get; set; }//1cash 2cheque
@@ -43,7 +42,7 @@ namespace Atelier.Common.Dto
         
     }
 
-    public class ServiceContract
+    public class ServiceContractDto
     {
         public Guid? Id { get; set; }
         public string? Title { get; set; }

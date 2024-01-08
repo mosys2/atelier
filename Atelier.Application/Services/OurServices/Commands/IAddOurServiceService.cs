@@ -37,10 +37,20 @@ namespace Atelier.Application.Services.OurServices.Commands
                             Message = Messages.PRICE_INVALID
                         };
                     }
+                    bool checkUnit = ContractServiceUnit.ContractServiceUnitList().Contains(request.Unit);
+                    if (!checkUnit)
+                    {
+                        return new ResultDto
+                        {
+                            IsSuccess = false,
+                            Message = Messages.NOT_FOUND_UNIT
+                        };
+                    }
                     OurService ourService = new OurService()
                     {
                         BranchId = branchId,
                         Title = request.Title,
+                        Unit=request.Unit,
                         InsertByUserId = userId,
                         Description = request.Description,
                         PriceWithProfit = request.PriceWithProfit,

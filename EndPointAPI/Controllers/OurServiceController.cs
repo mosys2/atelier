@@ -2,6 +2,7 @@
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using EndPointAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -25,6 +26,8 @@ namespace EndPointAPI.Controllers
         }
         // GET: api/<OurServiceController>
         [HttpGet]
+        [Authorize(Policy = "BigAdmin")]
+
         public async Task<IActionResult> Get()
         {
             var ourServices = await _ourService.GetOurServiceService.Execute(branchId);
@@ -33,6 +36,8 @@ namespace EndPointAPI.Controllers
 
         // GET api/<OurServiceController>/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+
         public string Get(int id)
         {
             return "value";
@@ -40,6 +45,8 @@ namespace EndPointAPI.Controllers
 
         // POST api/<OurServiceController>
         [HttpPost]
+        [Authorize(Policy = "BigAdmin")]
+
         public async Task<IActionResult> Post([FromBody] RequestOurServiceDto request)
         {
             if (!ModelState.IsValid)
@@ -56,6 +63,8 @@ namespace EndPointAPI.Controllers
 
         // PUT api/<OurServiceController>/5
         [HttpPut]
+        [Authorize(Policy = "BigAdmin")]
+
         public async Task<IActionResult> Put([FromBody] RequestOurServiceDto request)
         {
             if (!ModelState.IsValid)
@@ -72,6 +81,8 @@ namespace EndPointAPI.Controllers
 
         // DELETE api/<OurServiceController>/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "BigAdmin")]
+
         public async Task<IActionResult> Delete(Guid id)
         {
             var result=await _ourService.RemoveOurServiceService.Execute(id, userId);
