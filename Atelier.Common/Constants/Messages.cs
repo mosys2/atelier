@@ -118,7 +118,9 @@ namespace Atelier.Common.Constants
         public const string EXISTS_NAME_BANK = "نام بانک تکراری است!";
         public const string FAILED_OPERATION = " عملیات با شکست مواجه شد!";
         public const string NOT_FOUND_UNIT = "واحد خدمات یافت نشد!";
-        public const string NOT_FOUND_TypePay = "نوع پرداخت یافت نشد!";
+        public const string NOT_FOUND_TYPEPAY = "نوع پرداخت یافت نشد!";
+        public const string NOT_FOUND_CONTRACT = "نوع پرداخت یافت نشد!";
+
 
 
 

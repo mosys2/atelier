@@ -23,7 +23,6 @@
   <ItemGroup>
     <Folder Include="Services\Auth\Queries\" />
     <Folder Include="Services\Banks\Queries\" />
-    <Folder Include="Services\Contracts\Queries\" />
     <Folder Include="Services\Customers\Commands\" />
     <Folder Include="Services\Customers\Queries\" />
     <Folder Include="Services\AtelierServi\" />

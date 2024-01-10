@@ -1,6 +1,7 @@
 ﻿using Atelier.Application.Interfaces.FacadPattern;
 using Atelier.Application.Interfaces.Repository;
 using Atelier.Application.Services.Contracts.Commands;
+using Atelier.Application.Services.Contracts.Queries;
 using Atelier.Domain.MongoEntities;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,35 @@ namespace Atelier.Application.Services.Contracts.FacadPattern
 
         }
         private IAddContractService _addContractService;
+        private IGetAllContractService _getAllContractService;
+        private IEditContractService _editServiceContract;
+        private IRemoveContractService _removeContractService;
         public IAddContractService AddContractService
         {
             get
             {
-                return _addContractService=_addContractService ?? new AddContractService(_contractRepository,_personRepository);
+                return _addContractService=_addContractService ?? new AddContractService(_contractRepository, _personRepository);
+            }
+        }
+        public IGetAllContractService GetAllContractService
+        {
+            get
+            {
+                return _getAllContractService=_getAllContractService ?? new GetAllContractService(_contractRepository);
+            }
+        }
+        public IEditContractService EditServiceContract
+        {
+            get
+            {
+                return _editServiceContract=_editServiceContract ?? new EditServiceContract(_contractRepository, _personRepository);
+            }
+        }
+        public IRemoveContractService RemoveContractService
+        {
+            get
+            {
+                return _removeContractService=_removeContractService ?? new RemoveContractService(_contractRepository);
             }
         }
     }

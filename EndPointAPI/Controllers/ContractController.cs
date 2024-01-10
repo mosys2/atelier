@@ -1,9 +1,11 @@
 ﻿using Atelier.Application.Interfaces.FacadPattern;
+using Atelier.Application.Services.Cheques.FacadPattern;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
 using EndPointAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -25,9 +27,11 @@ namespace EndPointAPI.Controllers
         }
         // GET: api/<ContractController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Get([FromQuery] int page, int pageSize = 20)
         {
-            return new string[] { "value1", "value2" };
+            var result = await _contractFacad.GetAllContractService.Execute(branchId, new RequstPaginateDto { Page = page, PageSize = pageSize });
+            return Ok(result);
         }
 
         // GET api/<ContractController>/5
@@ -55,15 +59,34 @@ namespace EndPointAPI.Controllers
         }
 
         // PUT api/<ContractController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> Put([FromBody] RequestContractDto request)
         {
+            if (!ModelState.IsValid)
+            {
+                return Ok(new ResultDto
+                {
+                    IsSuccess = false,
+                    Message=Messages.InvalidForm
+                });
+            }
+            var result = await _contractFacad.EditServiceContract.Execute(request, userId, branchId);
+            return Ok(result);
         }
 
         // DELETE api/<ContractController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize(Policy = "BigAdmin")]
+
+        public async Task<IActionResult>Delete(Guid id)
         {
+            if (string.IsNullOrEmpty(id.ToString()))
+            {
+                return NotFound();
+            }
+            var result = await _contractFacad.RemoveContractService.Execute(id, userId,branchId);
+            return Ok(result);
         }
     }
 }

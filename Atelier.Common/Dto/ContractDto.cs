@@ -31,6 +31,7 @@ namespace Atelier.Common.Dto
 
         public double Discount { get; set; } = 0;
     }
+
     public class PaymentTermsDto
     {
         public Guid? Id { get; set; }
@@ -41,7 +42,6 @@ namespace Atelier.Common.Dto
         public string? Description { get; set; }
         
     }
-
     public class ServiceContractDto
     {
         public Guid? Id { get; set; }
@@ -52,5 +52,15 @@ namespace Atelier.Common.Dto
         public double PriceWithProfit { get; set; } = 0;//قیمت با محاسبه سود
         public double Discont { get; set; } = 0;//تخفیف
 
+    }
+
+    public class ResponseContractDto
+    {
+        public Guid Id { get; set;}
+        public string? Title { get; set; }
+        public double ContractNumber { get; set; }
+        public string PersonFullName { get; set; }
+        public DateTime ContractDate { get; set; }
+        public double TotalPrice { get; set; }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Atelier.Application.Interfaces.Repository;
 using Atelier.Common.Constants;
 using Atelier.Common.Dto;
-using Atelier.Domain.Entities.AtelierApp;
-using Atelier.Domain.Entities.Users;
 using Atelier.Domain.MongoEntities;
 using System;
 using System.Collections.Generic;
@@ -12,21 +10,20 @@ using System.Threading.Tasks;
 
 namespace Atelier.Application.Services.Contracts.Commands
 {
-    public interface IAddContractService
+    public interface IEditContractService
     {
         Task<ResultDto> Execute(RequestContractDto request, Guid userId, Guid branchId);
     }
-    public class AddContractService : IAddContractService
+    public class EditServiceContract : IEditContractService
     {
         private readonly IMongoRepository<Contract> _contractRepository;
         private readonly IMongoRepository<Person> _personRepository;
 
-        public AddContractService(IMongoRepository<Contract> contractRepository, IMongoRepository<Person> personRepository)
+        public EditServiceContract(IMongoRepository<Contract> contractRepository, IMongoRepository<Person> personRepository)
         {
             _contractRepository = contractRepository;
             _personRepository = personRepository;
         }
-
         public async Task<ResultDto> Execute(RequestContractDto request, Guid userId, Guid branchId)
         {
             using (var session = await _contractRepository.StartSessionAsync())
@@ -35,10 +32,14 @@ namespace Atelier.Application.Services.Contracts.Commands
                 {
                     session.StartTransaction();
 
+                    var contract = await _contractRepository.GetAsync(c => c.BranchId==branchId&&c.Id==request.Id);
+                    if (contract == null)
+                    {
+                        return new ResultDto { IsSuccess=false, Message=Messages.NOT_FOUND_CONTRACT };
+                    }
+
                     var person = await _personRepository.GetAsync(p => p.BranchId==branchId && p.Id==request.PersonId, session); ;
                     if (person == null) { return new ResultDto { IsSuccess = false, Message= Messages.PersonNotFound }; }
-                    //last transaction for last contract number
-                    var LastContract = await _contractRepository.GetLastAsync(c => c.BranchId==branchId, session);
 
                     List<PaymentTerms> paymentTerms = new List<PaymentTerms>();
                     if (request.PaymentTermsList!=null)
@@ -102,38 +103,33 @@ namespace Atelier.Application.Services.Contracts.Commands
                             totalFactor+=totalPrice;
                         }
                     }
+                    contract.Person=person;
+                    contract.CeremonyAddress=request.CeremonyAddress;
+                    contract.CeremonyEndDateTime=request.CeremonyEndDateTime;
+                    contract.CeremonyStartDateTime=request.CeremonyStartDateTime;
+                    contract.ContractTitle=request.ContractTitle;
+                    contract.ContractDate=request.ContractDate;
+                    contract.Description=request.Description;
+                    contract.Discount=request.Discount;
+                    contract.ExecutorContract=request.ExecutorContract;
+                    contract.GuildNumber=request.GuildNumber;
+                    contract.UnitAddress=request.UnitAddress;
+                    contract.UnitHead=request.UnitHead;
+                    contract.UnitMobile=request.UnitMobile;
+                    contract.UnitPhone=request.UnitPhone;
+                    contract.PaymentTermsList=paymentTerms;
+                    contract.ServiceContractList=serviceContracts;
+                    contract.Total=totalFactor-request.Discount;
+                    contract.UpdateByUserId=userId;
+                    contract.UpdateTime=DateTime.Now;
 
-                    Contract contract = new Contract()
-                    {
-                        BranchId = branchId,
-                        Person=person,
-                        CeremonyAddress=request.CeremonyAddress,
-                        CeremonyEndDateTime=request.CeremonyEndDateTime,
-                        CeremonyStartDateTime=request.CeremonyStartDateTime,
-                        ContractTitle=request.ContractTitle,
-                        ContractDate=request.ContractDate,
-                        ContractNumber=LastContract==null ? 100 : LastContract.ContractNumber+1,
-                        Description=request.Description,
-                        Discount=request.Discount,
-                        ExecutorContract=request.ExecutorContract,
-                        GuildNumber=request.GuildNumber,
-                        UnitAddress=request.UnitAddress,
-                        UnitHead=request.UnitHead,
-                        UnitMobile=request.UnitMobile,
-                        UnitPhone=request.UnitPhone,
-                        PaymentTermsList=paymentTerms,
-                        ServiceContractList=serviceContracts,
-                        Total=totalFactor-request.Discount,
-                        InsertTime = DateTime.Now,
-                        InsertByUserId = userId
-                    };
 
-                    await _contractRepository.CreateAsync(contract, session);
+                    await _contractRepository.UpdateAsync(contract, session);
                     await session.CommitTransactionAsync();
                     return new ResultDto
                     {
                         IsSuccess = true,
-                        Message = Messages.RegisterSuccess
+                        Message = Messages.MessageUpdate
                     };
                 }
                 catch (Exception ex)
@@ -143,6 +139,7 @@ namespace Atelier.Application.Services.Contracts.Commands
                     return new ResultDto { IsSuccess = false, Message = Messages.FAILED_OPERATION };
                 }
             }
+
         }
         public async Task<double> TotalService(int unit, double priceWithProfit, double value, double discount)
         {
