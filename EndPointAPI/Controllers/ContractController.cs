@@ -78,7 +78,6 @@ namespace EndPointAPI.Controllers
         // DELETE api/<ContractController>/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "BigAdmin")]
-
         public async Task<IActionResult>Delete(Guid id)
         {
             if (string.IsNullOrEmpty(id.ToString()))
