@@ -34,6 +34,7 @@ using Atelier.Application.Services.Banks.FacadPattern;
 using Atelier.Application.Services.Jobs.FacadPattern;
 using Atelier.Application.Services.PersonTypes.FacadPattern;
 using Atelier.Application.Services.Contracts.FacadPattern;
+using Atelier.Application.Services.Pages.FacadPattern;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,6 +115,7 @@ builder.Services.AddScoped<IJobFacad, JobFacad>();
 builder.Services.AddScoped<IPersonTypeFacad, PersonTypeFacad>();
 builder.Services.AddScoped<IOurServiceFacad, OurServiceFacad>();
 builder.Services.AddScoped<IContractFacad, ContractFacad>();
+builder.Services.AddScoped<IPageFacad, PageFacad>();
 
 
 

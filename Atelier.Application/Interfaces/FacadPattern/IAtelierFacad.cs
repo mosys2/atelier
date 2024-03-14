@@ -14,8 +14,8 @@ namespace Atelier.Application.Interfaces.FacadPattern
 {
     public interface IAtelierFacad
     {
-         IGetAllAtelierBase GetAllAtelierBase{  get; }
-         IAddAtelierService AddAtelierService { get; }
+        IGetAllAtelierBase GetAllAtelierBase{  get; }
+        IAddAtelierService AddAtelierService { get; }
         IRemoveAtelierService RemoveAtelierService { get; }
         IGetDetailAtelierService GetDetailAtelierService { get; }
         IEditAtelierService EditAtelierService { get; }

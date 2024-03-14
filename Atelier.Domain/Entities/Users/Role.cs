@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Atelier.Domain.Entities.Commons;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +20,25 @@ namespace Atelier.Domain.Entities.Users
         public bool IsRemoved { get; set; } = false;
         public DateTime? RemoveTime { get; set; }
         public string? RemoveByUserId { get; set; }
+        public ICollection<RolePagePermission> RolePagePermissions { get; set; }
+
+    }
+    // Models/Page.cs
+    public class Page: BaseEntity
+    {
+        public string Name { get; set; }
+        // Navigation property for RolePagePermission
+        public ICollection<RolePagePermission> RolePagePermissions { get; set; }
+    }
+    // Models/RolePagePermission.cs
+    public class RolePagePermission:BaseEntity
+    {
+        // Foreign key properties
+        public int RoleId { get; set; }
+        public int PageId { get; set; }
+        // Navigation properties
+        public Role Role { get; set; }
+        public Page Page { get; set; }
+        public bool CanAccess { get; set; }
     }
 }
