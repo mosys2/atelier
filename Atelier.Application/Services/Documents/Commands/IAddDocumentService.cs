@@ -8,5 +8,6 @@ namespace Atelier.Application.Services.Documents.Commands
 {
     public interface IAddDocumentService
     {
+
     }
 }
