@@ -24,9 +24,5 @@ namespace Atelier.Common.Constants
         public const string Secretary = "منشی";
         public const string Employee = "کارمند";
         public const string Customer = "مشتری";
-
-
-
-
     }
 }
