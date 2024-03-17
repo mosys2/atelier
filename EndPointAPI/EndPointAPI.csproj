@@ -35,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Atelier.Application\Atelier.Application.csproj" />
     <ProjectReference Include="..\Atelier.Common\Atelier.Common.csproj" />
+    <ProjectReference Include="..\Atelier.infrastructure\Atelier.infrastructure.csproj" />
     <ProjectReference Include="..\Atelier.Persistence\Atelier.Persistence.csproj" />
   </ItemGroup>
 

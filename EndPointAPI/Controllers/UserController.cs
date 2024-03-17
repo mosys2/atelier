@@ -55,5 +55,16 @@ namespace EndPointAPI.Controllers
             var result = await _userFacad.ChangeStatusUserService.Execute(userId);
             return Ok(result);
         }
+        [HttpPost("RequestChangePageAccessDto")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> AddPageAccess(RequestAddPageAccessDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _userFacad.AddPageAccessService.Execute(request.userId,request.pageIds);
+            return Ok(result);
+        }
     }
 }

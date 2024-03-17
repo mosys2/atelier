@@ -35,6 +35,8 @@ using Atelier.Application.Services.Jobs.FacadPattern;
 using Atelier.Application.Services.PersonTypes.FacadPattern;
 using Atelier.Application.Services.Contracts.FacadPattern;
 using Atelier.Application.Services.Pages.FacadPattern;
+using Atelier.infrastructure.HasAccessPage;
+using Atelier.Persistence.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,6 +118,7 @@ builder.Services.AddScoped<IPersonTypeFacad, PersonTypeFacad>();
 builder.Services.AddScoped<IOurServiceFacad, OurServiceFacad>();
 builder.Services.AddScoped<IContractFacad, ContractFacad>();
 builder.Services.AddScoped<IPageFacad, PageFacad>();
+builder.Services.AddScoped<IHasAccessPageService, HasAccessPageService>();
 
 
 
@@ -265,8 +268,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
+app.UseAuthentication();
+app.UseMiddleware<PageAccessMiddleware>();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
