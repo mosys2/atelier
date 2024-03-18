@@ -24,13 +24,12 @@ namespace EndPointAPI.Controllers
     public class BranchController : ControllerBase
     {
         private readonly IBranchFacad _branchFacad;
-        private readonly IHasAccessPageService _hasAccessPageService;
         private readonly Guid userId;
-        public BranchController(IBranchFacad branchFacad, ClaimsPrincipal user, IHasAccessPageService hasAccessPageService) 
+        public BranchController(IBranchFacad branchFacad, ClaimsPrincipal user) 
         {
             _branchFacad = branchFacad;
              userId = Guid.Parse(ClaimUtility.GetUserId(user) ?? "");
-            _hasAccessPageService = hasAccessPageService;
+     
         }
         [HttpPost]
         [Authorize(Policy = "BigAdmin")]
@@ -71,16 +70,6 @@ namespace EndPointAPI.Controllers
                     IsSuccess = false,
                     Message=Messages.NotFind
                 });
-            }
-            // بررسی مجوز ورود
-            var hasAccess = await _hasAccessPageService.Execute(userId,"شعبه");
-            if (!hasAccess)
-            {
-                return StatusCode(403, new ResultDto
-                {
-                    IsSuccess = false,
-                    Message = "Access Denied"
-                }); 
             }
             var result = await _branchFacad.GetAllBranches.Excute(new RequestBranchDto { AtelierBaseId=atelierBaseId });
             return Ok(result);

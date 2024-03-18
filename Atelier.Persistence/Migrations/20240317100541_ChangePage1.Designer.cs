@@ -4,6 +4,7 @@ using Atelier.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atelier.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240317100541_ChangePage1")]
+    partial class ChangePage1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -269,6 +272,9 @@ namespace Atelier.Persistence.Migrations
                     b.Property<DateTime?>("RemoveTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -288,6 +294,8 @@ namespace Atelier.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PageId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
 
@@ -612,7 +620,11 @@ namespace Atelier.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Atelier.Domain.Entities.Users.User", "User")
+                    b.HasOne("Atelier.Domain.Entities.Users.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
+
+                    b.HasOne("Atelier.Domain.Entities.Users.User", null)
                         .WithMany("PageAccess")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -620,7 +632,7 @@ namespace Atelier.Persistence.Migrations
 
                     b.Navigation("Page");
 
-                    b.Navigation("User");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Atelier.Domain.Entities.Users.User", b =>

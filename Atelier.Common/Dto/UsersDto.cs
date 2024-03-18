@@ -41,7 +41,7 @@ namespace Atelier.Common.Dto
     public class GetUsersDto
     {
         public  string UserId { get; set; }
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
         public string? PhoneNumber { get; set; }
         public bool IsActive { get; set; }
         public DateTime? InsertTime { get; set; }
@@ -61,5 +61,14 @@ namespace Atelier.Common.Dto
         public DateTime? BirthDay { get; set; }
         public string? ProfileImage { get; set; }
         public string? HomeNumber { get; set; }
+    }
+    public class RequestAddPageAccessDto
+    {
+        public string userId { get; set; }
+        public List<string> pageIds { get; set; }
+    }
+    public class ResultUserPageAccessDto
+    {
+        public List<DetailAccessPageDto> DetailAccessPages { get; set; }
     }
 }

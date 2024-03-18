@@ -4,11 +4,13 @@ using Atelier.Application.Services.Auth;
 using Atelier.Application.Services.Auth.Commands;
 using Atelier.Application.Services.Branches.Queries;
 using Atelier.Application.Services.Roles.Queries.GetRolesUser;
+using Atelier.Application.Services.Users.Commands.AddPageAccess;
 using Atelier.Application.Services.Users.Commands.ChangeStatusUser;
 using Atelier.Application.Services.Users.Commands.SaveToken;
 using Atelier.Application.Services.Users.Queries.FindRefreshToken;
 using Atelier.Application.Services.Users.Queries.GetAllUser;
 using Atelier.Application.Services.Users.Queries.GetDetailsUser;
+using Atelier.Application.Services.Users.Queries.GetUserPageAccess;
 using Atelier.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -43,6 +45,8 @@ namespace Atelier.Application.Services.Users.FacadPattern
         private  ILoginService _loginService;
         private  IFindRefreshTokenService _findRefreshTokenService;
         private  ILogoutService _logoutService;
+        private  IAddPageAccessService _changePageAccessService;
+        private  IGetAllUserPageAccessService _getAllUserPageAccessService;
         public IGetUsersService GetUsersService
         {
             get
@@ -88,6 +92,22 @@ namespace Atelier.Application.Services.Users.FacadPattern
             get
             {
                 return _loginService = _loginService ?? new LoginService(_userManager,_saveUserTokenService,_getRolesUserService,_context,configuration);
+            }
+        }
+
+        public IAddPageAccessService AddPageAccessService
+        {
+            get
+            {
+                return _changePageAccessService = _changePageAccessService ?? new AddPageAccessService(_context);
+            }
+        }
+
+        public IGetAllUserPageAccessService GetAllUserPageAccessService
+        {
+            get
+            {
+                return _getAllUserPageAccessService = _getAllUserPageAccessService ?? new GetAllUserPageAccessService(_context);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace Atelier.Persistence.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Page> Pages { get; set; }
-        public DbSet<RolePagePermission> RolePagePermissions { get; set; }
+        public DbSet<PageAccess> PageAccess { get; set; }
 
         public DbSet<AtelierBase> AtelierBases { get; set; }
         public DbSet<Branch> Branches { get; set; }

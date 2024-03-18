@@ -27,6 +27,7 @@ namespace Atelier.Application.Services.Pages.Commands
             {
                  Id=Guid.NewGuid().ToString(),
                  Name=request.Name,
+                 Url=request.Url,
                  InsertByUserId=userId.ToString(),
                  InsertTime=DateTime.Now,
             };

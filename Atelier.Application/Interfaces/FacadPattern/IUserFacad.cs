@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Atelier.Application.Services.Users.Commands.AddPageAccess;
+using Atelier.Application.Services.Users.Queries.GetUserPageAccess;
 
 namespace Atelier.Application.Interfaces.FacadPattern
 {
@@ -20,5 +22,7 @@ namespace Atelier.Application.Interfaces.FacadPattern
        ILoginService LoginService { get; }
        IFindRefreshTokenService FindRefreshTokenService { get; }
        ILogoutService LogoutService { get; }
+        IAddPageAccessService AddPageAccessService { get; }
+        IGetAllUserPageAccessService GetAllUserPageAccessService { get; }
     }
 }

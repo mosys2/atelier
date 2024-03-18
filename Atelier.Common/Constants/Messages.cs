@@ -110,6 +110,9 @@ namespace Atelier.Common.Constants
         //public const string DuplicateAccountNumber = "این شماره شماره قبلا ثبت شده است!";
         public const string INVAILD_DATETIME = "تاریخ انتخابی نامعتبر است!";
         public const string INSERT_PAGE = "صفحه با موفقیت ثبت شد!";
+        public const string INVALID_ROLE = "نقش مورد نظر وجود ندارد!";
+        public const string INVALID_PAGE = "صفحه مورد نظر وجود ندارد!";
+        public const string INVALID_USER = "کاربر مورد نظر وجود ندارد!";
 
 
         public const string PRICE_INVALID = "قیمت وارد شده نامعتبر!";

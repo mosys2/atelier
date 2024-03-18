@@ -28,6 +28,7 @@ namespace Atelier.Application.Services.Pages.Queries
             {
                 Id = p.Id,
                 Name = p.Name,
+                Url=p.Url,
                 InsertTime=p.InsertTime,
             }).ToListAsync();
 

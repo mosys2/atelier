@@ -4,6 +4,7 @@ using Atelier.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atelier.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240316145108_ChangePage")]
+    partial class ChangePage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,16 +236,12 @@ namespace Atelier.Persistence.Migrations
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Pages");
                 });
 
-            modelBuilder.Entity("Atelier.Domain.Entities.Users.PageAccess", b =>
+            modelBuilder.Entity("Atelier.Domain.Entities.Users.RolePagePermission", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -269,6 +268,10 @@ namespace Atelier.Persistence.Migrations
                     b.Property<DateTime?>("RemoveTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -281,17 +284,13 @@ namespace Atelier.Persistence.Migrations
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PageId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("PageAccess");
+                    b.ToTable("RolePagePermissions");
                 });
 
             modelBuilder.Entity("Atelier.Domain.Entities.Users.User", b =>
@@ -604,23 +603,23 @@ namespace Atelier.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Atelier.Domain.Entities.Users.PageAccess", b =>
+            modelBuilder.Entity("Atelier.Domain.Entities.Users.RolePagePermission", b =>
                 {
                     b.HasOne("Atelier.Domain.Entities.Users.Page", "Page")
-                        .WithMany("PageAccess")
+                        .WithMany("RolePagePermissions")
                         .HasForeignKey("PageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Atelier.Domain.Entities.Users.User", "User")
-                        .WithMany("PageAccess")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Atelier.Domain.Entities.Users.Role", "Role")
+                        .WithMany("RolePagePermissions")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Page");
 
-                    b.Navigation("User");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Atelier.Domain.Entities.Users.User", b =>
@@ -697,14 +696,17 @@ namespace Atelier.Persistence.Migrations
 
             modelBuilder.Entity("Atelier.Domain.Entities.Users.Page", b =>
                 {
-                    b.Navigation("PageAccess");
+                    b.Navigation("RolePagePermissions");
                 });
 
             modelBuilder.Entity("Atelier.Domain.Entities.Users.User", b =>
                 {
                     b.Navigation("JwtUserTokens");
+                });
 
-                    b.Navigation("PageAccess");
+            modelBuilder.Entity("Atelier.Domain.Entities.Users.Role", b =>
+                {
+                    b.Navigation("RolePagePermissions");
                 });
 #pragma warning restore 612, 618
         }

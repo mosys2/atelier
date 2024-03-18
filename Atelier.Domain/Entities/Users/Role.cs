@@ -20,25 +20,23 @@ namespace Atelier.Domain.Entities.Users
         public bool IsRemoved { get; set; } = false;
         public DateTime? RemoveTime { get; set; }
         public string? RemoveByUserId { get; set; }
-        public ICollection<RolePagePermission> RolePagePermissions { get; set; }
 
     }
     // Models/Page.cs
     public class Page: BaseEntity
     {
         public string Name { get; set; }
-        // Navigation property for RolePagePermission
-        public ICollection<RolePagePermission> RolePagePermissions { get; set; }
+        public string Url { get; set; }
+        public ICollection<PageAccess> PageAccess { get; set; }
     }
-    // Models/RolePagePermission.cs
-    public class RolePagePermission:BaseEntity
+    public class PageAccess: BaseEntity
     {
-        // Foreign key properties
-        public int RoleId { get; set; }
-        public int PageId { get; set; }
-        // Navigation properties
-        public Role Role { get; set; }
+        public string PageId { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
         public Page Page { get; set; }
-        public bool CanAccess { get; set; }
+        public bool CanAccess { get; set; } = false;
+
+        // سایر خصوصیات
     }
 }

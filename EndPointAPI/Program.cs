@@ -118,7 +118,6 @@ builder.Services.AddScoped<IPersonTypeFacad, PersonTypeFacad>();
 builder.Services.AddScoped<IOurServiceFacad, OurServiceFacad>();
 builder.Services.AddScoped<IContractFacad, ContractFacad>();
 builder.Services.AddScoped<IPageFacad, PageFacad>();
-builder.Services.AddScoped<IHasAccessPageService, HasAccessPageService>();
 
 
 

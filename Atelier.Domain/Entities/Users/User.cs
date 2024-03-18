@@ -32,6 +32,7 @@ namespace Atelier.Domain.Entities.Users
         public DateTime? RemoveTime { get; set; }
         public string? RemoveByUserId { get; set; }
         public ICollection<JwtUserToken> JwtUserTokens { get; set; }
+        public ICollection<PageAccess> PageAccess { get; set; }
 
     }
     public class JwtUserToken:BaseEntity

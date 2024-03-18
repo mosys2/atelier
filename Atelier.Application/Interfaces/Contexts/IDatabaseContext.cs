@@ -14,7 +14,7 @@ namespace Atelier.Application.Interfaces.Contexts
         DbSet<User> Users { get; set; }
         DbSet<Role> Roles { get; set; }
         DbSet<Page> Pages { get; set; }
-        DbSet<RolePagePermission> RolePagePermissions { get; set; }
+        DbSet<PageAccess> PageAccess { get; set; }
         DbSet<AtelierBase> AtelierBases { get; set; }
         DbSet<Branch> Branches { get; set; }
         DbSet<JwtUserToken> JwtUserTokens { get; set; }

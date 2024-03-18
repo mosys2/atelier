@@ -66,5 +66,16 @@ namespace EndPointAPI.Controllers
             var result = await _userFacad.AddPageAccessService.Execute(request.userId,request.pageIds);
             return Ok(result);
         }
+        [HttpGet("GetUserPageAccess")]
+        [Authorize(Policy = "BigAdmin")]
+        public async Task<IActionResult> GetUserPageAccess()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _userFacad.GetAllUserPageAccessService.Execute();
+            return Ok(result);
+        }
     }
 }

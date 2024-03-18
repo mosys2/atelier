@@ -32,6 +32,7 @@ namespace Atelier.Application.Services.Pages.Commands
                 };
             }
             page.Name = editPage.Name;
+            page.Url=editPage.Url;  
             page.UpdateByUserId = CurrentUserId.ToString();
             page.UpdateTime=DateTime.Now;
             await _context.SaveChangesAsync();
